@@ -56,6 +56,8 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="Analyze imported articles.")
     analyze.add_argument("--article-id", default="all")
     analyze.add_argument("--use-llm", action="store_true")
+    analyze.add_argument("--only-missing-llm", action="store_true")
+    analyze.add_argument("--limit", type=int, default=None)
 
     curate = subparsers.add_parser("curate-corpus", help="Remove low-value analyzed articles.")
     curate.add_argument("--min-exam-value", type=float, default=None)
@@ -137,7 +139,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "analyze":
-        count = analyze_articles(db, config, use_llm=args.use_llm, article_id=args.article_id)
+        count = analyze_articles(
+            db,
+            config,
+            use_llm=args.use_llm,
+            article_id=args.article_id,
+            only_missing_llm=args.only_missing_llm,
+            limit=args.limit,
+        )
         print(f"Analyzed {count} articles.")
         return 0
 
@@ -295,7 +304,15 @@ def _count_exam_articles(db) -> int:
     )
 
 
-def analyze_articles(db, config, *, use_llm: bool = False, article_id: str = "all") -> int:
+def analyze_articles(
+    db,
+    config,
+    *,
+    use_llm: bool = False,
+    article_id: str = "all",
+    only_missing_llm: bool = False,
+    limit: int | None = None,
+) -> int:
     analyzer = (
         LLMAnalyzer.from_config(config.llm.model, config.llm.api_key, config.llm.base_url)
         if use_llm
@@ -305,6 +322,11 @@ def analyze_articles(db, config, *, use_llm: bool = False, article_id: str = "al
     if article_id != "all":
         article = db.get_article(article_id)
         articles = [article] if article else []
+    if only_missing_llm:
+        completed = db.llm_analyzed_article_ids()
+        articles = [article for article in articles if article.normalized_id() not in completed]
+    if limit is not None:
+        articles = articles[:limit]
     for article in articles:
         llm_payload = analyzer.analyze(article) if analyzer else {}
         result = analyze_article(article, llm_payload=llm_payload)

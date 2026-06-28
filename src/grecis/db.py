@@ -136,6 +136,17 @@ class CorpusDB:
             row = conn.execute("SELECT * FROM articles WHERE id = ?", (article_id,)).fetchone()
         return self._row_to_article(row) if row else None
 
+    def llm_analyzed_article_ids(self) -> set[str]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT article_id
+                FROM analyses
+                WHERE llm_json IS NOT NULL AND llm_json != '{}'
+                """
+            ).fetchall()
+        return {row["article_id"] for row in rows}
+
     def article_exists_by_url(self, url: str) -> bool:
         if not url:
             return False
