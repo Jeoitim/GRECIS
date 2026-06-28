@@ -338,6 +338,27 @@ class CorpusDB:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def delete_articles(self, article_ids: list[str]) -> int:
+        if not article_ids:
+            return 0
+        with self.connect() as conn:
+            conn.executemany("DELETE FROM articles WHERE id = ?", [(item,) for item in article_ids])
+        return len(article_ids)
+
+    def low_quality_article_ids(self, min_exam_value: float, min_difficulty: float) -> list[str]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT a.id
+                FROM articles a
+                LEFT JOIN analyses an ON an.article_id = a.id
+                WHERE an.article_id IS NOT NULL
+                  AND (an.exam_value < ? OR an.difficulty < ?)
+                """,
+                (min_exam_value, min_difficulty),
+            ).fetchall()
+        return [row["id"] for row in rows]
+
     @staticmethod
     def _fetch_many(conn: sqlite3.Connection, table: str, article_id: str) -> list[dict[str, Any]]:
         rows = conn.execute(f"SELECT * FROM {table} WHERE article_id = ?", (article_id,)).fetchall()

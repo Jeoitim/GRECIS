@@ -3,6 +3,7 @@ database:
 
 output:
   markdown_dir: output/markdown
+  redbook_dir: output/redbook
 
 llm:
   model: gpt-4.1-mini
@@ -12,8 +13,11 @@ crawler:
   user_agent: "GRECIS/0.1 (+local research corpus)"
   request_timeout_seconds: 20
   delay_seconds: 1.0
-  max_articles_per_source: 5
+  max_articles_per_source: 50
+  target_article_count: 1000
   min_text_chars: 800
+  min_exam_value: 4.5
+  min_difficulty: 3.5
 
 sources:
   - name: The Guardian
@@ -23,6 +27,9 @@ sources:
       - https://www.theguardian.com/world/rss
       - https://www.theguardian.com/commentisfree/rss
       - https://www.theguardian.com/environment/rss
+      - https://www.theguardian.com/science/rss
+      - https://www.theguardian.com/business/rss
+      - https://www.theguardian.com/education/rss
 
   - name: Nature
     enabled: true
@@ -30,6 +37,8 @@ sources:
     feed_urls:
       - https://www.nature.com/nature.rss
       - https://www.nature.com/subjects/climate-change.rss
+      - https://www.nature.com/subjects/psychology.rss
+      - https://www.nature.com/subjects/business-and-commerce.rss
 
   - name: Science
     enabled: true
@@ -54,3 +63,21 @@ sources:
     field_hint: politics
     feed_urls:
       - https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml
+
+  - name: New York Times Science
+    enabled: true
+    field_hint: science
+    feed_urls:
+      - https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
+
+  - name: New York Times Business
+    enabled: true
+    field_hint: economics
+    feed_urls:
+      - https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
+
+  - name: New York Times Climate
+    enabled: true
+    field_hint: environment
+    feed_urls:
+      - https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml

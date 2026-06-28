@@ -6,6 +6,7 @@ database:
 
 output:
   markdown_dir: output/markdown
+  redbook_dir: output/redbook
 
 llm:
   model: gpt-4.1-mini
@@ -15,7 +16,10 @@ crawler:
   user_agent: "GRECIS/0.1 (+local research corpus)"
   request_timeout_seconds: 20
   delay_seconds: 1.0
-  max_articles_per_source: 5
+  max_articles_per_source: 50
+  target_article_count: 1000
   min_text_chars: 800
+  min_exam_value: 4.5
+  min_difficulty: 3.5
 
 sources: []

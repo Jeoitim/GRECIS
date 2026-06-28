@@ -9,6 +9,7 @@ from .export import write_markdown_report
 from .ingest import fetch_source_articles, fetch_url, load_jsonl
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
+from .redbook import write_redbook
 
 DEFAULT_DB = "data/grecis.sqlite"
 DEFAULT_OUTPUT = "output/markdown"
@@ -40,14 +41,24 @@ def build_parser() -> argparse.ArgumentParser:
     analyze.add_argument("--article-id", default="all")
     analyze.add_argument("--use-llm", action="store_true")
 
+    curate = subparsers.add_parser("curate-corpus", help="Remove low-value analyzed articles.")
+    curate.add_argument("--min-exam-value", type=float, default=None)
+    curate.add_argument("--min-difficulty", type=float, default=None)
+    curate.add_argument("--dry-run", action="store_true")
+
     export = subparsers.add_parser("export", help="Export Markdown and Anki files.")
     export.add_argument("--out", default=None)
+
+    redbook = subparsers.add_parser("export-redbook", help="Export a red-book style review guide.")
+    redbook.add_argument("--out", default=None)
+    redbook.add_argument("--seed", default="data/redbook_seed.yaml")
 
     update = subparsers.add_parser("update-corpus", help="Fetch, analyze, and export in one run.")
     update.add_argument("--source", default="all")
     update.add_argument("--limit", type=int, default=None)
     update.add_argument("--use-llm", action="store_true")
     update.add_argument("--out", default=None)
+    update.add_argument("--redbook-out", default=None)
 
     demo = subparsers.add_parser("run-demo", help="Run init, sample ingest, analysis, and export.")
     demo.add_argument("--out", default=None)
@@ -88,10 +99,27 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Analyzed {count} articles.")
         return 0
 
+    if args.command == "curate-corpus":
+        min_exam = args.min_exam_value or config.crawler.min_exam_value
+        min_diff = args.min_difficulty or config.crawler.min_difficulty
+        article_ids = db.low_quality_article_ids(min_exam, min_diff)
+        if args.dry_run:
+            print(f"Would remove {len(article_ids)} low-value articles.")
+        else:
+            removed = db.delete_articles(article_ids)
+            print(f"Removed {removed} low-value articles.")
+        return 0
+
     if args.command == "export":
         out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
         write_markdown_report(db, out)
         print(f"Exported reports to {out}")
+        return 0
+
+    if args.command == "export-redbook":
+        out = args.out or config.output.redbook_dir
+        path = write_redbook(db, out, seed_path=args.seed)
+        print(f"Exported redbook to {path}")
         return 0
 
     if args.command == "update-corpus":
@@ -102,6 +130,9 @@ def main(argv: list[str] | None = None) -> int:
         out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
         write_markdown_report(db, out)
         print(f"Exported reports to {out}")
+        redbook_out = args.redbook_out or config.output.redbook_dir
+        path = write_redbook(db, redbook_out)
+        print(f"Exported redbook to {path}")
         return 0
 
     if args.command == "run-demo":
@@ -116,6 +147,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Analyzed {result.article_id}: field={result.field}")
         out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
         write_markdown_report(db, out)
+        write_redbook(db, config.output.redbook_dir)
         print(f"Demo exported reports to {out}")
         return 0
 

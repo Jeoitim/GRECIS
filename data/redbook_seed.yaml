@@ -1,0 +1,579 @@
+metadata:
+  title: GRECIS 考研外刊词汇红宝书
+  subtitle: 领域语料库驱动的考研英语阅读词汇与表达
+  note: >
+    内置词条来自考研英语阅读常见外刊领域与需求.md 中的目标结构。
+    权威词典释义字段预留给本地词典 API 或授权数据；项目内置释义为学习用简明释义。
+
+domains:
+  politics_law:
+    title: 政治法律
+    overview: 英美制度、法院裁决、政策争议和公共治理文本中的高频词汇。
+    entries:
+      - headword: issue
+        kind: polysemy
+        pos: noun / verb
+        english: a point in dispute; to publish or formally release something
+        chinese: 争议焦点；议题；发布；发行
+        common: 问题
+        exam: 法律政治语境中常指“争议焦点”，金融语境中可指“发行”。
+        risk: 只译成“问题”会错过作者真正讨论的争议核心。
+        collocations: [at issue, issue at stake, issue a ruling, issue a statement, issue shares]
+        contrast:
+          - term: problem
+            note: 普通问题，未必有争议双方。
+          - term: matter
+            note: 事项；比 issue 更宽泛。
+        examples:
+          - sentence: What is at issue is whether the agency exceeded its authority.
+            zh: 争议焦点在于该机构是否越权。
+        importance: 5
+      - headword: at issue
+        kind: phrase
+        pos: phrase
+        english: being discussed or disputed
+        chinese: 争议焦点在于
+        common: issue 不是“问题”的普通义
+        exam: 读到 at issue 要立刻定位文章争论点。
+        risk: 不要逐字译为“在问题上”。
+        collocations: [what is at issue, question at issue, matter at issue]
+        examples:
+          - sentence: What is at issue is not privacy alone, but power.
+            zh: 争议焦点不只是隐私，而是权力。
+        importance: 5
+      - headword: take issue with
+        kind: phrase
+        pos: verb phrase
+        english: to disagree with or object to a view
+        chinese: 反对；质疑；提出异议
+        common: 不可逐字理解为“拿走问题”
+        exam: 作者态度题中常表示明确反对。
+        risk: 漏掉 with 后面的观点对象，会误判态度。
+        collocations: [take issue with this view, take issue with the assumption]
+        examples:
+          - sentence: Many economists take issue with the assumption that consolidation always helps consumers.
+            zh: 许多经济学家反对“整合总是有利于消费者”的假设。
+        importance: 5
+      - headword: hold
+        kind: polysemy
+        pos: verb
+        english: to rule, decide, or maintain a legal position
+        chinese: 裁定；认为；持有
+        common: 拿着；持有
+        exam: The court held that... 是“法院裁定……”
+        risk: 译成“法院持有”会完全错读。
+        collocations: [the court held that, hold that, be held liable]
+        examples:
+          - sentence: The court held that the rule violated the statute.
+            zh: 法院裁定该规则违反成文法。
+        importance: 5
+      - headword: find
+        kind: polysemy
+        pos: verb
+        english: to decide after considering evidence; to discover in research
+        chinese: 裁定；认定；研究发现
+        common: 找到
+        exam: 法律和学术语境均高频。
+        risk: The judge found that... 不是“法官找到了……”
+        collocations: [find that, the study finds, the judge found]
+        examples:
+          - sentence: The judge found that the company had misled investors.
+            zh: 法官认定该公司误导了投资者。
+        importance: 5
+      - headword: case
+        kind: polysemy
+        pos: noun
+        english: a lawsuit; an argument or set of reasons
+        chinese: 案件；论据；情形
+        common: 例子；情况
+        exam: 法律文本中常为“案件”，议论文中可为“论证”。
+        risk: make the case for 不是“制造案例”，而是“论证支持”。
+        collocations: [court case, make the case for, a strong case against]
+        examples:
+          - sentence: The article makes the case for stronger regulation.
+            zh: 文章论证了加强监管的必要性。
+        importance: 5
+      - headword: challenge
+        kind: polysemy
+        pos: verb / noun
+        english: to question the legality or validity of something
+        chinese: 质疑；对法律提出异议；挑战
+        common: 挑战
+        exam: challenge a law 常指“对法律提出异议”。
+        risk: 不一定是体育或能力挑战。
+        collocations: [challenge a ruling, legal challenge, constitutional challenge]
+        examples:
+          - sentence: The states challenged the mandate in federal court.
+            zh: 各州在联邦法院对该强制令提出异议。
+        importance: 4
+      - headword: ruling
+        kind: term
+        pos: noun
+        english: an official decision by a court or authority
+        chinese: 裁决；裁定
+        common: ruling 不是“统治”时的动名词
+        exam: 常与 court、judge、appeal 连用。
+        risk: 看到 Supreme Court ruling 要译为“最高法院裁决”。
+        collocations: [court ruling, issue a ruling, appeal a ruling]
+        examples:
+          - sentence: The ruling narrowed the power of federal agencies.
+            zh: 该裁决限制了联邦机构的权力。
+        importance: 4
+      - headword: mandate
+        kind: term
+        pos: noun / verb
+        english: an official order or requirement
+        chinese: 强制要求；授权；命令
+        common: 不是简单的“任务”
+        exam: 政策新闻中常指政府强制规定。
+        risk: vaccine mandate 不是“疫苗任务”，而是“疫苗强制令”。
+        collocations: [legal mandate, vaccine mandate, mandate that]
+        examples:
+          - sentence: The mandate required employers to provide paid leave.
+            zh: 该强制令要求雇主提供带薪假。
+        importance: 4
+      - headword: jurisdiction
+        kind: term
+        pos: noun
+        english: legal authority over a place, person, or subject
+        chinese: 管辖权；司法管辖范围
+        common: 无常用基础义，属法律术语
+        exam: 理解法院是否“有权审理”的关键。
+        risk: 不要泛译为“地区”。
+        collocations: [federal jurisdiction, within jurisdiction, lack jurisdiction]
+        examples:
+          - sentence: The court said it lacked jurisdiction.
+            zh: 法院称其没有管辖权。
+        importance: 4
+
+  economics_business:
+    title: 经贸金融
+    overview: 企业并购、市场监管、宏观政策和金融新闻中的核心表达。
+    entries:
+      - headword: acquisition
+        kind: term
+        pos: noun
+        english: the purchase of one company, asset, or right by another
+        chinese: 收购；取得
+        common: 获得
+        exam: 商业语境中特指公司收购。
+        risk: 与 merger 不同，acquisition 强调一方取得控制权。
+        collocations: [acquisition target, acquisition strategy, hostile acquisition]
+        contrast:
+          - term: merger
+            note: 合并，常强调两个主体结合。
+          - term: takeover
+            note: 接管，强调控制权变化，可带敌意。
+        examples:
+          - sentence: The acquisition gave the firm control over a valuable data platform.
+            zh: 这次收购使该公司控制了一个有价值的数据平台。
+        importance: 5
+      - headword: merger
+        kind: term
+        pos: noun
+        english: the joining of two companies into one
+        chinese: 合并；并购中的合并
+        common: 合并
+        exam: 反垄断和企业战略文章高频。
+        risk: 不要和 acquisition 完全等同。
+        collocations: [merger deal, merger review, merger agreement]
+        examples:
+          - sentence: Regulators argued that the merger would reduce competition.
+            zh: 监管者认为该合并会削弱竞争。
+        importance: 5
+      - headword: takeover
+        kind: term
+        pos: noun
+        english: the act of gaining control of a company
+        chinese: 接管；收购
+        common: 接管
+        exam: hostile takeover 表示“敌意收购”。
+        risk: 不一定是政府接管，也常用于企业控制权。
+        collocations: [hostile takeover, takeover bid, takeover target]
+        examples:
+          - sentence: Shareholders rejected the takeover bid.
+            zh: 股东拒绝了该收购报价。
+        importance: 4
+      - headword: consolidate
+        kind: academic
+        pos: verb
+        english: to combine, strengthen, or make more stable
+        chinese: 整合；巩固
+        common: 巩固
+        exam: market is consolidating 常指市场集中度提高。
+        risk: 不要机械译为“巩固市场”。
+        collocations: [consolidate power, consolidate operations, market consolidation]
+        examples:
+          - sentence: The industry began to consolidate after years of weak profits.
+            zh: 多年利润疲弱后，该行业开始整合。
+        importance: 4
+      - headword: capital
+        kind: polysemy
+        pos: noun / adjective
+        english: money or assets used to produce wealth; a major or uppercase form
+        chinese: 资本；资金；大写的；首都
+        common: 首都
+        exam: economic capital、human capital、venture capital 都不是“首都”。
+        risk: 人力资本 human capital 是教育经济类高频概念。
+        collocations: [human capital, venture capital, capital market]
+        examples:
+          - sentence: Education increases human capital and long-term productivity.
+            zh: 教育提升人力资本和长期生产率。
+        importance: 5
+      - headword: yield
+        kind: polysemy
+        pos: noun / verb
+        english: return on an investment; to produce a result
+        chinese: 收益率；产生；让步
+        common: 产出；让步
+        exam: 金融语境中多为“收益率”。
+        risk: bond yield 不是“债券产出”。
+        collocations: [bond yield, yield results, yield evidence]
+        examples:
+          - sentence: Higher bond yields made borrowing more expensive.
+            zh: 更高的债券收益率提高了借贷成本。
+        importance: 5
+      - headword: margin
+        kind: polysemy
+        pos: noun
+        english: a difference, advantage, or profit ratio
+        chinese: 利润率；差距；优势；边缘
+        common: 边缘；页边距
+        exam: by a narrow margin 表示“以微弱优势”。
+        risk: profit margin 是利润率，不是“利润边缘”。
+        collocations: [profit margin, by a narrow margin, margin of error]
+        examples:
+          - sentence: The company increased its margins by cutting costs.
+            zh: 公司通过削减成本提高了利润率。
+        importance: 4
+      - headword: regulation
+        kind: term
+        pos: noun
+        english: official rules controlling an activity or industry
+        chinese: 监管；法规
+        common: 调节
+        exam: economic regulation 常与市场失灵、平台企业相关。
+        risk: 不要只译成“调节”。
+        collocations: [financial regulation, regulatory agency, tighten regulation]
+        examples:
+          - sentence: Stronger regulation may limit the power of large platforms.
+            zh: 更强的监管可能限制大型平台的权力。
+        importance: 5
+
+  science_academic:
+    title: 学术科技
+    overview: 科学报道、研究摘要和学术议论文中决定论证方向的动词与形容词。
+    entries:
+      - headword: suggest
+        kind: academic
+        pos: verb
+        english: to indicate something without proving it completely
+        chinese: 表明；暗示；建议
+        common: 建议
+        exam: 学术语境中常译为“研究表明/提示”。
+        risk: The findings suggest... 不是“发现建议……”。
+        collocations: [findings suggest, evidence suggests, suggest that]
+        examples:
+          - sentence: The findings suggest that sleep affects memory.
+            zh: 研究结果表明睡眠影响记忆。
+        importance: 5
+      - headword: indicate
+        kind: academic
+        pos: verb
+        english: to show or point to something
+        chinese: 表明；显示
+        common: 指示
+        exam: 论证证据链高频动词。
+        risk: 不要只译成“指出方向”。
+        collocations: [data indicate, results indicate, indicate that]
+        examples:
+          - sentence: The data indicate a modest but reliable effect.
+            zh: 数据显示存在一个较小但可靠的影响。
+        importance: 4
+      - headword: significant
+        kind: polysemy
+        pos: adjective
+        english: statistically meaningful; large enough to matter
+        chinese: 统计显著的；重要的
+        common: 重要的
+        exam: 学术文章中常为“统计显著”。
+        risk: significant difference 常是统计术语。
+        collocations: [statistically significant, significant effect, significant difference]
+        examples:
+          - sentence: The treatment produced a statistically significant improvement.
+            zh: 该治疗产生了统计显著的改善。
+        importance: 5
+      - headword: robust
+        kind: polysemy
+        pos: adjective
+        english: reliable under different conditions or tests
+        chinese: 稳健的；可靠的；强健的
+        common: 强壮的
+        exam: robust evidence 是“稳健证据”。
+        risk: 不要译为“肌肉强壮的证据”。
+        collocations: [robust evidence, robust results, robust model]
+        examples:
+          - sentence: The conclusion remained robust after additional tests.
+            zh: 经过额外检验后，该结论仍然稳健。
+        importance: 4
+      - headword: novel
+        kind: polysemy
+        pos: adjective / noun
+        english: new or original
+        chinese: 新颖的；小说
+        common: 小说
+        exam: 科技文章中 novel approach 是“新方法”。
+        risk: novel coronavirus 是“新型冠状病毒”。
+        collocations: [novel approach, novel method, novel evidence]
+        examples:
+          - sentence: Researchers proposed a novel method for detecting bias.
+            zh: 研究者提出了一种检测偏见的新方法。
+        importance: 4
+      - headword: account for
+        kind: phrase
+        pos: verb phrase
+        english: to explain; to make up a proportion
+        chinese: 解释；占比
+        common: 不是“账户为了”
+        exam: 因果解释和数据比例题高频。
+        risk: 要根据宾语判断是“解释”还是“占比”。
+        collocations: [account for the difference, account for half of]
+        examples:
+          - sentence: Social factors account for much of the difference.
+            zh: 社会因素解释了大部分差异。
+        importance: 5
+      - headword: underlie
+        kind: academic
+        pos: verb
+        english: to be the basis or cause of something
+        chinese: 构成基础；是……的深层原因
+        common: 字面为“位于下面”
+        exam: 抽象因果关系常用词。
+        risk: 不要机械译为“在……下面”。
+        collocations: [underlie behavior, mechanisms underlying, factors underlie]
+        examples:
+          - sentence: Several mechanisms may underlie the observed effect.
+            zh: 几种机制可能构成这一观察效应的基础。
+        importance: 4
+      - headword: mediate
+        kind: academic
+        pos: verb
+        english: to act as an intermediate cause or process
+        chinese: 起中介作用；调解
+        common: 调解
+        exam: 心理学和实验研究中常指变量中介。
+        risk: mediated by 不是“被调解”，而是“由……中介/介导”。
+        collocations: [be mediated by, mediating effect, mediate the relationship]
+        examples:
+          - sentence: Stress may mediate the relationship between work and health.
+            zh: 压力可能中介工作与健康之间的关系。
+        importance: 4
+
+  environment:
+    title: 环境气候
+    overview: 气候变化、能源转型、生态保护和公共政策中的核心词群。
+    entries:
+      - headword: emissions
+        kind: term
+        pos: plural noun
+        english: gases or substances released into the air
+        chinese: 排放物；排放量
+        common: emit 的名词形式
+        exam: reduce emissions 是环境文核心搭配。
+        risk: carbon emissions 是“碳排放”，不是“碳发射”。
+        collocations: [carbon emissions, reduce emissions, emissions target]
+        examples:
+          - sentence: The policy aims to reduce emissions from transport.
+            zh: 该政策旨在减少交通运输排放。
+        importance: 5
+      - headword: mitigation
+        kind: term
+        pos: noun
+        english: action that reduces the severity of a problem
+        chinese: 缓解；减缓
+        common: 无常用基础义
+        exam: climate mitigation 指减少气候变化本身。
+        risk: 与 adaptation 区分：mitigation 减缓变化，adaptation 适应影响。
+        collocations: [climate mitigation, mitigation strategy, mitigation efforts]
+        examples:
+          - sentence: Mitigation requires cutting greenhouse gas emissions.
+            zh: 减缓气候变化需要削减温室气体排放。
+        importance: 5
+      - headword: adaptation
+        kind: term
+        pos: noun
+        english: adjustment to new conditions or climate impacts
+        chinese: 适应；改编
+        common: 改编
+        exam: climate adaptation 指适应气候影响。
+        risk: 不要与 mitigation 混同。
+        collocations: [climate adaptation, adaptation policy, adaptation costs]
+        examples:
+          - sentence: Coastal cities need adaptation plans for rising seas.
+            zh: 沿海城市需要应对海平面上升的适应计划。
+        importance: 5
+      - headword: resilience
+        kind: academic
+        pos: noun
+        english: the ability to recover from stress or damage
+        chinese: 韧性；恢复力
+        common: 无基础常用义
+        exam: 城市、生态、心理学语境都高频。
+        risk: 不只是“弹性”，更强调遭受冲击后的恢复能力。
+        collocations: [climate resilience, urban resilience, build resilience]
+        examples:
+          - sentence: Green infrastructure can improve urban resilience.
+            zh: 绿色基础设施可以提升城市韧性。
+        importance: 4
+      - headword: biodiversity
+        kind: term
+        pos: noun
+        english: the variety of living species in an environment
+        chinese: 生物多样性
+        common: 领域术语
+        exam: 环境保护文章高频主题词。
+        risk: 常与 ecosystem、conservation、habitat 同场出现。
+        collocations: [preserve biodiversity, biodiversity loss, biodiversity crisis]
+        examples:
+          - sentence: Habitat loss remains a major threat to biodiversity.
+            zh: 栖息地丧失仍是生物多样性的主要威胁。
+        importance: 4
+      - headword: sustainability
+        kind: term
+        pos: noun
+        english: the ability to continue without exhausting resources
+        chinese: 可持续性
+        common: sustain 的名词化
+        exam: 可持续发展与企业责任文章高频。
+        risk: 不只是“维持”，含资源与长期影响。
+        collocations: [environmental sustainability, sustainability goals, sustainable growth]
+        examples:
+          - sentence: Sustainability requires balancing growth with ecological limits.
+            zh: 可持续性要求在增长与生态限制之间取得平衡。
+        importance: 4
+
+  society_education_psychology:
+    title: 教育社会心理
+    overview: 教育改革、社会文化、心理与行为科学文章中的高频熟词生义。
+    entries:
+      - headword: school
+        kind: polysemy
+        pos: noun
+        english: an institution; a group of thinkers sharing a view
+        chinese: 学校；学派
+        common: 学校
+        exam: school of thought 是“思想流派”。
+        risk: 看到 economists from one school 不一定指同一学校。
+        collocations: [school of thought, Chicago school, old school]
+        examples:
+          - sentence: One school argues that markets correct themselves.
+            zh: 一个学派认为市场会自我修正。
+        importance: 5
+      - headword: position
+        kind: polysemy
+        pos: noun / verb
+        english: an opinion, stance, or place
+        chinese: 立场；观点；位置
+        common: 位置
+        exam: author's position 是“作者立场”。
+        risk: 不要把 position 全部译成物理位置。
+        collocations: [author's position, policy position, take a position]
+        examples:
+          - sentence: The author takes a cautious position on the reform.
+            zh: 作者对改革持谨慎立场。
+        importance: 5
+      - headword: concern
+        kind: polysemy
+        pos: noun / verb
+        english: worry; a matter that involves someone; a company
+        chinese: 担忧；涉及；企业
+        common: 担心
+        exam: be concerned with 是“涉及/关于”。
+        risk: a going concern 是会计语境中的“持续经营企业”。
+        collocations: [be concerned with, public concern, a matter of concern]
+        examples:
+          - sentence: The study is concerned with how children learn rules.
+            zh: 该研究涉及儿童如何学习规则。
+        importance: 5
+      - headword: subject
+        kind: polysemy
+        pos: noun / adjective / verb
+        english: topic; person in a study; dependent on; expose to
+        chinese: 主题；受试者；受制于；使遭受
+        common: 科目；主题
+        exam: subject to 表示“受制于/可能遭受”。
+        risk: subject to change 是“可能变动”。
+        collocations: [be subject to, research subject, subject matter]
+        examples:
+          - sentence: The policy is subject to legal review.
+            zh: 该政策须接受法律审查。
+        importance: 5
+      - headword: discipline
+        kind: polysemy
+        pos: noun / verb
+        english: a field of study; training or control
+        chinese: 学科；纪律；训练
+        common: 纪律
+        exam: academic discipline 是“学科”。
+        risk: 不要把 cross-disciplinary 误读成“跨纪律处罚”。
+        collocations: [academic discipline, disciplinary boundary, self-discipline]
+        examples:
+          - sentence: Psychology became a separate discipline in the nineteenth century.
+            zh: 心理学在十九世纪成为独立学科。
+        importance: 4
+      - headword: bias
+        kind: academic
+        pos: noun / verb
+        english: a systematic preference or distortion
+        chinese: 偏见；偏差；使有偏
+        common: 偏见
+        exam: 认知心理、媒体和算法文章高频。
+        risk: statistical bias 可为“系统性偏差”，不一定是道德偏见。
+        collocations: [cognitive bias, selection bias, algorithmic bias]
+        examples:
+          - sentence: Selection bias can weaken the study's conclusion.
+            zh: 选择偏差会削弱该研究结论。
+        importance: 4
+      - headword: drive
+        kind: polysemy
+        pos: noun / verb
+        english: to cause or push forward; a force or motivation
+        chinese: 驱动；推动；驱动力；驾驶
+        common: 驾驶
+        exam: factors driving change 是“推动变化的因素”。
+        risk: 不要把 drive in prices 误解成“开车进入价格”。
+        collocations: [drive growth, key driver, factors driving]
+        examples:
+          - sentence: Anxiety can drive people to seek simple answers.
+            zh: 焦虑会驱使人们寻找简单答案。
+        importance: 5
+      - headword: move
+        kind: polysemy
+        pos: noun / verb
+        english: an action or step taken to achieve something
+        chinese: 举措；行动；移动
+        common: 移动
+        exam: the move was criticized 是“这一举措受到批评”。
+        risk: 新闻中名词 move 常是政策或商业动作。
+        collocations: [policy move, strategic move, the move to]
+        examples:
+          - sentence: The move was intended to reduce inequality.
+            zh: 这一举措旨在减少不平等。
+        importance: 5
+
+sentence_patterns:
+  - pattern: not so much A as B
+    function: 强调 B，弱化 A
+    chinese: 与其说是 A，不如说是 B
+    example: The debate is not so much about privacy as about power.
+    importance: 5
+  - pattern: while / whereas
+    function: 让步或对比
+    chinese: 虽然；而；相比之下
+    example: While the policy may cut costs, it could increase inequality.
+    importance: 5
+  - pattern: rather than
+    function: 排除 A，强调 B
+    chinese: 而不是
+    example: The reform rewards credentials rather than actual skills.
+    importance: 4

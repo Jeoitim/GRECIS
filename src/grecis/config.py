@@ -21,6 +21,9 @@ class CrawlerConfig:
     delay_seconds: float = 1.0
     max_articles_per_source: int = 5
     min_text_chars: int = 800
+    target_article_count: int = 1000
+    min_exam_value: float = 4.5
+    min_difficulty: float = 3.5
 
 
 @dataclass(slots=True)
@@ -32,6 +35,7 @@ class LLMConfig:
 @dataclass(slots=True)
 class OutputConfig:
     markdown_dir: str = "output/markdown"
+    redbook_dir: str = "output/redbook"
 
 
 @dataclass(slots=True)

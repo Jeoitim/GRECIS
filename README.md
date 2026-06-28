@@ -62,6 +62,27 @@ uv run grecis analyze
 uv run grecis export
 ```
 
+生成“红宝书式”复习资料：
+
+```powershell
+uv run grecis export-redbook
+```
+
+输出：
+
+```text
+output/redbook/GRECIS-考研外刊词汇红宝书.md
+```
+
+这个文件按领域成章，词条包含：
+
+- 简明英英义、核心中文义、常见义、考研义
+- 熟词生义和误译风险
+- 高频搭配
+- 近义辨析
+- 项目例句和本地语料例句
+- 7 天复习安排
+
 导入单个网页：
 
 ```powershell
@@ -96,6 +117,7 @@ output:
 crawler:
   max_articles_per_source: 5
   delay_seconds: 1.0
+  target_article_count: 1000
 ```
 
 `config/local.yaml`、`config/local.json` 已被 Git 忽略，适合保存本机明文密钥和偏好配置。环境变量优先级更高。
@@ -121,6 +143,17 @@ sources:
 - 按 URL 去重
 - 跳过过短正文
 - 按配置限速
+
+要积累千篇级语料，建议提高每源上限后分批运行：
+
+```powershell
+uv run grecis update-corpus --limit 50
+uv run grecis curate-corpus --dry-run
+uv run grecis curate-corpus
+uv run grecis export-redbook
+```
+
+`target_article_count` 是本地语料建设目标；项目不会把上千篇版权文章提交到 Git，只会把抓取、去重、筛选和生成词书的流水线保留在代码中。
 
 请只抓取你有权访问和保存的内容；付费墙、版权受限内容建议只保存链接、摘要和自己生成的学习笔记。
 
