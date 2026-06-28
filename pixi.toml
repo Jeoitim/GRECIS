@@ -1,0 +1,20 @@
+[workspace]
+authors = ["GRECIS"]
+channels = ["conda-forge"]
+name = "grecis"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[dependencies]
+python = ">=3.11,<3.14"
+pip = ">=24.0"
+
+[pypi-dependencies]
+grecis = { path = ".", editable = true }
+
+[tasks]
+init = "grecis init"
+demo = "grecis run-demo"
+test = "pytest"
+lint = "ruff check ."
+format = "ruff format ."
