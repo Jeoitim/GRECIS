@@ -9,6 +9,7 @@ from .export import write_markdown_report
 from .ingest import fetch_source_articles, fetch_url, load_exam_corpus, load_jsonl
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
+from .pastpapers import import_pastpapers, summarize_import
 from .redbook import write_redbook
 
 DEFAULT_DB = "data/grecis.sqlite"
@@ -30,6 +31,11 @@ def build_parser() -> argparse.ArgumentParser:
     ingest_exam = subparsers.add_parser("ingest-exam", help="Import local Kaoyan passages.")
     ingest_exam.add_argument("path")
     ingest_exam.add_argument("--source", default="kaoyan_exam")
+
+    ingest_pastpapers = subparsers.add_parser(
+        "ingest-pastpapers", help="Import Kaoyan papers from pastpapers.cn."
+    )
+    ingest_pastpapers.add_argument("--limit", type=int, default=None)
 
     ingest_url = subparsers.add_parser("ingest-url", help="Fetch and import one web article.")
     ingest_url.add_argument("url")
@@ -91,6 +97,14 @@ def main(argv: list[str] | None = None) -> int:
         articles = load_exam_corpus(args.path, source_name=args.source)
         ids = upsert_articles(db, articles)
         print(f"Imported {len(ids)} exam passages.")
+        return 0
+
+    if args.command == "ingest-pastpapers":
+        articles = import_pastpapers(limit=args.limit)
+        ids = upsert_articles(db, articles)
+        summary = summarize_import(articles)
+        print(f"Imported {len(ids)} pastpapers.cn reading passages.")
+        print(f"Papers: {', '.join(summary['papers'])}")
         return 0
 
     if args.command == "ingest-url":
