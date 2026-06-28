@@ -1,0 +1,21 @@
+# Copy this file to config/local.yaml if you want local cleartext settings.
+# config/local.yaml is ignored by Git.
+
+database:
+  path: data/grecis.sqlite
+
+output:
+  markdown_dir: output/markdown
+
+llm:
+  model: gpt-4.1-mini
+  api_key: ""
+
+crawler:
+  user_agent: "GRECIS/0.1 (+local research corpus)"
+  request_timeout_seconds: 20
+  delay_seconds: 1.0
+  max_articles_per_source: 5
+  min_text_chars: 800
+
+sources: []

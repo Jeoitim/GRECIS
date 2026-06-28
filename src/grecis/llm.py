@@ -56,6 +56,10 @@ class LLMAnalyzer:
             api_key=os.getenv("OPENAI_API_KEY"),
         )
 
+    @classmethod
+    def from_config(cls, model: str, api_key: str) -> LLMAnalyzer:
+        return cls(model=model, api_key=api_key or None)
+
     def enabled(self) -> bool:
         return bool(self.api_key)
 

@@ -1,0 +1,56 @@
+database:
+  path: data/grecis.sqlite
+
+output:
+  markdown_dir: output/markdown
+
+llm:
+  model: gpt-4.1-mini
+  api_key: ""
+
+crawler:
+  user_agent: "GRECIS/0.1 (+local research corpus)"
+  request_timeout_seconds: 20
+  delay_seconds: 1.0
+  max_articles_per_source: 5
+  min_text_chars: 800
+
+sources:
+  - name: The Guardian
+    enabled: true
+    field_hint: politics
+    feed_urls:
+      - https://www.theguardian.com/world/rss
+      - https://www.theguardian.com/commentisfree/rss
+      - https://www.theguardian.com/environment/rss
+
+  - name: Nature
+    enabled: true
+    field_hint: science
+    feed_urls:
+      - https://www.nature.com/nature.rss
+      - https://www.nature.com/subjects/climate-change.rss
+
+  - name: Science
+    enabled: true
+    field_hint: science
+    feed_urls:
+      - https://www.science.org/rss/news_current.xml
+
+  - name: The Atlantic
+    enabled: true
+    field_hint: sociology
+    feed_urls:
+      - https://www.theatlantic.com/feed/all/
+
+  - name: Foreign Affairs
+    enabled: true
+    field_hint: politics
+    feed_urls:
+      - https://www.foreignaffairs.com/rss.xml
+
+  - name: New York Times Opinion
+    enabled: true
+    field_hint: politics
+    feed_urls:
+      - https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml

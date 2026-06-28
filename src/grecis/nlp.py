@@ -179,6 +179,57 @@ SENTENCE_PATTERNS: list[tuple[str, str, str]] = [
     ("emphasis", "强调", r"\b(not so much\b.+\bas|not only\b.+\bbut also|what matters is)\b"),
 ]
 
+EXAM_PHRASES: list[dict[str, str]] = [
+    {
+        "expression": "at issue",
+        "pattern": r"\bat issue\b",
+        "meaning": "争议焦点在于",
+        "type": "legal/political expression",
+    },
+    {
+        "expression": "take issue with",
+        "pattern": r"\btak(?:e|es|ing)? issue with\b|\btook issue with\b|\btaken issue with\b",
+        "meaning": "反对；质疑某观点",
+        "type": "stance expression",
+    },
+    {
+        "expression": "at stake",
+        "pattern": r"\bat stake\b",
+        "meaning": "利害攸关；处于风险中",
+        "type": "argument expression",
+    },
+    {
+        "expression": "subject to",
+        "pattern": r"\bsubject to\b",
+        "meaning": "受制于；可能遭受",
+        "type": "polysemy phrase",
+    },
+    {
+        "expression": "account for",
+        "pattern": r"\baccount(?:s|ed|ing)? for\b",
+        "meaning": "解释；占比",
+        "type": "academic expression",
+    },
+    {
+        "expression": "result in",
+        "pattern": r"\bresult(?:s|ed|ing)? in\b",
+        "meaning": "导致",
+        "type": "causality expression",
+    },
+    {
+        "expression": "lead to",
+        "pattern": r"\blead(?:s|ing)? to\b|\bled to\b",
+        "meaning": "导致；通向",
+        "type": "causality expression",
+    },
+    {
+        "expression": "not so much A as B",
+        "pattern": r"\bnot so much\b.+\bas\b",
+        "meaning": "与其说是 A，不如说是 B",
+        "type": "comparison pattern",
+    },
+]
+
 IRREGULAR_LEMMAS = {
     "held": "hold",
     "found": "find",
@@ -243,7 +294,16 @@ def estimate_difficulty(tokens: list[str], sentence_count: int) -> float:
     return round(min(score, 10.0), 1)
 
 
-def word_frequencies(tokens: list[str], field: str, limit: int = 40) -> list[dict[str, Any]]:
+def find_example_sentence(word: str, sentences: list[str]) -> str:
+    for sentence in sentences:
+        if word in set(content_tokens(sentence)):
+            return sentence
+    return ""
+
+
+def word_frequencies(
+    tokens: list[str], field: str, sentences: list[str], limit: int = 40
+) -> list[dict[str, Any]]:
     counts = Counter(tokens)
     rows = []
     domain_words = DOMAIN_KEYWORDS.get(field, set())
@@ -259,12 +319,35 @@ def word_frequencies(tokens: list[str], field: str, limit: int = 40) -> list[dic
                 "category": category,
                 "field": field,
                 "importance": min(5, 1 + frequency),
+                "example_sentence": find_example_sentence(word, sentences),
             }
         )
     return rows
 
 
-def extract_collocations(tokens: list[str], limit: int = 35) -> list[dict[str, Any]]:
+def extract_collocations(text: str, tokens: list[str], limit: int = 35) -> list[dict[str, Any]]:
+    sentences = split_sentences(text)
+    phrase_rows: list[dict[str, Any]] = []
+    lowered = text.lower()
+    for phrase in EXAM_PHRASES:
+        matches = re.findall(phrase["pattern"], lowered)
+        if not matches:
+            continue
+        example = next(
+            (sentence for sentence in sentences if re.search(phrase["pattern"], sentence.lower())),
+            "",
+        )
+        phrase_rows.append(
+            {
+                "expression": phrase["expression"],
+                "frequency": len(matches),
+                "type": phrase["type"],
+                "importance": 5,
+                "meaning": phrase["meaning"],
+                "example_sentence": example,
+            }
+        )
+
     counts: Counter[tuple[str, ...]] = Counter()
     for n in (2, 3):
         for index in range(len(tokens) - n + 1):
@@ -273,19 +356,35 @@ def extract_collocations(tokens: list[str], limit: int = 35) -> list[dict[str, A
                 continue
             counts[gram] += 1
 
-    rows = []
+    rows = phrase_rows.copy()
+    existing = {row["expression"] for row in rows}
     for gram, frequency in counts.most_common(limit):
         if frequency < 1:
             continue
+        expression = " ".join(gram)
+        if expression in existing:
+            continue
         rows.append(
             {
-                "expression": " ".join(gram),
+                "expression": expression,
                 "frequency": frequency,
                 "type": f"{len(gram)}-gram",
                 "importance": min(5, 1 + frequency),
+                "meaning": "",
+                "example_sentence": find_ngram_example(expression, sentences),
             }
         )
-    return rows
+    return rows[:limit]
+
+
+def find_ngram_example(expression: str, sentences: list[str]) -> str:
+    parts = expression.split()
+    for sentence in sentences:
+        tokens = content_tokens(sentence)
+        for index in range(len(tokens) - len(parts) + 1):
+            if tokens[index : index + len(parts)] == parts:
+                return sentence
+    return ""
 
 
 def extract_polysemy(text: str) -> list[dict[str, Any]]:
@@ -338,10 +437,10 @@ def analyze_article(article: Article, llm_payload: dict[str, Any] | None = None)
     tokens = content_tokens(article.text)
     sentences = split_sentences(article.text)
     field, field_scores = infer_domain(tokens)
-    frequencies = word_frequencies(tokens, field)
+    frequencies = word_frequencies(tokens, field, sentences)
     polysemy = extract_polysemy(article.text)
     patterns = extract_sentence_patterns(article.text)
-    collocations = extract_collocations(tokens)
+    collocations = extract_collocations(article.text, tokens)
     difficulty = estimate_difficulty(tokens, len(sentences))
     exam_value = estimate_exam_value(frequencies, polysemy, patterns)
 

@@ -1,5 +1,5 @@
 from grecis.models import Article
-from grecis.nlp import analyze_article, content_tokens, extract_polysemy
+from grecis.nlp import analyze_article, content_tokens, extract_collocations, extract_polysemy
 
 
 def test_content_tokens_normalize_common_suffixes() -> None:
@@ -29,3 +29,12 @@ def test_analyze_article_returns_core_sections() -> None:
     assert result.word_frequencies
     assert result.polysemy
     assert result.sentence_patterns
+
+
+def test_extract_collocations_prioritizes_exam_phrases() -> None:
+    text = "What is at issue is whether the policy will lead to higher costs."
+    tokens = content_tokens(text)
+    rows = extract_collocations(text, tokens)
+    by_expression = {row["expression"]: row for row in rows}
+    assert by_expression["at issue"]["meaning"] == "争议焦点在于"
+    assert by_expression["lead to"]["meaning"] == "导致；通向"

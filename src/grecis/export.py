@@ -25,6 +25,8 @@ def write_markdown_report(db: CorpusDB, output_dir: str | Path) -> None:
     reports = db.fetch_report_rows()
     vocabulary = db.aggregate_vocabulary()
     collocations = db.aggregate_collocations()
+    polysemy = db.aggregate_polysemy()
+    sentence_patterns = db.aggregate_sentence_patterns()
 
     for report in reports:
         article = report["article"]
@@ -37,8 +39,12 @@ def write_markdown_report(db: CorpusDB, output_dir: str | Path) -> None:
         )
 
     (output / "expressions.md").write_text(render_expressions(collocations), encoding="utf-8")
+    (output / "polysemy.md").write_text(render_polysemy(polysemy), encoding="utf-8")
+    (output / "sentence-patterns.md").write_text(
+        render_sentence_patterns(sentence_patterns), encoding="utf-8"
+    )
     (output / "index.md").write_text(
-        render_index(reports, vocabulary, collocations), encoding="utf-8"
+        render_index(reports, vocabulary, collocations, polysemy), encoding="utf-8"
     )
     write_anki(db, output.parent / "anki" / "grecis_cards.tsv")
 
@@ -63,9 +69,15 @@ def render_article(report: dict[str, Any]) -> str:
         "## 高频词",
         "",
         table(
-            ["词", "类别", "频次", "重要度"],
+            ["词", "类别", "频次", "重要度", "例句"],
             [
-                [item["word"], item["category"], item["frequency"], stars(item["importance"])]
+                [
+                    item["word"],
+                    item["category"],
+                    item["frequency"],
+                    stars(item["importance"]),
+                    truncate(item.get("example_sentence", ""), 120),
+                ]
                 for item in report["vocabulary"][:25]
             ],
         ),
@@ -95,9 +107,16 @@ def render_article(report: dict[str, Any]) -> str:
             "## 高频表达",
             "",
             table(
-                ["表达", "类型", "频次", "重要度"],
+                ["表达", "类型", "含义", "频次", "重要度", "例句"],
                 [
-                    [item["expression"], item["type"], item["frequency"], stars(item["importance"])]
+                    [
+                        item["expression"],
+                        item["type"],
+                        item.get("meaning", ""),
+                        item["frequency"],
+                        stars(item["importance"]),
+                        truncate(item.get("example_sentence", ""), 120),
+                    ]
                     for item in report["collocations"][:25]
                 ],
             ),
@@ -146,7 +165,7 @@ def render_field_vocabulary(field: str, rows: list[dict[str, Any]]) -> str:
         "## 领域词汇",
         "",
         table(
-            ["词", "词形", "类别", "频次", "文章数", "重要度"],
+            ["词", "词形", "类别", "频次", "文章数", "重要度", "原文例句"],
             [
                 [
                     item["word"],
@@ -155,6 +174,7 @@ def render_field_vocabulary(field: str, rows: list[dict[str, Any]]) -> str:
                     item["frequency"],
                     item["article_count"],
                     stars(item["importance"]),
+                    truncate(item.get("example_sentence", ""), 120),
                 ]
                 for item in rows
             ],
@@ -170,14 +190,16 @@ def render_expressions(rows: list[dict[str, Any]]) -> str:
             "# Expressions",
             "",
             table(
-                ["表达", "类型", "频次", "文章数", "重要度"],
+                ["表达", "类型", "含义", "频次", "文章数", "重要度", "例句"],
                 [
                     [
                         item["expression"],
                         item["type"],
+                        item.get("meaning", ""),
                         item["frequency"],
                         item["article_count"],
                         stars(item["importance"]),
+                        truncate(item.get("example_sentence", ""), 140),
                     ]
                     for item in rows
                 ],
@@ -187,10 +209,54 @@ def render_expressions(rows: list[dict[str, Any]]) -> str:
     )
 
 
+def render_polysemy(rows: list[dict[str, Any]]) -> str:
+    lines = ["# Polysemy", "", "## 熟词生义风险词", ""]
+    lines.append(
+        table(
+            ["词", "常见义", "文中高频义", "文章数", "例句", "来源"],
+            [
+                [
+                    item["word"],
+                    item["ordinary_meaning"],
+                    item["contextual_meaning"],
+                    item["article_count"],
+                    truncate(item["example_sentence"], 140),
+                    item["sources"],
+                ]
+                for item in rows
+            ],
+        )
+    )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_sentence_patterns(rows: list[dict[str, Any]]) -> str:
+    lines = ["# Sentence Patterns", "", "## 句式与论证功能", ""]
+    lines.append(
+        table(
+            ["类型", "功能", "频次", "重要度", "例句"],
+            [
+                [
+                    item["type"],
+                    item["function"],
+                    item["frequency"],
+                    stars(item["importance"]),
+                    truncate(item["example_sentence"], 160),
+                ]
+                for item in rows
+            ],
+        )
+    )
+    lines.append("")
+    return "\n".join(lines)
+
+
 def render_index(
     reports: list[dict[str, Any]],
     vocabulary: list[dict[str, Any]],
     collocations: list[dict[str, Any]],
+    polysemy: list[dict[str, Any]],
 ) -> str:
     article_rows = []
     for report in reports:
@@ -211,6 +277,7 @@ def render_index(
             f"- 文章数：{len(reports)}",
             f"- 词条数：{len(vocabulary)}",
             f"- 表达数：{len(collocations)}",
+            f"- 熟词生义词条数：{len(polysemy)}",
             "",
             "## Articles",
             "",
@@ -233,7 +300,8 @@ def write_anki(db: CorpusDB, path: str | Path) -> None:
                 f"Field: {item['field']}<br>"
                 f"Category: {item['category']}<br>"
                 f"Frequency: {item['frequency']}<br>"
-                f"Importance: {stars(item['importance'])}"
+                f"Importance: {stars(item['importance'])}<br>"
+                f"Example: {item.get('example_sentence', '')}"
             )
             writer.writerow(
                 [front, back, f"grecis {item['field']} {item['category'].replace(' ', '_')}"]
@@ -250,6 +318,15 @@ def table(headers: list[str], rows: list[list[Any]]) -> str:
     for row in rows:
         lines.append("| " + " | ".join(str(cell).replace("\n", " ") for cell in row) + " |")
     return "\n".join(lines)
+
+
+def truncate(value: str | None, limit: int) -> str:
+    if not value:
+        return ""
+    normalized = str(value).replace("\n", " ").strip()
+    if len(normalized) <= limit:
+        return normalized
+    return normalized[: limit - 3] + "..."
 
 
 def stars(value: int | float | None) -> str:

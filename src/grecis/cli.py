@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 
+from .config import load_config
 from .db import ensure_db, upsert_articles
 from .export import write_markdown_report
-from .ingest import fetch_url, load_jsonl
+from .ingest import fetch_source_articles, fetch_url, load_jsonl
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
 
@@ -17,7 +17,8 @@ SAMPLE_JSONL = "data/sample_articles.jsonl"
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="grecis")
-    parser.add_argument("--db", default=os.getenv("GRECIS_DB_PATH", DEFAULT_DB))
+    parser.add_argument("--config", default=None, help="YAML or JSON config path.")
+    parser.add_argument("--db", default=None)
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("init", help="Create local directories and SQLite schema.")
@@ -29,26 +30,40 @@ def build_parser() -> argparse.ArgumentParser:
     ingest_url.add_argument("url")
     ingest_url.add_argument("--source", default="web")
 
+    fetch_sources = subparsers.add_parser(
+        "fetch-sources", help="Fetch articles from configured feeds."
+    )
+    fetch_sources.add_argument("--source", default="all", help="Source name or 'all'.")
+    fetch_sources.add_argument("--limit", type=int, default=None, help="Override per-source limit.")
+
     analyze = subparsers.add_parser("analyze", help="Analyze imported articles.")
     analyze.add_argument("--article-id", default="all")
     analyze.add_argument("--use-llm", action="store_true")
 
     export = subparsers.add_parser("export", help="Export Markdown and Anki files.")
-    export.add_argument("--out", default=os.getenv("GRECIS_OUTPUT_DIR", DEFAULT_OUTPUT))
+    export.add_argument("--out", default=None)
+
+    update = subparsers.add_parser("update-corpus", help="Fetch, analyze, and export in one run.")
+    update.add_argument("--source", default="all")
+    update.add_argument("--limit", type=int, default=None)
+    update.add_argument("--use-llm", action="store_true")
+    update.add_argument("--out", default=None)
 
     demo = subparsers.add_parser("run-demo", help="Run init, sample ingest, analysis, and export.")
-    demo.add_argument("--out", default=os.getenv("GRECIS_OUTPUT_DIR", DEFAULT_OUTPUT))
+    demo.add_argument("--out", default=None)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    db = ensure_db(args.db)
+    config = load_config(args.config)
+    db_path = args.db or config.database.path or DEFAULT_DB
+    db = ensure_db(db_path)
 
     if args.command == "init":
         Path("data").mkdir(exist_ok=True)
         Path("output").mkdir(exist_ok=True)
-        print(f"Initialized database: {args.db}")
+        print(f"Initialized database: {db_path}")
         return 0
 
     if args.command == "ingest-jsonl":
@@ -58,31 +73,35 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "ingest-url":
-        article = fetch_url(args.url, source=args.source)
+        article = fetch_url(args.url, source=args.source, crawler=config.crawler)
         article_id = db.upsert_article(article)
         print(f"Imported {article_id}: {article.title}")
         return 0
 
+    if args.command == "fetch-sources":
+        imported = fetch_configured_sources(db, config, source_name=args.source, limit=args.limit)
+        print(f"Imported {imported} fetched articles.")
+        return 0
+
     if args.command == "analyze":
-        analyzer = LLMAnalyzer.from_env() if args.use_llm else None
-        articles = db.list_articles()
-        if args.article_id != "all":
-            article = db.get_article(args.article_id)
-            articles = [article] if article else []
-        for article in articles:
-            llm_payload = analyzer.analyze(article) if analyzer else {}
-            result = analyze_article(article, llm_payload=llm_payload)
-            db.save_analysis(result)
-            print(
-                f"Analyzed {result.article_id}: field={result.field}, "
-                f"difficulty={result.difficulty}, exam_value={result.exam_value}"
-            )
-        print(f"Analyzed {len(articles)} articles.")
+        count = analyze_articles(db, config, use_llm=args.use_llm, article_id=args.article_id)
+        print(f"Analyzed {count} articles.")
         return 0
 
     if args.command == "export":
-        write_markdown_report(db, args.out)
-        print(f"Exported reports to {args.out}")
+        out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
+        write_markdown_report(db, out)
+        print(f"Exported reports to {out}")
+        return 0
+
+    if args.command == "update-corpus":
+        imported = fetch_configured_sources(db, config, source_name=args.source, limit=args.limit)
+        print(f"Imported {imported} fetched articles.")
+        count = analyze_articles(db, config, use_llm=args.use_llm)
+        print(f"Analyzed {count} articles.")
+        out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
+        write_markdown_report(db, out)
+        print(f"Exported reports to {out}")
         return 0
 
     if args.command == "run-demo":
@@ -95,11 +114,58 @@ def main(argv: list[str] | None = None) -> int:
             result = analyze_article(article)
             db.save_analysis(result)
             print(f"Analyzed {result.article_id}: field={result.field}")
-        write_markdown_report(db, args.out)
-        print(f"Demo exported reports to {args.out}")
+        out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
+        write_markdown_report(db, out)
+        print(f"Demo exported reports to {out}")
         return 0
 
     return 1
+
+
+def fetch_configured_sources(
+    db, config, *, source_name: str = "all", limit: int | None = None
+) -> int:
+    selected = [
+        source
+        for source in config.sources
+        if source.enabled and (source_name == "all" or source.name.lower() == source_name.lower())
+    ]
+    if not selected:
+        print("No enabled sources matched.")
+        return 0
+
+    original_limit = config.crawler.max_articles_per_source
+    if limit is not None:
+        config.crawler.max_articles_per_source = limit
+
+    imported = 0
+    existing_urls = {article.url for article in db.list_articles() if article.url}
+    try:
+        for source in selected:
+            articles = fetch_source_articles(source, config.crawler, existing_urls=existing_urls)
+            ids = upsert_articles(db, articles)
+            imported += len(ids)
+            print(f"{source.name}: imported {len(ids)} articles.")
+    finally:
+        config.crawler.max_articles_per_source = original_limit
+    return imported
+
+
+def analyze_articles(db, config, *, use_llm: bool = False, article_id: str = "all") -> int:
+    analyzer = LLMAnalyzer.from_config(config.llm.model, config.llm.api_key) if use_llm else None
+    articles = db.list_articles()
+    if article_id != "all":
+        article = db.get_article(article_id)
+        articles = [article] if article else []
+    for article in articles:
+        llm_payload = analyzer.analyze(article) if analyzer else {}
+        result = analyze_article(article, llm_payload=llm_payload)
+        db.save_analysis(result)
+        print(
+            f"Analyzed {result.article_id}: field={result.field}, "
+            f"difficulty={result.difficulty}, exam_value={result.exam_value}"
+        )
+    return len(articles)
 
 
 if __name__ == "__main__":

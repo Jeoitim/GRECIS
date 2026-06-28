@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS vocabulary (
     category TEXT NOT NULL,
     frequency INTEGER NOT NULL,
     importance INTEGER NOT NULL,
+    example_sentence TEXT NOT NULL DEFAULT '',
     PRIMARY KEY(article_id, word, category)
 );
 
@@ -48,6 +49,8 @@ CREATE TABLE IF NOT EXISTS collocations (
     type TEXT NOT NULL,
     frequency INTEGER NOT NULL,
     importance INTEGER NOT NULL,
+    meaning TEXT NOT NULL DEFAULT '',
+    example_sentence TEXT NOT NULL DEFAULT '',
     PRIMARY KEY(article_id, expression)
 );
 
@@ -85,6 +88,11 @@ class CorpusDB:
     def init(self) -> None:
         with self.connect() as conn:
             conn.executescript(SCHEMA)
+            self._ensure_column(conn, "vocabulary", "example_sentence", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(conn, "collocations", "meaning", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(
+                conn, "collocations", "example_sentence", "TEXT NOT NULL DEFAULT ''"
+            )
 
     def upsert_article(self, article: Article) -> str:
         article_id = article.normalized_id()
@@ -128,6 +136,13 @@ class CorpusDB:
             row = conn.execute("SELECT * FROM articles WHERE id = ?", (article_id,)).fetchone()
         return self._row_to_article(row) if row else None
 
+    def article_exists_by_url(self, url: str) -> bool:
+        if not url:
+            return False
+        with self.connect() as conn:
+            row = conn.execute("SELECT 1 FROM articles WHERE url = ? LIMIT 1", (url,)).fetchone()
+        return row is not None
+
     def save_analysis(self, result: AnalysisResult) -> None:
         with self.connect() as conn:
             conn.execute("DELETE FROM analyses WHERE article_id = ?", (result.article_id,))
@@ -157,9 +172,10 @@ class CorpusDB:
             conn.executemany(
                 """
                 INSERT INTO vocabulary (
-                    article_id, word, lemma, field, category, frequency, importance
+                    article_id, word, lemma, field, category, frequency,
+                    importance, example_sentence
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 [
                     (
@@ -170,14 +186,18 @@ class CorpusDB:
                         item["category"],
                         item["frequency"],
                         item["importance"],
+                        item.get("example_sentence", ""),
                     )
                     for item in result.word_frequencies
                 ],
             )
             conn.executemany(
                 """
-                INSERT INTO collocations (article_id, expression, type, frequency, importance)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO collocations (
+                    article_id, expression, type, frequency,
+                    importance, meaning, example_sentence
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 [
                     (
@@ -186,6 +206,8 @@ class CorpusDB:
                         item["type"],
                         item["frequency"],
                         item["importance"],
+                        item.get("meaning", ""),
+                        item.get("example_sentence", ""),
                     )
                     for item in result.collocations
                 ],
@@ -260,7 +282,8 @@ class CorpusDB:
                 SELECT field, word, lemma, category,
                        SUM(frequency) AS frequency,
                        MAX(importance) AS importance,
-                       COUNT(DISTINCT article_id) AS article_count
+                       COUNT(DISTINCT article_id) AS article_count,
+                       MIN(example_sentence) AS example_sentence
                 FROM vocabulary
                 GROUP BY field, word, lemma, category
                 ORDER BY field, frequency DESC, word
@@ -274,10 +297,43 @@ class CorpusDB:
                 """
                 SELECT expression, type, SUM(frequency) AS frequency,
                        MAX(importance) AS importance,
-                       COUNT(DISTINCT article_id) AS article_count
+                       COUNT(DISTINCT article_id) AS article_count,
+                       MIN(meaning) AS meaning,
+                       MIN(example_sentence) AS example_sentence
                 FROM collocations
                 GROUP BY expression, type
                 ORDER BY frequency DESC, expression
+                """
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def aggregate_polysemy(self) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT p.word, p.ordinary_meaning, p.contextual_meaning,
+                       COUNT(DISTINCT p.article_id) AS article_count,
+                       MIN(p.sentence) AS example_sentence,
+                       GROUP_CONCAT(DISTINCT a.source) AS sources
+                FROM polysemy p
+                JOIN articles a ON a.id = p.article_id
+                GROUP BY p.word, p.ordinary_meaning, p.contextual_meaning
+                ORDER BY article_count DESC, p.word
+                """
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def aggregate_sentence_patterns(self) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT type, function,
+                       COUNT(*) AS frequency,
+                       MAX(importance) AS importance,
+                       MIN(sentence) AS example_sentence
+                FROM sentence_patterns
+                GROUP BY type, function
+                ORDER BY frequency DESC, type
                 """
             ).fetchall()
         return [dict(row) for row in rows]
@@ -286,6 +342,12 @@ class CorpusDB:
     def _fetch_many(conn: sqlite3.Connection, table: str, article_id: str) -> list[dict[str, Any]]:
         rows = conn.execute(f"SELECT * FROM {table} WHERE article_id = ?", (article_id,)).fetchall()
         return [dict(row) for row in rows]
+
+    @staticmethod
+    def _ensure_column(conn: sqlite3.Connection, table: str, column: str, declaration: str) -> None:
+        columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+        if column not in columns:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {declaration}")
 
     @staticmethod
     def _row_to_article(row: sqlite3.Row) -> Article:
