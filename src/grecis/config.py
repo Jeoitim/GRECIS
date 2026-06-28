@@ -24,12 +24,14 @@ class CrawlerConfig:
     target_article_count: int = 1000
     min_exam_value: float = 4.5
     min_difficulty: float = 3.5
+    min_quality_score: float = 6.0
 
 
 @dataclass(slots=True)
 class LLMConfig:
     model: str = "gpt-4.1-mini"
     api_key: str = ""
+    base_url: str = ""
 
 
 @dataclass(slots=True)
@@ -48,6 +50,11 @@ class SourceConfig:
     name: str
     enabled: bool = True
     field_hint: str = "unknown"
+    category: str = "general"
+    reliability: float = 0.8
+    quality_weight: float = 1.0
+    prefer_keywords: list[str] = field(default_factory=list)
+    exclude_keywords: list[str] = field(default_factory=list)
     feed_urls: list[str] = field(default_factory=list)
     article_urls: list[str] = field(default_factory=list)
 
@@ -94,6 +101,8 @@ def apply_env_overrides(config: AppConfig) -> None:
         config.output.markdown_dir = os.environ["GRECIS_OUTPUT_DIR"]
     if os.getenv("GRECIS_LLM_MODEL"):
         config.llm.model = os.environ["GRECIS_LLM_MODEL"]
+    if os.getenv("GRECIS_LLM_BASE_URL"):
+        config.llm.base_url = os.environ["GRECIS_LLM_BASE_URL"]
     if os.getenv("OPENAI_API_KEY"):
         config.llm.api_key = os.environ["OPENAI_API_KEY"]
 

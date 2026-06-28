@@ -6,7 +6,7 @@ from pathlib import Path
 from .config import load_config
 from .db import ensure_db, upsert_articles
 from .export import write_markdown_report
-from .ingest import fetch_source_articles, fetch_url, load_jsonl
+from .ingest import fetch_source_articles, fetch_url, load_exam_corpus, load_jsonl
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
 from .redbook import write_redbook
@@ -26,6 +26,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     ingest_jsonl = subparsers.add_parser("ingest-jsonl", help="Import articles from JSONL.")
     ingest_jsonl.add_argument("path")
+
+    ingest_exam = subparsers.add_parser("ingest-exam", help="Import local Kaoyan passages.")
+    ingest_exam.add_argument("path")
+    ingest_exam.add_argument("--source", default="kaoyan_exam")
 
     ingest_url = subparsers.add_parser("ingest-url", help="Fetch and import one web article.")
     ingest_url.add_argument("url")
@@ -83,6 +87,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Imported {len(ids)} articles.")
         return 0
 
+    if args.command == "ingest-exam":
+        articles = load_exam_corpus(args.path, source_name=args.source)
+        ids = upsert_articles(db, articles)
+        print(f"Imported {len(ids)} exam passages.")
+        return 0
+
     if args.command == "ingest-url":
         article = fetch_url(args.url, source=args.source, crawler=config.crawler)
         article_id = db.upsert_article(article)
@@ -102,7 +112,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "curate-corpus":
         min_exam = args.min_exam_value or config.crawler.min_exam_value
         min_diff = args.min_difficulty or config.crawler.min_difficulty
-        article_ids = db.low_quality_article_ids(min_exam, min_diff)
+        article_ids = db.low_quality_article_ids(
+            min_exam, min_diff, config.crawler.min_quality_score
+        )
         if args.dry_run:
             print(f"Would remove {len(article_ids)} low-value articles.")
         else:
@@ -184,7 +196,11 @@ def fetch_configured_sources(
 
 
 def analyze_articles(db, config, *, use_llm: bool = False, article_id: str = "all") -> int:
-    analyzer = LLMAnalyzer.from_config(config.llm.model, config.llm.api_key) if use_llm else None
+    analyzer = (
+        LLMAnalyzer.from_config(config.llm.model, config.llm.api_key, config.llm.base_url)
+        if use_llm
+        else None
+    )
     articles = db.list_articles()
     if article_id != "all":
         article = db.get_article(article_id)

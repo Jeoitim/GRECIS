@@ -283,8 +283,15 @@ class CorpusDB:
                        SUM(frequency) AS frequency,
                        MAX(importance) AS importance,
                        COUNT(DISTINCT article_id) AS article_count,
-                       MIN(example_sentence) AS example_sentence
-                FROM vocabulary
+                       MIN(example_sentence) AS example_sentence,
+                       GROUP_CONCAT(DISTINCT source) AS sources,
+                       MIN(citation) AS citation
+                FROM (
+                    SELECT v.*, a.source,
+                           json_extract(a.metadata_json, '$.citation') AS citation
+                    FROM vocabulary v
+                    JOIN articles a ON a.id = v.article_id
+                )
                 GROUP BY field, word, lemma, category
                 ORDER BY field, frequency DESC, word
                 """
@@ -299,8 +306,15 @@ class CorpusDB:
                        MAX(importance) AS importance,
                        COUNT(DISTINCT article_id) AS article_count,
                        MIN(meaning) AS meaning,
-                       MIN(example_sentence) AS example_sentence
-                FROM collocations
+                       MIN(example_sentence) AS example_sentence,
+                       GROUP_CONCAT(DISTINCT source) AS sources,
+                       MIN(citation) AS citation
+                FROM (
+                    SELECT c.*, a.source,
+                           json_extract(a.metadata_json, '$.citation') AS citation
+                    FROM collocations c
+                    JOIN articles a ON a.id = c.article_id
+                )
                 GROUP BY expression, type
                 ORDER BY frequency DESC, expression
                 """
@@ -345,19 +359,29 @@ class CorpusDB:
             conn.executemany("DELETE FROM articles WHERE id = ?", [(item,) for item in article_ids])
         return len(article_ids)
 
-    def low_quality_article_ids(self, min_exam_value: float, min_difficulty: float) -> list[str]:
+    def low_quality_article_ids(
+        self, min_exam_value: float, min_difficulty: float, min_quality_score: float = 0.0
+    ) -> list[str]:
         with self.connect() as conn:
             rows = conn.execute(
                 """
-                SELECT a.id
+                SELECT a.id, a.metadata_json, an.exam_value, an.difficulty
                 FROM articles a
                 LEFT JOIN analyses an ON an.article_id = a.id
                 WHERE an.article_id IS NOT NULL
-                  AND (an.exam_value < ? OR an.difficulty < ?)
-                """,
-                (min_exam_value, min_difficulty),
+                """
             ).fetchall()
-        return [row["id"] for row in rows]
+        article_ids = []
+        for row in rows:
+            metadata = json.loads(row["metadata_json"] or "{}")
+            quality_score = float(metadata.get("quality_score", 10.0))
+            if (
+                row["exam_value"] < min_exam_value
+                or row["difficulty"] < min_difficulty
+                or quality_score < min_quality_score
+            ):
+                article_ids.append(row["id"])
+        return article_ids
 
     @staticmethod
     def _fetch_many(conn: sqlite3.Connection, table: str, article_id: str) -> list[dict[str, Any]]:

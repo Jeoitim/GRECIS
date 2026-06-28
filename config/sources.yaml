@@ -7,6 +7,7 @@ output:
 
 llm:
   model: gpt-4.1-mini
+  base_url: ""
   api_key: ""
 
 crawler:
@@ -18,11 +19,62 @@ crawler:
   min_text_chars: 800
   min_exam_value: 4.5
   min_difficulty: 3.5
+  min_quality_score: 6.0
 
 sources:
+  - name: The Economist
+    enabled: true
+    field_hint: economics
+    category: economy
+    reliability: 0.98
+    quality_weight: 0.7
+    prefer_keywords: [economy, business, finance, market, regulation, technology, climate, education]
+    exclude_keywords: [sport, football, cricket, celebrity, crossword, puzzle]
+    feed_urls:
+      - https://www.economist.com/rss
+
+  - name: Financial Times
+    enabled: true
+    field_hint: economics
+    category: economy
+    reliability: 0.97
+    quality_weight: 0.7
+    prefer_keywords: [markets, companies, economy, opinion, technology, climate]
+    exclude_keywords: [sport, luxury, travel]
+    feed_urls:
+      - https://www.ft.com/rss/home
+
+  - name: Wall Street Journal
+    enabled: true
+    field_hint: economics
+    category: economy
+    reliability: 0.96
+    quality_weight: 0.7
+    prefer_keywords: [economy, business, markets, politics, technology]
+    exclude_keywords: [sports, lifestyle, celebrity]
+    feed_urls:
+      - https://feeds.a.dj.com/rss/RSSWorldNews.xml
+      - https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml
+
+  - name: Bloomberg Businessweek
+    enabled: true
+    field_hint: economics
+    category: economy
+    reliability: 0.93
+    quality_weight: 0.65
+    prefer_keywords: [businessweek, business, economics, technology, markets]
+    exclude_keywords: [pursuits, travel]
+    feed_urls:
+      - https://feeds.bloomberg.com/businessweek/news.rss
+
   - name: The Guardian
     enabled: true
     field_hint: politics
+    category: society_culture
+    reliability: 0.9
+    quality_weight: 1.1
+    prefer_keywords: [comment, analysis, environment, science, business, education, society, politics]
+    exclude_keywords: [football, sport, live, minute-by-minute, crossword]
     feed_urls:
       - https://www.theguardian.com/world/rss
       - https://www.theguardian.com/commentisfree/rss
@@ -34,6 +86,11 @@ sources:
   - name: Nature
     enabled: true
     field_hint: science
+    category: science_technology
+    reliability: 0.99
+    quality_weight: 0.75
+    prefer_keywords: [research, news, nature, science, climate, technology, psychology]
+    exclude_keywords: [career, jobs, podcast]
     feed_urls:
       - https://www.nature.com/nature.rss
       - https://www.nature.com/subjects/climate-change.rss
@@ -43,41 +100,189 @@ sources:
   - name: Science
     enabled: true
     field_hint: science
+    category: science_technology
+    reliability: 0.99
+    quality_weight: 0.75
+    prefer_keywords: [science, research, climate, policy, technology]
+    exclude_keywords: [jobs, careers]
     feed_urls:
       - https://www.science.org/rss/news_current.xml
+
+  - name: Scientific American
+    enabled: true
+    field_hint: science
+    category: science_technology
+    reliability: 0.95
+    quality_weight: 0.7
+    prefer_keywords: [science, technology, health, climate, mind]
+    exclude_keywords: [podcast, games]
+    feed_urls:
+      - https://www.scientificamerican.com/feed/
+
+  - name: New Scientist
+    enabled: true
+    field_hint: science
+    category: science_technology
+    reliability: 0.93
+    quality_weight: 0.65
+    prefer_keywords: [science, technology, environment, health, mind]
+    exclude_keywords: [crossword, puzzle]
+    feed_urls:
+      - https://www.newscientist.com/feed/home/
+
+  - name: National Geographic
+    enabled: true
+    field_hint: environment
+    category: science_technology
+    reliability: 0.92
+    quality_weight: 0.65
+    prefer_keywords: [environment, science, animals, history, culture, climate]
+    exclude_keywords: [travel, photography]
+    feed_urls:
+      - https://www.nationalgeographic.com/content/natgeo/en_us/index.rss
 
   - name: The Atlantic
     enabled: true
     field_hint: sociology
+    category: humanities
+    reliability: 0.93
+    quality_weight: 1.1
+    prefer_keywords: [ideas, culture, politics, society, technology, family, education]
+    exclude_keywords: [podcast, games]
     feed_urls:
       - https://www.theatlantic.com/feed/all/
+
+  - name: Time
+    enabled: true
+    field_hint: sociology
+    category: society_culture
+    reliability: 0.88
+    quality_weight: 0.6
+    prefer_keywords: [ideas, world, society, health, science, business]
+    exclude_keywords: [entertainment, celebrity]
+    feed_urls:
+      - https://time.com/feed/
+
+  - name: Newsweek
+    enabled: true
+    field_hint: sociology
+    category: society_culture
+    reliability: 0.82
+    quality_weight: 0.55
+    prefer_keywords: [world, politics, science, business, culture]
+    exclude_keywords: [sports, entertainment, celebrity]
+    feed_urls:
+      - https://www.newsweek.com/rss
+
+  - name: The Washington Post
+    enabled: true
+    field_hint: politics
+    category: society_culture
+    reliability: 0.93
+    quality_weight: 0.65
+    prefer_keywords: [politics, opinions, world, business, climate, technology, education]
+    exclude_keywords: [sports, games, lifestyle]
+    feed_urls:
+      - https://feeds.washingtonpost.com/rss/world
+      - https://feeds.washingtonpost.com/rss/business
+      - https://feeds.washingtonpost.com/rss/opinions
+
+  - name: USA Today
+    enabled: true
+    field_hint: sociology
+    category: society_culture
+    reliability: 0.82
+    quality_weight: 0.55
+    prefer_keywords: [news, money, tech, health, opinion]
+    exclude_keywords: [sports, entertainment, celebrity, games]
+    feed_urls:
+      - https://rssfeeds.usatoday.com/usatoday-NewsTopStories
+      - https://rssfeeds.usatoday.com/UsatodaycomMoney-TopStories
+
+  - name: The Christian Science Monitor
+    enabled: true
+    field_hint: sociology
+    category: society_culture
+    reliability: 0.91
+    quality_weight: 1.1
+    prefer_keywords: [world, politics, culture, society, science, environment, education, economy]
+    exclude_keywords: [sports, crossword, puzzle, recipe]
+    feed_urls:
+      - https://rss.csmonitor.com/feeds/csm
 
   - name: Foreign Affairs
     enabled: true
     field_hint: politics
+    category: humanities
+    reliability: 0.94
+    quality_weight: 0.65
+    prefer_keywords: [policy, diplomacy, politics, world, economy, democracy]
+    exclude_keywords: [podcast, event]
     feed_urls:
       - https://www.foreignaffairs.com/rss.xml
+
+  - name: U.S. News & World Report
+    enabled: true
+    field_hint: education
+    category: humanities
+    reliability: 0.84
+    quality_weight: 0.55
+    prefer_keywords: [education, policy, health, economy, world]
+    exclude_keywords: [rankings, travel, cars]
+    feed_urls:
+      - https://www.usnews.com/rss/news
+
+  - name: The Times
+    enabled: true
+    field_hint: sociology
+    category: humanities
+    reliability: 0.9
+    quality_weight: 0.6
+    prefer_keywords: [comment, world, business, science, education, culture]
+    exclude_keywords: [sport, football, racing]
+    feed_urls:
+      - https://www.thetimes.co.uk/rss
 
   - name: New York Times Opinion
     enabled: true
     field_hint: politics
+    category: society_culture
+    reliability: 0.94
+    quality_weight: 0.65
+    prefer_keywords: [opinion, politics, society, economy, science, culture]
+    exclude_keywords: [sports, cooking, games]
     feed_urls:
       - https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml
 
   - name: New York Times Science
     enabled: true
     field_hint: science
+    category: science_technology
+    reliability: 0.94
+    quality_weight: 0.65
+    prefer_keywords: [science, climate, health, technology]
+    exclude_keywords: [sports, cooking, games]
     feed_urls:
       - https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
 
   - name: New York Times Business
     enabled: true
     field_hint: economics
+    category: economy
+    reliability: 0.94
+    quality_weight: 0.65
+    prefer_keywords: [business, economy, market, technology]
+    exclude_keywords: [sports, cooking, games]
     feed_urls:
       - https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
 
   - name: New York Times Climate
     enabled: true
     field_hint: environment
+    category: science_technology
+    reliability: 0.94
+    quality_weight: 0.65
+    prefer_keywords: [climate, environment, policy, science]
+    exclude_keywords: [sports, cooking, games]
     feed_urls:
       - https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml

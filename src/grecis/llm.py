@@ -48,17 +48,19 @@ Return compact JSON only.
 class LLMAnalyzer:
     model: str = "gpt-4.1-mini"
     api_key: str | None = None
+    base_url: str | None = None
 
     @classmethod
     def from_env(cls) -> LLMAnalyzer:
         return cls(
             model=os.getenv("GRECIS_LLM_MODEL", "gpt-4.1-mini"),
             api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("GRECIS_LLM_BASE_URL") or None,
         )
 
     @classmethod
-    def from_config(cls, model: str, api_key: str) -> LLMAnalyzer:
-        return cls(model=model, api_key=api_key or None)
+    def from_config(cls, model: str, api_key: str, base_url: str = "") -> LLMAnalyzer:
+        return cls(model=model, api_key=api_key or None, base_url=base_url or None)
 
     def enabled(self) -> bool:
         return bool(self.api_key)
@@ -69,7 +71,7 @@ class LLMAnalyzer:
 
         from openai import OpenAI
 
-        client = OpenAI(api_key=self.api_key)
+        client = OpenAI(api_key=self.api_key, base_url=self.base_url)
         article_text = article.text[:12000]
         payload = {
             "title": article.title,
@@ -83,14 +85,15 @@ class LLMAnalyzer:
         }
         results: dict[str, Any] = {}
         for name, prompt in tasks.items():
-            response = client.responses.create(
+            response = client.chat.completions.create(
                 model=self.model,
-                input=[
+                messages=[
                     {"role": "system", "content": prompt},
                     {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
                 ],
             )
-            results[name] = parse_jsonish(response.output_text)
+            content = response.choices[0].message.content or ""
+            results[name] = parse_jsonish(content)
         return results
 
 

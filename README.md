@@ -96,6 +96,7 @@ LLM 分析需要设置 `.env` 或环境变量：
 ```powershell
 $env:OPENAI_API_KEY="sk-..."
 $env:GRECIS_LLM_MODEL="gpt-4.1-mini"
+$env:GRECIS_LLM_BASE_URL="https://api.openai.com/v1"
 ```
 
 也可以明文写入本地配置文件。复制：
@@ -109,6 +110,7 @@ Copy-Item config/local.example.yaml config/local.yaml
 ```yaml
 llm:
   model: gpt-4.1-mini
+  base_url: "https://api.openai.com/v1"
   api_key: "sk-..."
 database:
   path: data/grecis.sqlite
@@ -122,6 +124,15 @@ crawler:
 
 `config/local.yaml`、`config/local.json` 已被 Git 忽略，适合保存本机明文密钥和偏好配置。环境变量优先级更高。
 
+任何兼容 OpenAI Chat Completions 的模型服务都可以使用，例如本地网关、One API、LiteLLM、硅基流动、DeepSeek 兼容入口等，只要提供：
+
+```yaml
+llm:
+  model: "provider-model-name"
+  base_url: "https://your-provider.example/v1"
+  api_key: "your-key"
+```
+
 ## 外刊来源配置
 
 默认来源在 `config/sources.yaml`。每个来源支持 RSS 和手工 URL：
@@ -131,6 +142,11 @@ sources:
   - name: The Guardian
     enabled: true
     field_hint: politics
+    category: society_culture
+    reliability: 0.9
+    quality_weight: 1.0
+    prefer_keywords: [comment, analysis, environment, science]
+    exclude_keywords: [football, sport, live, crossword]
     feed_urls:
       - https://www.theguardian.com/world/rss
     article_urls: []
@@ -143,6 +159,8 @@ sources:
 - 按 URL 去重
 - 跳过过短正文
 - 按配置限速
+- 用来源可信度、题材关键词、正文长度、句式复杂度、熟词生义密度等计算 `quality_score`
+- 过滤体育、娱乐、填字游戏、短快讯等低价值文章
 
 要积累千篇级语料，建议提高每源上限后分批运行：
 
@@ -152,6 +170,24 @@ uv run grecis curate-corpus --dry-run
 uv run grecis curate-corpus
 uv run grecis export-redbook
 ```
+
+## 考研真题语料
+
+项目支持直接导入你本地持有授权的考研英语阅读语料：
+
+```powershell
+uv run grecis ingest-exam data/my_kaoyan_passages.jsonl
+uv run grecis analyze
+uv run grecis export-redbook
+```
+
+JSONL 示例见 `data/exam_corpus.example.jsonl`。字段建议：
+
+```json
+{"id":"kaoyan-2024-text1","year":"2024","section":"reading-text-1","title":"...","field":"science","original_source":"...","citation":"2024 English I Text 1","text":"..."}
+```
+
+考研语料会标记为 `corpus_type=kaoyan_exam`，红宝书例句会优先保留 citation，保证可溯源。
 
 `target_article_count` 是本地语料建设目标；项目不会把上千篇版权文章提交到 Git，只会把抓取、去重、筛选和生成词书的流水线保留在代码中。
 

@@ -201,6 +201,8 @@ def lookup_corpus_hits(headword: str, corpus: dict[str, Any]) -> list[dict[str, 
 
 
 def describe_corpus_hit(hit: dict[str, Any]) -> str:
+    if hit.get("citation"):
+        return hit["citation"]
     if hit.get("sources"):
         return hit["sources"]
     parts = []

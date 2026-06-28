@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 import re
 import time
@@ -9,6 +10,7 @@ from typing import Any
 
 from .config import CrawlerConfig, SourceConfig
 from .models import Article
+from .quality import score_article_quality
 
 WHITESPACE_RE = re.compile(r"\s+")
 
@@ -40,6 +42,74 @@ def load_jsonl(path: str | Path) -> list[Article]:
                 )
             )
     return articles
+
+
+def load_exam_corpus(path: str | Path, source_name: str = "kaoyan_exam") -> list[Article]:
+    path = Path(path)
+    if path.suffix.lower() == ".jsonl":
+        return _load_exam_jsonl(path, source_name)
+    if path.suffix.lower() == ".csv":
+        return _load_exam_csv(path, source_name)
+    return _load_exam_txt(path, source_name)
+
+
+def _exam_article_from_payload(payload: dict[str, Any], source_name: str, index: int) -> Article:
+    text = payload.get("text") or payload.get("passage") or ""
+    if not text:
+        raise ValueError(f"Exam corpus item {index} has no text/passage field.")
+    year = str(payload.get("year", ""))
+    section = payload.get("section", "reading")
+    title = payload.get("title") or f"Kaoyan {year} {section}".strip()
+    exam_id = payload.get("id") or payload.get("exam_id") or f"kaoyan-{year}-{section}-{index}"
+    return Article(
+        id=str(exam_id),
+        title=title,
+        source=source_name,
+        url=payload.get("url", ""),
+        published_at=year,
+        field=payload.get("field", "unknown"),
+        text=clean_text(text),
+        metadata={
+            "corpus_type": "kaoyan_exam",
+            "year": year,
+            "section": section,
+            "question_no": payload.get("question_no", ""),
+            "original_source": payload.get("original_source", ""),
+            "citation": payload.get("citation", ""),
+        },
+    )
+
+
+def _load_exam_jsonl(path: Path, source_name: str) -> list[Article]:
+    articles = []
+    with path.open("r", encoding="utf-8") as file:
+        for index, line in enumerate(file, start=1):
+            if line.strip():
+                articles.append(_exam_article_from_payload(json.loads(line), source_name, index))
+    return articles
+
+
+def _load_exam_csv(path: Path, source_name: str) -> list[Article]:
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
+        return [
+            _exam_article_from_payload(row, source_name, index)
+            for index, row in enumerate(csv.DictReader(file), start=1)
+        ]
+
+
+def _load_exam_txt(path: Path, source_name: str) -> list[Article]:
+    text = path.read_text(encoding="utf-8")
+    chunks = [chunk.strip() for chunk in re.split(r"\n-{3,}\n|\n#{2,}\s+", text) if chunk.strip()]
+    return [
+        Article(
+            id=f"kaoyan-txt-{index}",
+            title=f"Kaoyan Passage {index}",
+            source=source_name,
+            text=clean_text(chunk),
+            metadata={"corpus_type": "kaoyan_exam", "citation": str(path)},
+        )
+        for index, chunk in enumerate(chunks, start=1)
+    ]
 
 
 def fetch_url(
@@ -176,6 +246,25 @@ def fetch_source_articles(
 
         if len(article.text) < crawler.min_text_chars:
             print(f"Skipped {url}: extracted text too short ({len(article.text)} chars)")
+            continue
+
+        article.metadata.update(
+            {
+                "source_category": source.category,
+                "source_reliability": source.reliability,
+                "source_quality_weight": source.quality_weight,
+                "min_quality_score": crawler.min_quality_score,
+                "prefer_keywords": source.prefer_keywords,
+                "exclude_keywords": source.exclude_keywords,
+            }
+        )
+        quality = score_article_quality(article, source)
+        article.metadata.update(quality)
+        if quality["quality_score"] < crawler.min_quality_score or not quality["quality_keep"]:
+            print(
+                f"Skipped {url}: quality_score={quality['quality_score']} "
+                f"reasons={';'.join(quality['quality_reasons'])}"
+            )
             continue
 
         if not article.published_at and target.get("published_at"):
