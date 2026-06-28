@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_CONFIG_PATHS = [
+    Path("config/sources.yaml"),
     Path("config/local.yaml"),
     Path("config/local.yml"),
     Path("config/local.json"),
-    Path("config/sources.yaml"),
 ]
 
 
@@ -25,6 +25,9 @@ class CrawlerConfig:
     min_exam_value: float = 4.5
     min_difficulty: float = 3.5
     min_quality_score: float = 6.0
+    candidate_multiplier: int = 8
+    max_discovery_pages_per_source: int = 20
+    max_search_pages_per_query: int = 2
 
 
 @dataclass(slots=True)
@@ -53,10 +56,17 @@ class SourceConfig:
     category: str = "general"
     reliability: float = 0.8
     quality_weight: float = 1.0
+    min_quality_score: float | None = None
     prefer_keywords: list[str] = field(default_factory=list)
     exclude_keywords: list[str] = field(default_factory=list)
     feed_urls: list[str] = field(default_factory=list)
     article_urls: list[str] = field(default_factory=list)
+    archive_urls: list[str] = field(default_factory=list)
+    archive_url_templates: list[str] = field(default_factory=list)
+    search_url_templates: list[str] = field(default_factory=list)
+    topic_queries: list[str] = field(default_factory=list)
+    article_url_patterns: list[str] = field(default_factory=list)
+    article_url_exclude_patterns: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -70,14 +80,18 @@ class AppConfig:
 
 def load_config(path: str | Path | None = None) -> AppConfig:
     payload: dict[str, Any] = {}
+    base_path = Path("config/sources.yaml")
+    if base_path.exists():
+        payload = _read_config(base_path)
+
     if path:
         config_path = Path(path)
         if config_path.exists():
-            payload = _read_config(config_path)
+            payload = _merge_config(payload, _read_config(config_path))
     else:
-        for candidate in DEFAULT_CONFIG_PATHS:
+        for candidate in DEFAULT_CONFIG_PATHS[1:]:
             if candidate.exists():
-                payload = _read_config(candidate)
+                payload = _merge_config(payload, _read_config(candidate))
                 break
 
     config = app_config_from_mapping(payload)
@@ -116,3 +130,15 @@ def _read_config(path: Path) -> dict[str, Any]:
 
     data = yaml.safe_load(text)
     return data or {}
+
+
+def _merge_config(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in overlay.items():
+        if key == "sources" and value == []:
+            continue
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_config(merged[key], value)
+        else:
+            merged[key] = value
+    return merged

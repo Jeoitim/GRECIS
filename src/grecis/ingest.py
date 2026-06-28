@@ -7,12 +7,17 @@ import time
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote_plus, urljoin, urlparse
 
 from .config import CrawlerConfig, SourceConfig
 from .models import Article
 from .quality import score_article_quality
 
 WHITESPACE_RE = re.compile(r"\s+")
+NON_ARTICLE_EXTENSIONS = re.compile(
+    r"\.(?:jpg|jpeg|png|gif|webp|svg|pdf|mp3|mp4|mov|zip|css|js)(?:$|\?)",
+    re.I,
+)
 
 
 def clean_text(text: str) -> str:
@@ -181,9 +186,13 @@ def discover_feed_entries(source: SourceConfig, limit: int) -> list[dict[str, An
     entries: list[dict[str, Any]] = []
     seen: set[str] = set()
     for feed_url in source.feed_urls:
-        parsed = feedparser.parse(feed_url)
+        try:
+            parsed = feedparser.parse(feed_url)
+        except Exception as exc:
+            print(f"Skipped feed {feed_url}: {exc}")
+            continue
         for entry in parsed.entries:
-            url = getattr(entry, "link", "")
+            url = _normalize_candidate_url(feed_url, getattr(entry, "link", ""))
             if not url or url in seen:
                 continue
             seen.add(url)
@@ -201,16 +210,99 @@ def discover_feed_entries(source: SourceConfig, limit: int) -> list[dict[str, An
     return entries
 
 
+def discover_page_entries(
+    source: SourceConfig,
+    crawler: CrawlerConfig,
+    limit: int,
+) -> list[dict[str, Any]]:
+    import requests
+    from bs4 import BeautifulSoup
+
+    entries: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    discovery_urls = _iter_discovery_urls(source, crawler)
+    for discovery_url in discovery_urls:
+        if len(entries) >= limit:
+            break
+        try:
+            response = requests.get(
+                discovery_url,
+                timeout=crawler.request_timeout_seconds,
+                headers={"User-Agent": crawler.user_agent},
+            )
+            response.raise_for_status()
+        except Exception as exc:
+            print(f"Skipped discovery page {discovery_url}: {exc}")
+            continue
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        for anchor in soup.find_all("a", href=True):
+            url = _normalize_candidate_url(discovery_url, anchor["href"])
+            if not url or url in seen or not _looks_like_source_article(url, source):
+                continue
+            seen.add(url)
+            entries.append(
+                {
+                    "url": url,
+                    "title": clean_text(anchor.get_text(" ")),
+                    "published_at": "",
+                    "feed_url": "",
+                    "discovery_url": discovery_url,
+                    "discovery_type": "archive_or_search",
+                }
+            )
+            if len(entries) >= limit:
+                break
+    return entries
+
+
 def iter_source_targets(source: SourceConfig, limit: int) -> Iterable[dict[str, Any]]:
+    yield from iter_source_targets_with_crawler(source, CrawlerConfig(), limit)
+
+
+def iter_source_targets_with_crawler(
+    source: SourceConfig, crawler: CrawlerConfig, limit: int
+) -> Iterable[dict[str, Any]]:
     yielded = 0
+    seen: set[str] = set()
     for url in source.article_urls:
         if yielded >= limit:
             return
+        normalized = _normalize_candidate_url(url, url)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
         yielded += 1
-        yield {"url": url, "feed_url": "", "title": "", "published_at": ""}
+        yield {
+            "url": normalized,
+            "feed_url": "",
+            "title": "",
+            "published_at": "",
+            "discovery_url": "",
+            "discovery_type": "explicit",
+        }
 
     remaining = max(0, limit - yielded)
-    yield from discover_feed_entries(source, remaining)
+    for target in discover_page_entries(source, crawler, remaining):
+        if target["url"] in seen:
+            continue
+        seen.add(target["url"])
+        yielded += 1
+        yield target
+        if yielded >= limit:
+            return
+
+    remaining = max(0, limit - yielded)
+    for target in discover_feed_entries(source, remaining):
+        if target["url"] in seen:
+            continue
+        target.setdefault("discovery_url", target.get("feed_url", ""))
+        target.setdefault("discovery_type", "feed")
+        seen.add(target["url"])
+        yielded += 1
+        yield target
+        if yielded >= limit:
+            return
 
 
 def fetch_source_articles(
@@ -219,13 +311,33 @@ def fetch_source_articles(
     *,
     existing_urls: set[str] | None = None,
 ) -> list[Article]:
+    return list(iter_fetch_source_articles(source, crawler, existing_urls=existing_urls))
+
+
+def iter_fetch_source_articles(
+    source: SourceConfig,
+    crawler: CrawlerConfig,
+    *,
+    existing_urls: set[str] | None = None,
+) -> Iterable[Article]:
     if not source.enabled:
-        return []
+        return
 
     existing_urls = existing_urls or set()
-    articles: list[Article] = []
-    for target in iter_source_targets(source, crawler.max_articles_per_source):
-        url = target["url"]
+    target_count = max(1, crawler.max_articles_per_source)
+    candidate_limit = target_count * max(1, crawler.candidate_multiplier)
+    min_quality_score = (
+        source.min_quality_score
+        if source.min_quality_score is not None
+        else crawler.min_quality_score
+    )
+    accepted = 0
+    for target in iter_source_targets_with_crawler(source, crawler, candidate_limit):
+        if accepted >= target_count:
+            break
+        url = _normalize_candidate_url(target.get("discovery_url", ""), target["url"])
+        if not url:
+            continue
         if url in existing_urls:
             continue
         try:
@@ -238,6 +350,8 @@ def fetch_source_articles(
                     "feed_url": target.get("feed_url", ""),
                     "feed_title": target.get("title", ""),
                     "feed_published_at": target.get("published_at", ""),
+                    "discovery_url": target.get("discovery_url", ""),
+                    "discovery_type": target.get("discovery_type", ""),
                 },
             )
         except Exception as exc:
@@ -253,14 +367,14 @@ def fetch_source_articles(
                 "source_category": source.category,
                 "source_reliability": source.reliability,
                 "source_quality_weight": source.quality_weight,
-                "min_quality_score": crawler.min_quality_score,
+                "min_quality_score": min_quality_score,
                 "prefer_keywords": source.prefer_keywords,
                 "exclude_keywords": source.exclude_keywords,
             }
         )
         quality = score_article_quality(article, source)
         article.metadata.update(quality)
-        if quality["quality_score"] < crawler.min_quality_score or not quality["quality_keep"]:
+        if quality["quality_score"] < min_quality_score or not quality["quality_keep"]:
             print(
                 f"Skipped {url}: quality_score={quality['quality_score']} "
                 f"reasons={';'.join(quality['quality_reasons'])}"
@@ -271,8 +385,111 @@ def fetch_source_articles(
             article.published_at = target["published_at"]
         if target.get("title") and article.title == url:
             article.title = clean_text(target["title"])
-        articles.append(article)
+        accepted += 1
         existing_urls.add(url)
+        yield article
         if crawler.delay_seconds > 0:
             time.sleep(crawler.delay_seconds)
-    return articles
+
+
+def _iter_discovery_urls(source: SourceConfig, crawler: CrawlerConfig) -> Iterable[str]:
+    max_pages = crawler.max_discovery_pages_per_source
+    yielded = 0
+
+    search_capacity = (
+        len(source.search_url_templates)
+        * len(source.topic_queries)
+        * max(1, crawler.max_search_pages_per_query)
+    )
+    reserved_search = min(max_pages // 3, search_capacity) if search_capacity else 0
+    non_search_budget = max_pages - reserved_search
+
+    for url in source.archive_urls:
+        if yielded >= non_search_budget:
+            break
+        yielded += 1
+        yield url
+
+    template_pages = max(1, non_search_budget // max(len(source.archive_url_templates), 1))
+    for template in source.archive_url_templates:
+        for page in range(1, template_pages + 1):
+            if yielded >= non_search_budget:
+                break
+            yielded += 1
+            yield template.format(page=page)
+
+    for template in source.search_url_templates:
+        for query in source.topic_queries:
+            for page in range(1, crawler.max_search_pages_per_query + 1):
+                if yielded >= max_pages:
+                    return
+                yielded += 1
+                yield template.format(
+                    page=page,
+                    query=query,
+                    query_plus=quote_plus(query),
+                    query_quote=quote_plus(f'"{query}"'),
+                )
+
+
+def _normalize_candidate_url(base_url: str, href: str) -> str:
+    if not href or href.startswith(("mailto:", "tel:", "javascript:")):
+        return ""
+    url = urljoin(base_url, href)
+    parsed = urlparse(url)
+    if not parsed.scheme.startswith("http") or not parsed.netloc:
+        return ""
+    if NON_ARTICLE_EXTENSIONS.search(parsed.path):
+        return ""
+    path = re.sub(r"/+$", "", parsed.path)
+    return parsed._replace(path=path, params="", query="", fragment="").geturl()
+
+
+def _looks_like_source_article(url: str, source: SourceConfig) -> bool:
+    parsed = urlparse(url)
+    if not parsed.netloc:
+        return False
+
+    configured_hosts = [
+        urlparse(item).netloc.lower()
+        for item in [*source.archive_urls, *source.feed_urls, *source.article_urls]
+        if urlparse(item).netloc
+    ]
+    if configured_hosts and not any(
+        parsed.netloc.lower().endswith(host) for host in configured_hosts
+    ):
+        return False
+
+    lowered = url.lower()
+    if any(re.search(pattern, lowered) for pattern in source.article_url_exclude_patterns):
+        return False
+    if source.article_url_patterns:
+        return any(re.search(pattern, lowered) for pattern in source.article_url_patterns)
+
+    segments = [segment for segment in parsed.path.split("/") if segment]
+    if len(segments) < 2:
+        return False
+    blocked = {
+        "about",
+        "advertising",
+        "archive",
+        "archives",
+        "author",
+        "authors",
+        "category",
+        "contact",
+        "feed",
+        "feeds",
+        "help",
+        "login",
+        "newsletter",
+        "podcasts",
+        "privacy",
+        "search",
+        "subscribe",
+        "subscription",
+        "tag",
+        "tags",
+        "video",
+    }
+    return not any(segment.lower() in blocked for segment in segments)

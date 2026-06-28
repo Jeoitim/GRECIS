@@ -6,15 +6,21 @@ from pathlib import Path
 from .config import load_config
 from .db import ensure_db, upsert_articles
 from .export import write_markdown_report
-from .ingest import fetch_source_articles, fetch_url, load_exam_corpus, load_jsonl
+from .ingest import fetch_url, iter_fetch_source_articles, load_exam_corpus, load_jsonl
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
 from .pastpapers import import_pastpapers, summarize_import
 from .redbook import write_redbook
+from .topics import exam_topic_queries
 
 DEFAULT_DB = "data/grecis.sqlite"
 DEFAULT_OUTPUT = "output/markdown"
 SAMPLE_JSONL = "data/sample_articles.jsonl"
+SECOND_TIER_SOURCES = {
+    "the christian science monitor",
+    "the guardian",
+    "the atlantic",
+}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -69,6 +75,18 @@ def build_parser() -> argparse.ArgumentParser:
     update.add_argument("--use-llm", action="store_true")
     update.add_argument("--out", default=None)
     update.add_argument("--redbook-out", default=None)
+
+    build_corpus = subparsers.add_parser(
+        "build-corpus", help="Build the prioritized Kaoyan review corpus end to end."
+    )
+    build_corpus.add_argument("--second-tier-limit", type=int, default=100)
+    build_corpus.add_argument("--third-tier-limit", type=int, default=20)
+    build_corpus.add_argument("--skip-pastpapers", action="store_true")
+    build_corpus.add_argument("--refresh-pastpapers", action="store_true")
+    build_corpus.add_argument("--exam-topic-limit", type=int, default=24)
+    build_corpus.add_argument("--use-llm", action="store_true")
+    build_corpus.add_argument("--out", default=None)
+    build_corpus.add_argument("--redbook-out", default=None)
 
     demo = subparsers.add_parser("run-demo", help="Run init, sample ingest, analysis, and export.")
     demo.add_argument("--out", default=None)
@@ -161,6 +179,51 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Exported redbook to {path}")
         return 0
 
+    if args.command == "build-corpus":
+        existing_exam_count = _count_exam_articles(db)
+        if not args.skip_pastpapers and (args.refresh_pastpapers or existing_exam_count == 0):
+            articles = import_pastpapers()
+            ids = upsert_articles(db, articles)
+            print(f"Imported {len(ids)} pastpapers.cn reading passages.")
+        elif existing_exam_count:
+            print(f"Using {existing_exam_count} existing exam reading passages.")
+
+        topic_queries = exam_topic_queries(db.list_articles(), limit=args.exam_topic_limit)
+        if topic_queries:
+            print(f"Expanded source searches with {len(topic_queries)} exam-derived topics.")
+            _apply_exam_topic_queries(config, topic_queries)
+
+        second_tier = [
+            source.name
+            for source in config.sources
+            if source.enabled and source.name.lower() in SECOND_TIER_SOURCES
+        ]
+        third_tier = [
+            source.name
+            for source in config.sources
+            if source.enabled and source.name.lower() not in SECOND_TIER_SOURCES
+        ]
+        imported = 0
+        for source_name in second_tier:
+            imported += fetch_configured_sources(
+                db, config, source_name=source_name, limit=args.second_tier_limit
+            )
+        for source_name in third_tier:
+            imported += fetch_configured_sources(
+                db, config, source_name=source_name, limit=args.third_tier_limit
+            )
+        print(f"Imported {imported} fetched articles.")
+
+        count = analyze_articles(db, config, use_llm=args.use_llm)
+        print(f"Analyzed {count} articles.")
+        out = args.out or config.output.markdown_dir or DEFAULT_OUTPUT
+        write_markdown_report(db, out)
+        print(f"Exported reports to {out}")
+        redbook_out = args.redbook_out or config.output.redbook_dir
+        path = write_redbook(db, redbook_out)
+        print(f"Exported redbook to {path}")
+        return 0
+
     if args.command == "run-demo":
         sample = Path(SAMPLE_JSONL)
         if not sample.exists():
@@ -200,13 +263,36 @@ def fetch_configured_sources(
     existing_urls = {article.url for article in db.list_articles() if article.url}
     try:
         for source in selected:
-            articles = fetch_source_articles(source, config.crawler, existing_urls=existing_urls)
-            ids = upsert_articles(db, articles)
-            imported += len(ids)
-            print(f"{source.name}: imported {len(ids)} articles.")
+            source_imported = 0
+            for article in iter_fetch_source_articles(
+                source, config.crawler, existing_urls=existing_urls
+            ):
+                db.upsert_article(article)
+                source_imported += 1
+            imported += source_imported
+            print(f"{source.name}: imported {source_imported} articles.")
     finally:
         config.crawler.max_articles_per_source = original_limit
     return imported
+
+
+def _apply_exam_topic_queries(config, topic_queries: list[str]) -> None:
+    for source in config.sources:
+        if not source.search_url_templates:
+            continue
+        if source.name.lower() not in SECOND_TIER_SOURCES and source.quality_weight < 0.75:
+            continue
+        merged = list(dict.fromkeys([*topic_queries, *source.topic_queries]))
+        source.topic_queries = merged
+
+
+def _count_exam_articles(db) -> int:
+    return sum(
+        1
+        for article in db.list_articles()
+        if article.source.lower() in {"pastpapers.cn", "kaoyan_exam"}
+        or article.metadata.get("corpus_type") == "kaoyan_exam"
+    )
 
 
 def analyze_articles(db, config, *, use_llm: bool = False, article_id: str = "all") -> int:

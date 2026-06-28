@@ -115,42 +115,55 @@ JSONL 示例：
 {"id":"kaoyan-2024-text1","year":"2024","section":"reading-text-1","title":"...","field":"science","original_source":"...","citation":"2024 English I Text 1","text":"..."}
 ```
 
-### 4. 抓取高质量外刊语料
+### 4. 构建高质量外刊语料
 
-默认来源在 `config/sources.yaml`。建议先抓第二梯队来源：
-
-```powershell
-uv run grecis update-corpus --source "The Christian Science Monitor" --limit 50
-uv run grecis update-corpus --source "The Guardian" --limit 50
-uv run grecis update-corpus --source "The Atlantic" --limit 50
-```
-
-如果已经配置模型 API，可以启用 LLM：
-
-```powershell
-uv run grecis update-corpus --source "The Guardian" --limit 50 --use-llm
-```
-
-其他外刊来源也可抓取：
-
-```powershell
-uv run grecis update-corpus --limit 50
-```
-
-抓取命令会执行：
+默认来源在 `config/sources.yaml`。现在不再只依赖 RSS，而是按下面的顺序发现候选文章：
 
 ```text
-RSS/URL 发现
+显式文章 URL
 ↓
-正文提取
+archive / section / topic 栏目页
 ↓
-质量评分
+由考研真题抽出的主题词站内搜索
 ↓
-SQLite 去重入库
+RSS 兜底
+```
+
+推荐直接运行一键构建命令：
+
+```powershell
+uv run grecis build-corpus --second-tier-limit 100 --third-tier-limit 20
+```
+
+这会执行：
+
+```text
+导入 pastpapers.cn 真题阅读
 ↓
-基础分析
+从真题抽取主题查询词，例如 climate change / supreme court / social media
+↓
+The Christian Science Monitor / The Guardian / The Atlantic 每源最多 100 篇
+↓
+其他来源每源最多 20 篇
+↓
+本地 NLP 分析
 ↓
 Markdown + 红宝书导出
+```
+
+如果已经配置 OpenAI-compatible 模型 API，可以启用 LLM 深度分析：
+
+```powershell
+uv run grecis build-corpus --second-tier-limit 100 --third-tier-limit 20 --use-llm
+```
+
+LLM 分析会对文章做词汇、修辞结构、考研价值评估，调用量约等于待分析文章数的 3 倍。若只想先扩充语料，先不加 `--use-llm`，完成后再运行 `uv run grecis analyze --use-llm`。
+
+仍然可以单独抓某个来源：
+
+```powershell
+uv run grecis fetch-sources --source "The Guardian" --limit 100
+uv run grecis update-corpus --source "The Atlantic" --limit 100
 ```
 
 ### 5. 清洗低质量文章
@@ -366,12 +379,13 @@ src/grecis/
 ├── config.py       # YAML/JSON/环境变量配置
 ├── db.py           # SQLite 存储与聚合查询
 ├── export.py       # Markdown 和 Anki 导出
-├── ingest.py       # JSONL/URL/本地真题导入
+├── ingest.py       # JSONL/URL/历史栏目/主题搜索/RSS 导入
 ├── llm.py          # OpenAI-compatible Chat Completions 分析
 ├── models.py       # 数据结构
 ├── nlp.py          # 本地统计、词频、熟词生义、句式识别
 ├── pastpapers.py   # pastpapers.cn PDF 真题导入
 ├── quality.py      # 来源可靠度和文章质量评分
+├── topics.py       # 从考研真题反向抽取语料扩展主题
 └── redbook.py      # 红宝书式 Markdown 生成
 ```
 
