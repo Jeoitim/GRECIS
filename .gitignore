@@ -4,9 +4,11 @@ __pycache__/
 *.py[cod]
 *.sqlite
 *.sqlite3
+!data/grecis.sqlite
 .env
 .env.*
 AGENTS.md
+需求.md
 config/local.yaml
 config/local.yml
 config/local.json
@@ -20,6 +22,11 @@ config/*api*.json
 .ruff_cache/
 .pytest_cache/
 output/
+!output/
+output/*
+!output/redbook/
+output/redbook/*
+!output/redbook/*.md
 dist/
 build/
 *.egg-info/
