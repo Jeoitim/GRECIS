@@ -53,10 +53,135 @@ def write_redbook(
     output.mkdir(parents=True, exist_ok=True)
     seed = load_seed(seed_path)
     corpus = build_corpus_index(db)
-    markdown = render_redbook(seed, corpus)
-    path = output / "GRECIS-考研外刊词汇红宝书.md"
-    path.write_text(markdown, encoding="utf-8")
-    return path
+    
+    metadata = seed.get("metadata", {})
+    domains = seed.get("domains", {})
+    
+    seed_words = set()
+    for domain in domains.values():
+        for entry in domain.get("entries", []):
+            if entry.get("headword"):
+                seed_words.add(entry["headword"].lower().strip())
+                
+    corpus_vocab = rank_vocabulary_for_redbook(corpus["vocabulary"], seed_words)
+    
+    grouped_corpus: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for item in corpus_vocab:
+        domain_key = map_field_to_domain_key(item.get("field", ""), item["word"])
+        grouped_corpus[domain_key].append(item)
+        
+    for domain_key, domain in domains.items():
+        title = domain["title"].replace("\n", "").replace("\r", "").strip()
+        overview = domain.get("overview", "")
+        
+        seed_entries = []
+        for entry in domain.get("entries", []):
+            entry_copy = dict(entry)
+            entry_copy["is_seed"] = True
+            seed_entries.append(entry_copy)
+            
+        corpus_entries = []
+        for item in grouped_corpus[domain_key]:
+            item_copy = dict(item)
+            item_copy["is_seed"] = False
+            corpus_entries.append(item_copy)
+            
+        combined_entries = seed_entries + corpus_entries
+        combined_entries.sort(
+            key=lambda x: (
+                _vocabulary_category_priority(x),
+                int(x.get("importance") or 0),
+                int(x.get("frequency") or 0),
+            ),
+            reverse=True,
+        )
+        
+        domain_lines = [
+            f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - {title}",
+            "",
+            overview,
+            "",
+            "---",
+            "",
+        ]
+        domain_lines.extend(render_unified_domain(title, overview, combined_entries, corpus))
+        
+        domain_file_path = output / f"GRECIS-考研外刊词汇红宝书-{title}.md"
+        domain_file_path.write_text("\n".join(domain_lines), encoding="utf-8")
+        
+    sp_lines = [
+        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 常见句型与表达",
+        "",
+        "外刊中常见且在考研中极其重要的长难句及特殊句型结构分析。",
+        "",
+        "---",
+        "",
+    ]
+    sp_lines.extend(render_sentence_patterns(seed.get("sentence_patterns", []), corpus))
+    sp_file_path = output / "GRECIS-考研外刊词汇红宝书-常见句型与表达.md"
+    sp_file_path.write_text("\n".join(sp_lines), encoding="utf-8")
+    
+    app_lines = [
+        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 未归类学术词汇附录",
+        "",
+        "语料库中提取出的其他高频学术和核心词汇，作为补充备考使用。",
+        "",
+        "---",
+        "",
+    ]
+    app_lines.extend(render_corpus_appendix(corpus, seed_words))
+    app_file_path = output / "GRECIS-考研外刊词汇红宝书-未归类附录.md"
+    app_file_path.write_text("\n".join(app_lines), encoding="utf-8")
+    
+    rp_lines = [
+        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 7天复习计划",
+        "",
+        "合理规划，高效突破。以下是为你量身定制的7天红宝书背诵与复习计划建议。",
+        "",
+        "---",
+        "",
+    ]
+    rp_lines.extend(render_review_plan())
+    rp_file_path = output / "GRECIS-考研外刊词汇红宝书-7天复习计划.md"
+    rp_file_path.write_text("\n".join(rp_lines), encoding="utf-8")
+    
+    index_lines = [
+        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')}",
+        "",
+        metadata.get("subtitle", ""),
+        "",
+        "## 使用说明",
+        "",
+        "- 本红宝书词汇量大、内容丰富，已按**学科专业板块**拆分为多个子文件，方便日常背诵与阅读。",
+        "- 先背各板块的熟词生义和固定搭配，再看领域术语。",
+        "- 每个词条优先记“考研义”和“误译风险”，不要只背中文对照。",
+        "- 例句分为项目例句 and 语料库例句；语料库例句来自本地已抓取文章的短摘录。",
+        "",
+        "## 快速背诵清单",
+        "",
+        render_quick_list(domains),
+        "",
+        "## 📖 板块目录",
+        "",
+    ]
+    for idx, (domain_key, domain) in enumerate(domains.items(), start=1):
+        title = domain["title"]
+        index_lines.append(f"{idx}. [{title}](./GRECIS-考研外刊词汇红宝书-{title}.md)")
+        
+    index_lines.extend([
+        f"{len(domains) + 1}. [常见句型与表达](./GRECIS-考研外刊词汇红宝书-常见句型与表达.md)",
+        f"{len(domains) + 2}. [未归类学术词汇附录](./GRECIS-考研外刊词汇红宝书-未归类附录.md)",
+        f"{len(domains) + 3}. [7天复习计划](./GRECIS-考研外刊词汇红宝书-7天复习计划.md)",
+        "",
+        "---",
+        "",
+        "**祝各位考研学子金榜题名！**"
+    ])
+    
+    main_index_path = output / "GRECIS-考研外刊词汇红宝书.md"
+    main_index_path.write_text("\n".join(index_lines), encoding="utf-8")
+    
+    return main_index_path
 
 
 def load_seed(path: str | Path) -> dict[str, Any]:
@@ -94,19 +219,21 @@ def build_corpus_index(db: CorpusDB) -> dict[str, Any]:
 
 def map_field_to_domain_key(field: str, word: str = "") -> str:
     f = str(field).lower().strip()
-    if f in {"politics", "law", "politics_law"}:
-        return "politics_law"
-    if f in {"economics", "business", "economics_business"}:
-        return "economics_business"
-    if f in {"science", "academic", "science_academic", "academic_science", "science_academic_academic"}:
+    w = word.strip().lower()
+    if not w:
+        if f in {"politics", "law", "politics_law"}:
+            return "politics_law"
+        if f in {"economics", "business", "economics_business"}:
+            return "economics_business"
+        if f in {"science", "academic", "science_academic", "academic_science", "science_academic_academic"}:
+            return "science_academic"
+        if f in {"environment", "climate"}:
+            return "environment"
+        if f in {"education", "psychology", "sociology", "society", "society_education_psychology"}:
+            return "society_education_psychology"
         return "science_academic"
-    if f in {"environment", "climate"}:
-        return "environment"
-    if f in {"education", "psychology", "sociology", "society", "society_education_psychology"}:
-        return "society_education_psychology"
         
     from .nlp import DOMAIN_KEYWORDS
-    w = word.strip().lower()
     for domain_name, keywords in DOMAIN_KEYWORDS.items():
         if w in keywords:
             if domain_name in {"politics", "law"}:
@@ -119,7 +246,43 @@ def map_field_to_domain_key(field: str, word: str = "") -> str:
                 return "environment"
             if domain_name in {"education", "psychology", "sociology"}:
                 return "society_education_psychology"
-                
+
+    try:
+        from .dictionary import query_word
+        dict_data = query_word(w)
+        zh = dict_data.get("zh", "").lower()
+        
+        politics_law_zh = {"法", "诉讼", "裁决", "审理", "政府", "政治", "竞选", "议会", "宪法", "条例", "监管"}
+        economics_business_zh = {"经济", "金融", "公司", "企业", "商业", "贸易", "资本", "资金", "收购", "合并", "投资", "税", "银行"}
+        science_academic_zh = {"科学", "研究", "学者", "实验", "数据", "理论", "技术", "学术", "发现", "基因", "细胞", "分析"}
+        environment_zh = {"环境", "气候", "温室", "排放", "生态", "污染", "碳", "减缓", "适应", "生物"}
+        society_education_zh = {"社会", "教育", "学校", "心理", "认知", "家庭", "群体", "文化", "学生", "教学"}
+        
+        scores = {
+            "politics_law": sum(1 for k in politics_law_zh if k in zh),
+            "economics_business": sum(1 for k in economics_business_zh if k in zh),
+            "science_academic": sum(1 for k in science_academic_zh if k in zh),
+            "environment": sum(1 for k in environment_zh if k in zh),
+            "society_education_psychology": sum(1 for k in society_education_zh if k in zh),
+        }
+        
+        max_score = max(scores.values())
+        if max_score > 0:
+            return [k for k, v in scores.items() if v == max_score][0]
+    except Exception:
+        pass
+
+    if f in {"politics", "law", "politics_law"}:
+        return "politics_law"
+    if f in {"economics", "business", "economics_business"}:
+        return "economics_business"
+    if f in {"science", "academic", "science_academic", "academic_science", "science_academic_academic"}:
+        return "science_academic"
+    if f in {"environment", "climate"}:
+        return "environment"
+    if f in {"education", "psychology", "sociology", "society", "society_education_psychology"}:
+        return "society_education_psychology"
+        
     return "science_academic"
 
 def clean_category(category: str) -> str:

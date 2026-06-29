@@ -95,3 +95,32 @@ def test_render_corpus_appendix_prefers_high_value_entries() -> None:
     assert "people" not in joined
     assert "at issue" in joined
     assert "you can" not in joined
+
+
+def test_is_exportable_vocabulary_filters() -> None:
+    from grecis.export import is_exportable_vocabulary
+    
+    # 1. Polysemy (always keep)
+    assert is_exportable_vocabulary({"word": "issue", "category": "polysemy", "importance": 5}) is True
+    assert is_exportable_vocabulary({"word": "address", "category": "熟词生义", "importance": 5}) is True
+    
+    # 2. Gaokao 3500 words (filter out unless polysemy)
+    # 'abandon' is in gaokao_3500
+    assert is_exportable_vocabulary({"word": "abandon", "category": "academic/general", "importance": 5, "article_count": 2}) is False
+    
+    # 3. Proper Nouns / Names (filter out)
+    assert is_exportable_vocabulary({"word": "biden", "category": "academic/general", "importance": 5, "example_sentence": "President Biden announced..."}) is False
+    assert is_exportable_vocabulary({"word": "trump", "category": "academic/general", "importance": 5, "example_sentence": "Trump spoke at..."}) is False
+    
+    # 4. Uncommon Abbreviations (filter out)
+    assert is_exportable_vocabulary({"word": "fda", "category": "academic/general", "importance": 5, "example_sentence": "The FDA approved it."}) is False
+    # Common whitelisted abbreviation should keep
+    assert is_exportable_vocabulary({"word": "gdp", "category": "academic/general", "importance": 5, "example_sentence": "The GDP grew by 2%."}) is True
+    
+    # 5. Uncommon Professional Term (Zipf < 2.5) (filter out)
+    # 'pterosaur' zipf freq is very low (~1.3)
+    assert is_exportable_vocabulary({"word": "pterosaur", "category": "academic/general", "importance": 5, "article_count": 2}) is False
+    
+    # 6. Important academic word (keep)
+    # 'mitigate' has zipf frequency ~3.0 > 2.5
+    assert is_exportable_vocabulary({"word": "mitigate", "category": "academic/general", "importance": 5, "article_count": 2}) is True

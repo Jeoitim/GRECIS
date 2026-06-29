@@ -285,17 +285,151 @@ def is_exportable_expression(item: dict[str, Any]) -> bool:
     return frequency >= 3
 
 
+_GAOKAO_3500_WORDS: set[str] | None = None
+
+def load_gaokao_3500() -> set[str]:
+    global _GAOKAO_3500_WORDS
+    if _GAOKAO_3500_WORDS is not None:
+        return _GAOKAO_3500_WORDS
+    
+    _GAOKAO_3500_WORDS = set()
+    path = Path("data/gaokao_3500.txt")
+    if not path.exists():
+        return _GAOKAO_3500_WORDS
+        
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith('[') and line.endswith(']'):
+                continue
+            if any('\u4e00' <= c <= '\u9fff' for c in line):
+                continue
+            words_in_line = re.findall(r"[A-Za-z]+", line)
+            for w in words_in_line:
+                w_clean = w.lower().strip()
+                if len(w_clean) > 1:
+                    _GAOKAO_3500_WORDS.add(w_clean)
+                elif w_clean in {'a', 'i'}:
+                    _GAOKAO_3500_WORDS.add(w_clean)
+    except Exception:
+        pass
+    return _GAOKAO_3500_WORDS
+
+
+COMMON_NAMES_AND_PLACES = {
+    # Names
+    "john", "mary", "james", "charles", "robert", "william", "david", "richard", "joseph", 
+    "thomas", "donald", "paul", "mark", "george", "steven", "brian", "kevin", "edward", 
+    "biden", "trump", "obama", "bush", "clinton", "reagan", "carter", "ford", "nixon", 
+    "kennedy", "eisenhower", "truman", "roosevelt", "hoover", "coolidge", "harding", 
+    "wilson", "taft", "mckinley", "cleveland", "harrison", "arthur", "garfield", "hayes", 
+    "grant", "johnson", "lincoln", "buchanan", "pierce", "fillmore", "taylor", "polk", 
+    "tyler", "jackson", "adams", "jefferson", "washington", "smith", "jones", "miller", 
+    "davis", "garcia", "rodriguez", "wilson", "martinez", "anderson", "taylor", "thomas", 
+    "hernandez", "moore", "martin", "jackson", "thompson", "white", "lopez", "lee", 
+    "gonzalez", "harris", "clark", "lewis", "robinson", "walker", "perez", "hall", 
+    "young", "allen", "musk", "bezos", "jobs", "gates", "zuckerberg", "cook", "nadella", 
+    "pichai", "altman", "boris", "theresa", "angela", "emmanuel", "macron", "putin", "xi",
+    # Places & Countries
+    "china", "america", "britain", "england", "london", "europe", "asia", "africa", 
+    "france", "germany", "italy", "japan", "india", "canada", "australia", "paris", 
+    "berlin", "tokyo", "beijing", "washington", "new york", "york", "boston", "chicago", 
+    "california", "texas", "florida", "silicon", "valley", "russia", "uk", "usa", "us",
+    # Months & Days
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", 
+    "january", "february", "march", "april", "may", "june", "july", "august", 
+    "september", "october", "november", "december",
+}
+
+def is_proper_noun_or_name(word: str, example_sentence: str) -> bool:
+    if word in COMMON_NAMES_AND_PLACES:
+        return True
+        
+    if example_sentence:
+        pattern = r"\b" + re.escape(word) + r"(?:s|es|ed|ing|d)?\b"
+        match = re.search(pattern, example_sentence, re.IGNORECASE)
+        if match:
+            matched_str = match.group(0)
+            start_index = example_sentence.find(matched_str)
+            if matched_str[0].isupper() and not matched_str.isupper() and start_index > 0:
+                return True
+    return False
+
+def is_uncommon_abbreviation(word: str, example_sentence: str) -> bool:
+    abbreviation_whitelist = {"gdp", "ai", "ceo", "r&d", "rd", "it", "pr", "pc", "diy", "dna", "rna", "cpu", "covid"}
+    if word in abbreviation_whitelist:
+        return False
+        
+    if example_sentence:
+        pattern = r"\b" + re.escape(word) + r"(?:s|es|ed|ing|d)?\b"
+        match = re.search(pattern, example_sentence, re.IGNORECASE)
+        if match:
+            matched_str = match.group(0)
+            if matched_str.isupper() and len(matched_str) >= 2:
+                return True
+                
+    if "." in word or (len(word) <= 3 and not any(c in "aeiouy" for c in word)):
+        return True
+        
+    return False
+
+def is_uncommon_professional_term(word: str) -> bool:
+    try:
+        from .nlp import DOMAIN_KEYWORDS
+        domain_words = set()
+        for keywords in DOMAIN_KEYWORDS.values():
+            domain_words.update(keywords)
+    except Exception:
+        domain_words = set()
+        
+    if word in domain_words:
+        return False
+        
+    if zipf_frequency:
+        freq = zipf_frequency(word, "en")
+        if freq > 0 and freq < 2.5:
+            return True
+            
+    return False
+
 def is_exportable_vocabulary(item: dict[str, Any]) -> bool:
     word = str(item.get("word", "")).strip().lower()
-    category = str(item.get("category", ""))
+    category = str(item.get("category", "")).lower()
+    kind = str(item.get("kind", "")).lower()
+    
+    if "polysemy" in category or "熟词" in category or "polysemy" in kind or "熟词" in kind:
+        return True
+        
     if not word:
         return False
-    if category == "polysemy":
-        return True
+        
     if word in {"can", "people", "thing", "make", "good", "big", "small"}:
         return False
+        
+    # Gaokao 3500 filter
+    gaokao_words = load_gaokao_3500()
+    if word in gaokao_words:
+        return False
+        
+    # Proper nouns/names filter
+    if is_proper_noun_or_name(word, item.get("example_sentence", "")):
+        return False
+        
+    # Uncommon abbreviations filter
+    if is_uncommon_abbreviation(word, item.get("example_sentence", "")):
+        return False
+        
+    # Uncommon professional terms filter
+    if is_uncommon_professional_term(word):
+        return False
+        
+    # Zipf high frequency filter
     if zipf_frequency and zipf_frequency(word, "en") >= 5.5:
         return False
+        
     return int(item.get("importance") or 0) >= 4 or int(item.get("article_count") or 0) >= 2
 
 

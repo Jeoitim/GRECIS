@@ -291,7 +291,24 @@ HIGH_VALUE_PHRASES = {
 
 
 def split_sentences(text: str) -> list[str]:
-    return [sentence.strip() for sentence in SENTENCE_RE.split(text.strip()) if sentence.strip()]
+    protected = text
+    abbreviations = [
+        "U.S.", "U.K.", "e.g.", "i.e.", "Dr.", "Mr.", "Mrs.", "Ms.", "Co.", "Ltd.", "vs.", 
+        "A.I.", "F.D.A.", "G.D.P.", "Ph.D.", "B.C.", "A.D."
+    ]
+    for abbr in abbreviations:
+        pattern = re.compile(re.escape(abbr), re.IGNORECASE)
+        protected = pattern.sub(abbr.replace(".", "___DOT___"), protected)
+        
+    protected = re.sub(r"\b([A-Za-z])\.", r"\1___DOT___", protected)
+    raw_sentences = SENTENCE_RE.split(protected.strip())
+    
+    sentences = []
+    for s in raw_sentences:
+        s_clean = s.replace("___DOT___", ".").strip()
+        if s_clean:
+            sentences.append(s_clean)
+    return sentences
 
 
 def tokenize(text: str) -> list[str]:
@@ -343,9 +360,54 @@ def estimate_difficulty(tokens: list[str], sentence_count: int) -> float:
     return round(min(score, 10.0), 1)
 
 
+def score_sentence_quality(sentence: str, word: str) -> float:
+    s = sentence.strip()
+    if not s:
+        return 0.0
+        
+    words = s.split()
+    length = len(words)
+    if length < 6 or length > 45:
+        return 1.0
+        
+    score = 10.0
+    if 12 <= length <= 28:
+        score += 3.0
+    if s[0].isupper():
+        score += 2.0
+    if s[-1] in {".", "?", "!"}:
+        score += 2.0
+        
+    if "{" in s or "}" in s or "|" in s or "[]" in s or "<" in s or ">" in s:
+        score -= 5.0
+        
+    if not s[0].isalnum() and s[0] not in {'"', "'", '“', '‘'}:
+        score -= 4.0
+        
+    lowercased_s = s.lower()
+    pattern = r"\b" + re.escape(word.lower()) + r"(?:s|es|ed|ing|d)?\b"
+    if re.search(pattern, lowercased_s):
+        score += 5.0
+        
+    return score
+
+
 def find_example_sentence(word: str, sentences: list[str]) -> str:
+    candidates = []
+    word_lower = word.lower()
+    pattern = re.compile(r"\b" + re.escape(word_lower) + r"(?:s|es|ed|ing|d)?\b", re.IGNORECASE)
+    
     for sentence in sentences:
-        if word in set(content_tokens(sentence)):
+        if pattern.search(sentence):
+            score = score_sentence_quality(sentence, word_lower)
+            candidates.append((score, sentence))
+            
+    if candidates:
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        return candidates[0][1]
+        
+    for sentence in sentences:
+        if word_lower in set(content_tokens(sentence)):
             return sentence
     return ""
 

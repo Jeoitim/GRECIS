@@ -70,11 +70,18 @@ class SourceConfig:
 
 
 @dataclass(slots=True)
+class MDictConfig:
+    oxford_path: str = r"C:\baidunetdiskdownload\mdict\牛津高阶（第10版 英汉双解）V5.0（含机翻）\牛津高阶（第10版 英汉双解） V5_0.mdx"
+    collins_path: str = r"C:\baidunetdiskdownload\mdict\柯林斯\Collins COBUILD (CN - HD).mdx"
+
+
+@dataclass(slots=True)
 class AppConfig:
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
     llm: LLMConfig = field(default_factory=LLMConfig)
     crawler: CrawlerConfig = field(default_factory=CrawlerConfig)
+    mdict: MDictConfig = field(default_factory=MDictConfig)
     sources: list[SourceConfig] = field(default_factory=list)
 
 
@@ -104,8 +111,9 @@ def app_config_from_mapping(payload: dict[str, Any]) -> AppConfig:
     output = OutputConfig(**payload.get("output", {}))
     llm = LLMConfig(**payload.get("llm", {}))
     crawler = CrawlerConfig(**payload.get("crawler", {}))
+    mdict = MDictConfig(**payload.get("mdict", {}))
     sources = [SourceConfig(**source) for source in payload.get("sources", [])]
-    return AppConfig(database=database, output=output, llm=llm, crawler=crawler, sources=sources)
+    return AppConfig(database=database, output=output, llm=llm, crawler=crawler, sources=sources, mdict=mdict)
 
 
 def apply_env_overrides(config: AppConfig) -> None:
