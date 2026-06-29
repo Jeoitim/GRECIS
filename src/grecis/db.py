@@ -522,7 +522,7 @@ def _llm_category(value: Any, lemma: str) -> str:
         return "domain terminology"
     if "academic" in text:
         return "academic/general"
-    return "llm"
+    return "academic/general"
 
 
 def _llm_field(level: Any, importance: Any) -> str:

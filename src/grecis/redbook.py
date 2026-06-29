@@ -1,12 +1,45 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
 from .db import CorpusDB
 from .export import is_exportable_expression, is_exportable_vocabulary, stars, table, truncate
+from .dictionary import query_word
+
+def highlight_word(sentence: str, word: str) -> str:
+    if not sentence or not word:
+        return sentence
+        
+    extra_forms = []
+    word_lower = word.strip().lower()
+    if word_lower == "hold":
+        extra_forms = ["held"]
+    elif word_lower == "find":
+        extra_forms = ["found"]
+    elif word_lower == "take":
+        extra_forms = ["took", "taken"]
+    elif word_lower == "drive":
+        extra_forms = ["drove", "driven"]
+    elif word_lower == "take issue with":
+        extra_forms = ["took issue with", "takes issue with", "taken issue with", "taking issue with"]
+        
+    forms = [word_lower] + extra_forms
+    forms.sort(key=len, reverse=True)
+    
+    pattern_parts = []
+    for form in forms:
+        escaped = re.escape(form)
+        if " " in form:
+            pattern_parts.append(rf"\b{escaped}\b")
+        else:
+            pattern_parts.append(rf"\b{escaped}(?:s|es|ed|ing|d|r|er)?\b")
+            
+    pattern = re.compile(f"(" + "|".join(pattern_parts) + ")", re.IGNORECASE)
+    return pattern.sub(r"**\1**", sentence)
 
 DEFAULT_REDBOOK_SEED = "data/redbook_seed.yaml"
 
@@ -59,9 +92,65 @@ def build_corpus_index(db: CorpusDB) -> dict[str, Any]:
     }
 
 
+def map_field_to_domain_key(field: str, word: str = "") -> str:
+    f = str(field).lower().strip()
+    if f in {"politics", "law", "politics_law"}:
+        return "politics_law"
+    if f in {"economics", "business", "economics_business"}:
+        return "economics_business"
+    if f in {"science", "academic", "science_academic", "academic_science", "science_academic_academic"}:
+        return "science_academic"
+    if f in {"environment", "climate"}:
+        return "environment"
+    if f in {"education", "psychology", "sociology", "society", "society_education_psychology"}:
+        return "society_education_psychology"
+        
+    from .nlp import DOMAIN_KEYWORDS
+    w = word.strip().lower()
+    for domain_name, keywords in DOMAIN_KEYWORDS.items():
+        if w in keywords:
+            if domain_name in {"politics", "law"}:
+                return "politics_law"
+            if domain_name == "economics":
+                return "economics_business"
+            if domain_name == "science":
+                return "science_academic"
+            if domain_name == "environment":
+                return "environment"
+            if domain_name in {"education", "psychology", "sociology"}:
+                return "society_education_psychology"
+                
+    return "science_academic"
+
+def clean_category(category: str) -> str:
+    c = str(category).lower().strip()
+    if c in {"polysemy", "熟词生义"}:
+        return "熟词生义"
+    if c in {"phrase", "idiomatic expression", "llm vocabulary phrase", "高频短语"}:
+        return "高频短语"
+    if c in {"domain terminology", "institutional vocabulary", "legal or political vocabulary", "领域术语", "term"}:
+        return "领域术语"
+    if c in {"academic", "academic vocabulary", "academic/general", "academic/general"}:
+        return "学术词汇"
+    return "核心词汇"
+
 def render_redbook(seed: dict[str, Any], corpus: dict[str, Any]) -> str:
     metadata = seed.get("metadata", {})
     domains = seed.get("domains", {})
+    
+    seed_words = set()
+    for domain in domains.values():
+        for entry in domain.get("entries", []):
+            if entry.get("headword"):
+                seed_words.add(entry["headword"].lower().strip())
+                
+    corpus_vocab = rank_vocabulary_for_redbook(corpus["vocabulary"], seed_words)
+    
+    grouped_corpus: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for item in corpus_vocab:
+        domain_key = map_field_to_domain_key(item.get("field", ""), item["word"])
+        grouped_corpus[domain_key].append(item)
+
     lines = [
         f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')}",
         "",
@@ -71,7 +160,7 @@ def render_redbook(seed: dict[str, Any], corpus: dict[str, Any]) -> str:
         "",
         "- 先背每章的熟词生义和固定搭配，再看领域术语。",
         "- 每个词条优先记“考研义”和“误译风险”，不要只背中文对照。",
-        "- 例句分为项目例句和语料库例句；语料库例句来自本地已抓取文章的短摘录。",
+        "- 例句分为项目例句 and 语料库例句；语料库例句来自本地已抓取文章的短摘录。",
         "- 权威词典释义字段预留给你本地接入的授权词典 API，本文件内置的是学习用简明释义。",
         "",
         "## 快速背诵清单",
@@ -86,12 +175,33 @@ def render_redbook(seed: dict[str, Any], corpus: dict[str, Any]) -> str:
         lines.append(f"{index}. [{domain['title']}](#{markdown_anchor(domain['title'])})")
     lines.extend(["", "---", ""])
 
-    for domain in domains.values():
-        lines.extend(render_domain(domain, corpus))
+    for domain_key, domain in domains.items():
+        seed_entries = []
+        for entry in domain.get("entries", []):
+            entry_copy = dict(entry)
+            entry_copy["is_seed"] = True
+            seed_entries.append(entry_copy)
+            
+        corpus_entries = []
+        for item in grouped_corpus[domain_key]:
+            item_copy = dict(item)
+            item_copy["is_seed"] = False
+            corpus_entries.append(item_copy)
+            
+        combined_entries = seed_entries + corpus_entries
+        combined_entries.sort(
+            key=lambda x: (
+                _vocabulary_category_priority(x),
+                int(x.get("importance") or 0),
+                int(x.get("frequency") or 0),
+            ),
+            reverse=True,
+        )
+        
+        lines.extend(render_unified_domain(domain["title"], domain.get("overview", ""), combined_entries, corpus))
 
-    lines.extend(render_corpus_lexicon(corpus))
     lines.extend(render_sentence_patterns(seed.get("sentence_patterns", []), corpus))
-    lines.extend(render_corpus_appendix(corpus))
+    lines.extend(render_corpus_appendix(corpus, seed_words))
     lines.extend(render_review_plan())
     return "\n".join(line for line in lines if line is not None)
 
@@ -117,92 +227,140 @@ def render_quick_list(domains: dict[str, Any]) -> str:
     return table(["词条", "领域", "核心义", "先记风险"], rows)
 
 
-def render_domain(domain: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
+def resolve_vocab_details(item: dict[str, Any]) -> tuple[str, str, str]:
+    """Retrieve phonetic symbol, Chinese gloss, and English gloss with caching."""
+    word = item.get("headword") or item.get("word")
+    phonetic = item.get("phonetic") or ""
+    zh_val = item.get("exam") or item.get("chinese") or item.get("gloss") or ""
+    en_val = item.get("english") or item.get("english_gloss") or ""
+    
+    if not phonetic or not zh_val or not en_val:
+        dict_data = query_word(word)
+        if not phonetic:
+            phonetic = dict_data.get("phonetic") or ""
+        if not zh_val:
+            zh_val = dict_data.get("zh") or ""
+        if not en_val:
+            en_val = dict_data.get("en") or ""
+            
+    return phonetic, zh_val, en_val
+
+def render_unified_domain(title: str, overview: str, entries: list[dict[str, Any]], corpus: dict[str, Any]) -> list[str]:
     lines = [
-        f"## {domain['title']}",
+        f"## {title}",
         "",
-        domain.get("overview", ""),
+        overview,
         "",
-        "| 词条 | 类型 | 考研重要度 | 核心义 |",
-        "|---|---|---|---|",
+        "| 词条 | 类型 | 词性 | 考研重要度 | 核心义 |",
+        "|---|---|---|---|---|",
     ]
-    for entry in domain.get("entries", []):
+    for entry in entries:
+        word = entry.get("headword") or entry.get("word")
+        category = entry.get("kind") or entry.get("category") or ""
+        pos = entry.get("pos") or ""
+        importance = stars(entry.get("importance", 0))
+        cat_clean = clean_category(category)
+        
+        _, zh_val, _ = resolve_vocab_details(entry)
+        zh_short = truncate(zh_val, 40)
+        
         lines.append(
-            f"| {entry['headword']} | {entry.get('kind', '')} | "
-            f"{stars(entry.get('importance', 0))} | {entry.get('chinese', '')} |"
+            f"| {word} | {cat_clean} | {pos} | {importance} | {zh_short} |"
         )
     lines.append("")
 
-    for entry in domain.get("entries", []):
-        lines.extend(render_entry(entry, corpus))
+    for entry in entries:
+        lines.extend(render_unified_entry(entry, corpus))
     return lines
 
-
-def render_entry(entry: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
-    headword = entry["headword"]
-    corpus_hits = lookup_corpus_hits(headword, corpus)
-    gloss = resolve_gloss(headword, entry, corpus)
+def render_unified_entry(item: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
+    is_seed = item.get("is_seed", False)
+    word = item.get("headword") or item.get("word")
+    
+    phonetic, zh_val, en_val = resolve_vocab_details(item)
+    phonetic_str = f" `[{phonetic}]`" if phonetic else ""
+    
+    category = item.get("kind") or item.get("category") or ""
+    category_chinese = clean_category(category)
+    pos = item.get("pos") or ""
+    importance_stars = stars(item.get("importance", 0))
+    
+    attr_parts = []
+    if pos:
+        attr_parts.append(f"`{pos}`")
+    if category_chinese:
+        attr_parts.append(f"`{category_chinese}`")
+    if importance_stars:
+        attr_parts.append(f"重要度：{importance_stars}")
+    if not is_seed:
+        frequency = item.get("frequency", 0)
+        article_count = item.get("article_count", 0)
+        if frequency:
+            attr_parts.append(f"频次：{frequency}次")
+        if article_count:
+            attr_parts.append(f"文章：{article_count}篇")
+            
+    attr_line = " · ".join(attr_parts)
+    common_val = item.get("common") or ""
+    
     lines = [
-        f"### {headword}",
+        f"### {word}{phonetic_str}",
         "",
-        "| 项目 | 内容 |",
-        "|---|---|",
-        f"| 类型 | {entry.get('kind', '')} |",
-        f"| 词性 | {entry.get('pos', '')} |",
-        f"| 考研重要度 | {stars(entry.get('importance', 0))} |",
-        f"| 核心中文义 | {gloss['zh'] or entry.get('chinese', '')} |",
-        f"| 简明英英义 | {gloss['en_short'] or entry.get('english', '')} |",
-        f"| 英英补充 | {gloss['en_long'] or entry.get('english', '')} |",
-        "",
-        "**常见义**",
-        "",
-        gloss["common"] or entry.get("common", ""),
-        "",
-        "**考研义**",
-        "",
-        gloss["exam"] or entry.get("exam", ""),
-        "",
-        "**误译风险**",
-        "",
-        entry.get("risk", ""),
-        "",
+        f"*   **词汇属性**：{attr_line}" if attr_line else None,
+        f"*   🎯 **核心考研义**：**{zh_val}**",
     ]
-
-    if entry.get("collocations"):
-        lines.extend(["**高频搭配**", ""])
-        for item in entry["collocations"]:
-            lines.append(f"- {item}")
-        lines.append("")
-
-    if entry.get("contrast"):
-        lines.extend(["**近义辨析**", ""])
-        lines.append(
-            table(
-                ["词/表达", "区别"],
-                [[item["term"], item["note"]] for item in entry["contrast"]],
-            )
-        )
-        lines.append("")
-
-    lines.extend(["**例句**", ""])
-    for example in entry.get("examples", []):
-        lines.append(f"> {example['sentence']}")
-        if example.get("zh"):
-            lines.append("")
-            lines.append(f"释义：{example['zh']}")
-        lines.append("")
-
-    if corpus_hits:
-        lines.extend(["**本地语料例句**", ""])
-        for hit in corpus_hits[:1]:
-            lines.append(f"> {truncate(hit['example_sentence'], 220)}")
-            source = describe_corpus_hit(hit)
-            lines.append("")
-            lines.append(f"来源：{source}")
-            lines.append("")
-
-    lines.extend(["---", ""])
-    return lines
+    
+    if common_val:
+        lines.append(f"*   🔹 **普通基础义**：{common_val}")
+    if en_val:
+        lines.append(f"*   🌐 **英英释义**：`{en_val}`")
+        
+    risk_val = item.get("risk") or ""
+    if risk_val:
+        lines.append(f"*   ⚠️ **误译风险**：{risk_val}")
+        
+    collocations = item.get("collocations") or []
+    if collocations:
+        colloc_str = " | ".join(f"`{c}`" for c in collocations)
+        lines.append(f"*   💡 **高频搭配**：{colloc_str}")
+        
+    contrast = item.get("contrast") or []
+    if contrast:
+        lines.append("*   👥 **近义辨析**：")
+        for c in contrast:
+            lines.append(f"    *   `{c['term']}`: {c['note']}")
+            
+    examples = item.get("examples") or []
+    if examples:
+        lines.append("*   📖 **真题/经典例句**：")
+        for ex in examples:
+            hl_s = highlight_word(ex["sentence"], word)
+            lines.append(f"    > {hl_s}")
+            if ex.get("zh"):
+                lines.append(f"    > *译：{ex['zh']}*")
+                
+    example_sentence = item.get("example_sentence") or ""
+    if example_sentence:
+        hl_s = highlight_word(example_sentence, word)
+        lines.append("*   📰 **语料库例句**：")
+        lines.append(f"    > {truncate(hl_s, 220)}")
+        source = describe_corpus_hit(item)
+        lines.append(f"    > *来源：{source}*")
+        
+    if not examples and not example_sentence:
+        corpus_hits = lookup_corpus_hits(word, corpus)
+        if corpus_hits:
+            lines.append("*   📰 **语料库例句**：")
+            for hit in corpus_hits[:1]:
+                hl_s = highlight_word(hit["example_sentence"], word)
+                lines.append(f"    > {truncate(hl_s, 220)}")
+                source = describe_corpus_hit(hit)
+                lines.append(f"    > *来源：{source}*")
+                
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    return [line for line in lines if line is not None]
 
 
 def lookup_corpus_hits(headword: str, corpus: dict[str, Any]) -> list[dict[str, Any]]:
@@ -266,81 +424,15 @@ def render_sentence_patterns(
     return lines
 
 
-def render_corpus_lexicon(corpus: dict[str, Any]) -> list[str]:
-    vocabulary = rank_vocabulary_for_redbook(corpus["vocabulary"])[:80]
-    lines = [
-        "## 语料库新增核心词条",
-        "",
-        (
-            "本节来自本地考研真题与外刊语料的自动分析，"
-            "优先保留熟词生义、领域术语和 LLM 判定的高价值词条。"
-        ),
-        "",
-    ]
-    if not vocabulary:
-        lines.extend(["暂无新增词条。", ""])
-        return lines
-
-    for item in vocabulary:
-        lines.extend(render_corpus_entry(item))
-    return lines
+# Corpus entries rendering logic has been unified into render_unified_entry above
 
 
-def render_corpus_entry(item: dict[str, Any]) -> list[str]:
-    lines = [
-        f"### {item['word']}",
-        "",
-        "| 项目 | 内容 |",
-        "|---|---|",
-        f"| 领域 | {item.get('field', '')} |",
-        f"| 类别 | {item.get('category', '')} |",
-        f"| 语料频次 | {item.get('frequency', 0)} |",
-        f"| 覆盖文章 | {item.get('article_count', 0)} |",
-        f"| 重要度 | {stars(item.get('importance', 0))} |",
-        f"| 词条释义 | {item.get('gloss', '')} |",
-        f"| 英英释义 | {item.get('english_gloss', '')} |",
-        "",
-    ]
-    example = item.get("example_sentence", "")
-    if example:
-        lines.extend(
-            [
-                "**可溯源例句**",
-                "",
-                f"> {truncate(example, 220)}",
-                "",
-                f"来源：{describe_corpus_hit(item)}",
-                "",
-            ]
-        )
-    lines.extend(["---", ""])
-    return lines
-
-
-def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
-    vocabulary = rank_vocabulary_for_redbook(corpus["vocabulary"])[80:140]
+def render_corpus_appendix(corpus: dict[str, Any], seed_words: set[str] | None = None) -> list[str]:
     collocations = select_expression_candidates(corpus["collocations"])[:80]
     lines = [
-        "## 本地语料补充词条",
-        "",
-        "以下是未进入主章节的补充候选，只保留少量高价值项。",
-        "",
-        table(
-            ["词", "领域", "类别", "频次", "文章数", "词义"],
-            [
-                [
-                    item["word"],
-                    item["field"],
-                    item["category"],
-                    item["frequency"],
-                    item["article_count"],
-                    item.get("gloss", ""),
-                ]
-                for item in vocabulary
-            ],
-        ),
-        "",
         "## 本地语料补充表达",
+        "",
+        "以下是本地语料分析识别出的高频学术表达与固定搭配。",
         "",
         table(
             ["表达", "类型", "含义", "频次", "例句"],
@@ -360,8 +452,32 @@ def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
     return lines
 
 
-def rank_vocabulary_for_redbook(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def rank_vocabulary_for_redbook(
+    rows: list[dict[str, Any]], seed_words: set[str] | None = None
+) -> list[dict[str, Any]]:
+    if seed_words is None:
+        seed_words = set()
+        
     filtered = [item for item in rows if is_exportable_vocabulary(item)]
+    deduped: dict[str, dict[str, Any]] = {}
+    for item in filtered:
+        word = str(item.get("word", "")).strip().lower()
+        if not word or word in seed_words:
+            continue
+        if word not in deduped:
+            deduped[word] = dict(item)
+        else:
+            existing = deduped[word]
+            # Merge stats
+            existing["frequency"] = existing.get("frequency", 0) + item.get("frequency", 0)
+            existing["article_count"] = max(existing.get("article_count", 0), item.get("article_count", 0))
+            existing["importance"] = max(existing.get("importance", 0), item.get("importance", 0))
+            if not existing.get("example_sentence") and item.get("example_sentence"):
+                existing["example_sentence"] = item["example_sentence"]
+            if not existing.get("gloss") and item.get("gloss"):
+                existing["gloss"] = item["gloss"]
+                
+    filtered = list(deduped.values())
     filtered.sort(
         key=lambda item: (
             _vocabulary_category_priority(item),
@@ -375,13 +491,15 @@ def rank_vocabulary_for_redbook(rows: list[dict[str, Any]]) -> list[dict[str, An
 
 
 def _vocabulary_category_priority(item: dict[str, Any]) -> int:
-    category = str(item.get("category", ""))
-    if category == "polysemy":
+    category = str(item.get("kind") or item.get("category") or "").lower()
+    if category == "polysemy" or "熟词" in category:
         return 5
-    if category in {"domain terminology", "institutional vocabulary"}:
+    if "phrase" in category or "短语" in category or "idiom" in category:
         return 4
-    if "llm" in category:
+    if "term" in category or "术语" in category or "institutional" in category or "legal" in category or "political" in category:
         return 3
+    if "academic" in category or "学术" in category:
+        return 2
     return 1
 
 
@@ -427,18 +545,26 @@ def resolve_gloss(headword: str, entry: dict[str, Any], corpus: dict[str, Any]) 
     key = headword.strip().lower()
     gloss = dict(corpus.get("gloss_index", {}).get(key, {}))
     if not gloss:
+        dict_data = query_word(key)
         gloss = {
-            "zh": str(entry.get("chinese", "")),
-            "en_short": str(entry.get("english", "")),
-            "en_long": str(entry.get("english", "")),
+            "zh": dict_data["zh"] or str(entry.get("chinese", "")),
+            "en_short": dict_data["en"] or str(entry.get("english", "")),
+            "en_long": dict_data["en"] or str(entry.get("english", "")),
             "common": str(entry.get("common", "")),
             "exam": str(entry.get("exam", "")),
+            "phonetic": dict_data["phonetic"] or str(entry.get("phonetic", "")),
         }
+    else:
+        if not gloss.get("phonetic"):
+            dict_data = query_word(key)
+            gloss["phonetic"] = dict_data["phonetic"]
+            
     gloss.setdefault("zh", "")
     gloss.setdefault("en_short", "")
     gloss.setdefault("en_long", "")
     gloss.setdefault("common", "")
     gloss.setdefault("exam", "")
+    gloss.setdefault("phonetic", "")
     return gloss
 
 
@@ -497,6 +623,27 @@ def select_expression_candidates(rows: list[dict[str, Any]]) -> list[dict[str, A
         reverse=True,
     )
     return selected
+
+
+
+def _resolve_corpus_gloss(item: dict[str, Any], corpus: dict[str, Any] | None = None) -> str:
+    text = item.get("gloss", "") or ""
+    if not text and corpus:
+        word = str(item.get("word", "")).strip().lower()
+        gloss_entry = corpus.get("gloss_index", {}).get(word, {})
+        if gloss_entry:
+            text = gloss_entry.get("zh", "") or gloss_entry.get("common", "") or ""
+    return text
+
+
+def _resolve_corpus_egloss(item: dict[str, Any], corpus: dict[str, Any] | None = None) -> str:
+    text = item.get("english_gloss", "") or ""
+    if not text and corpus:
+        word = str(item.get("word", "")).strip().lower()
+        gloss_entry = corpus.get("gloss_index", {}).get(word, {})
+        if gloss_entry:
+            text = gloss_entry.get("en_short", "") or gloss_entry.get("en_long", "") or ""
+    return text
 
 
 def render_review_plan() -> list[str]:
