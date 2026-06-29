@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
 from .db import CorpusDB
-from .export import stars, table, truncate
+from .export import is_exportable_expression, is_exportable_vocabulary, stars, table, truncate
 
 DEFAULT_REDBOOK_SEED = "data/redbook_seed.yaml"
 
@@ -36,6 +37,7 @@ def build_corpus_index(db: CorpusDB) -> dict[str, Any]:
     collocations = db.aggregate_collocations()
     polysemy = db.aggregate_polysemy()
     sentence_patterns = db.aggregate_sentence_patterns()
+    llm_rows = db.fetch_llm_rows()
 
     by_word = defaultdict(list)
     for item in vocabulary:
@@ -45,6 +47,7 @@ def build_corpus_index(db: CorpusDB) -> dict[str, Any]:
     for item in collocations:
         by_expression[item["expression"].lower()].append(item)
 
+    gloss_index = build_gloss_index(vocabulary, llm_rows)
     return {
         "vocabulary": vocabulary,
         "collocations": collocations,
@@ -52,6 +55,7 @@ def build_corpus_index(db: CorpusDB) -> dict[str, Any]:
         "sentence_patterns": sentence_patterns,
         "by_word": by_word,
         "by_expression": by_expression,
+        "gloss_index": gloss_index,
     }
 
 
@@ -85,6 +89,7 @@ def render_redbook(seed: dict[str, Any], corpus: dict[str, Any]) -> str:
     for domain in domains.values():
         lines.extend(render_domain(domain, corpus))
 
+    lines.extend(render_corpus_lexicon(corpus))
     lines.extend(render_sentence_patterns(seed.get("sentence_patterns", []), corpus))
     lines.extend(render_corpus_appendix(corpus))
     lines.extend(render_review_plan())
@@ -136,6 +141,7 @@ def render_domain(domain: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
 def render_entry(entry: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
     headword = entry["headword"]
     corpus_hits = lookup_corpus_hits(headword, corpus)
+    gloss = resolve_gloss(headword, entry, corpus)
     lines = [
         f"### {headword}",
         "",
@@ -144,10 +150,17 @@ def render_entry(entry: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
         f"| 类型 | {entry.get('kind', '')} |",
         f"| 词性 | {entry.get('pos', '')} |",
         f"| 考研重要度 | {stars(entry.get('importance', 0))} |",
-        f"| 核心中文义 | {entry.get('chinese', '')} |",
-        f"| 简明英英义 | {entry.get('english', '')} |",
-        f"| 常见义 | {entry.get('common', '')} |",
-        f"| 考研义 | {entry.get('exam', '')} |",
+        f"| 核心中文义 | {gloss['zh'] or entry.get('chinese', '')} |",
+        f"| 简明英英义 | {gloss['en_short'] or entry.get('english', '')} |",
+        f"| 英英补充 | {gloss['en_long'] or entry.get('english', '')} |",
+        "",
+        "**常见义**",
+        "",
+        gloss["common"] or entry.get("common", ""),
+        "",
+        "**考研义**",
+        "",
+        gloss["exam"] or entry.get("exam", ""),
         "",
         "**误译风险**",
         "",
@@ -181,7 +194,7 @@ def render_entry(entry: dict[str, Any], corpus: dict[str, Any]) -> list[str]:
 
     if corpus_hits:
         lines.extend(["**本地语料例句**", ""])
-        for hit in corpus_hits[:2]:
+        for hit in corpus_hits[:1]:
             lines.append(f"> {truncate(hit['example_sentence'], 220)}")
             source = describe_corpus_hit(hit)
             lines.append("")
@@ -234,7 +247,7 @@ def render_sentence_patterns(
         )
 
     if corpus["sentence_patterns"]:
-        lines.extend(["### 本地语料中识别到的句式", ""])
+        lines.extend(["### 本地语料中识别到的高频句式", ""])
         lines.append(
             table(
                 ["类型", "功能", "频次", "例句"],
@@ -243,9 +256,9 @@ def render_sentence_patterns(
                         item["type"],
                         item["function"],
                         item["frequency"],
-                        truncate(item["example_sentence"], 180),
+                        summarize_sentence(item["example_sentence"]),
                     ]
-                    for item in corpus["sentence_patterns"]
+                    for item in select_sentence_patterns(corpus["sentence_patterns"])
                 ],
             )
         )
@@ -253,20 +266,67 @@ def render_sentence_patterns(
     return lines
 
 
-def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
-    vocabulary = [
-        item
-        for item in corpus["vocabulary"]
-        if item["category"] in {"polysemy", "domain terminology"}
-    ][:80]
-    collocations = [item for item in corpus["collocations"] if item.get("meaning")][:80]
+def render_corpus_lexicon(corpus: dict[str, Any]) -> list[str]:
+    vocabulary = rank_vocabulary_for_redbook(corpus["vocabulary"])[:80]
     lines = [
-        "## 本地语料新增词条",
+        "## 语料库新增核心词条",
         "",
-        "以下来自本地数据库统计，可作为下一轮人工精选或 LLM 深度释义的候选。",
+        (
+            "本节来自本地考研真题与外刊语料的自动分析，"
+            "优先保留熟词生义、领域术语和 LLM 判定的高价值词条。"
+        ),
+        "",
+    ]
+    if not vocabulary:
+        lines.extend(["暂无新增词条。", ""])
+        return lines
+
+    for item in vocabulary:
+        lines.extend(render_corpus_entry(item))
+    return lines
+
+
+def render_corpus_entry(item: dict[str, Any]) -> list[str]:
+    lines = [
+        f"### {item['word']}",
+        "",
+        "| 项目 | 内容 |",
+        "|---|---|",
+        f"| 领域 | {item.get('field', '')} |",
+        f"| 类别 | {item.get('category', '')} |",
+        f"| 语料频次 | {item.get('frequency', 0)} |",
+        f"| 覆盖文章 | {item.get('article_count', 0)} |",
+        f"| 重要度 | {stars(item.get('importance', 0))} |",
+        f"| 词条释义 | {item.get('gloss', '')} |",
+        f"| 英英释义 | {item.get('english_gloss', '')} |",
+        "",
+    ]
+    example = item.get("example_sentence", "")
+    if example:
+        lines.extend(
+            [
+                "**可溯源例句**",
+                "",
+                f"> {truncate(example, 220)}",
+                "",
+                f"来源：{describe_corpus_hit(item)}",
+                "",
+            ]
+        )
+    lines.extend(["---", ""])
+    return lines
+
+
+def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
+    vocabulary = rank_vocabulary_for_redbook(corpus["vocabulary"])[80:140]
+    collocations = select_expression_candidates(corpus["collocations"])[:80]
+    lines = [
+        "## 本地语料补充词条",
+        "",
+        "以下是未进入主章节的补充候选，只保留少量高价值项。",
         "",
         table(
-            ["词", "领域", "类别", "频次", "文章数", "例句"],
+            ["词", "领域", "类别", "频次", "文章数", "词义"],
             [
                 [
                     item["word"],
@@ -274,13 +334,13 @@ def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
                     item["category"],
                     item["frequency"],
                     item["article_count"],
-                    truncate(item.get("example_sentence", ""), 140),
+                    item.get("gloss", ""),
                 ]
                 for item in vocabulary
             ],
         ),
         "",
-        "## 本地语料新增表达",
+        "## 本地语料补充表达",
         "",
         table(
             ["表达", "类型", "含义", "频次", "例句"],
@@ -290,7 +350,7 @@ def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
                     item["type"],
                     item.get("meaning", ""),
                     item["frequency"],
-                    truncate(item.get("example_sentence", ""), 140),
+                    summarize_sentence(item.get("example_sentence", "")),
                 ]
                 for item in collocations
             ],
@@ -298,6 +358,145 @@ def render_corpus_appendix(corpus: dict[str, Any]) -> list[str]:
         "",
     ]
     return lines
+
+
+def rank_vocabulary_for_redbook(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    filtered = [item for item in rows if is_exportable_vocabulary(item)]
+    filtered.sort(
+        key=lambda item: (
+            _vocabulary_category_priority(item),
+            int(item.get("importance") or 0),
+            int(item.get("article_count") or 0),
+            int(item.get("frequency") or 0),
+        ),
+        reverse=True,
+    )
+    return filtered
+
+
+def _vocabulary_category_priority(item: dict[str, Any]) -> int:
+    category = str(item.get("category", ""))
+    if category == "polysemy":
+        return 5
+    if category in {"domain terminology", "institutional vocabulary"}:
+        return 4
+    if "llm" in category:
+        return 3
+    return 1
+
+
+def build_gloss_index(
+    vocabulary: list[dict[str, Any]], llm_rows: list[dict[str, Any]]
+) -> dict[str, dict[str, str]]:
+    index: dict[str, dict[str, str]] = {}
+    for entry in vocabulary:
+        word = str(entry.get("word", "")).strip().lower()
+        if not word:
+            continue
+        index[word] = {
+            "zh": str(entry.get("contextual_meaning") or entry.get("common_meaning") or ""),
+            "en_short": str(entry.get("english_gloss") or ""),
+            "en_long": str(entry.get("english_gloss") or ""),
+            "common": str(entry.get("common_meaning") or ""),
+            "exam": str(entry.get("contextual_meaning") or ""),
+        }
+    for row in llm_rows:
+        payload = _load_llm_payload(row.get("llm_json", "{}"))
+        for item in payload.get("vocabulary", []):
+            if not isinstance(item, dict):
+                continue
+            lemma = str(item.get("lemma", "")).strip().lower()
+            if not lemma:
+                continue
+            zh = str(item.get("meaning_in_context", "")).strip()
+            common = str(item.get("common_meaning", "")).strip()
+            exam = str(item.get("why_chinese_students_misunderstand_it", "")).strip()
+            index.setdefault(lemma, {})
+            entry = index[lemma]
+            entry["zh"] = entry.get("zh") or zh
+            entry["common"] = entry.get("common") or common
+            entry["exam"] = entry.get("exam") or exam
+            entry["en_short"] = entry.get("en_short") or _shorten_english(zh or common or lemma)
+            entry["en_long"] = entry.get("en_long") or _shorten_english(
+                common or zh or lemma, limit=120
+            )
+    return index
+
+
+def resolve_gloss(headword: str, entry: dict[str, Any], corpus: dict[str, Any]) -> dict[str, str]:
+    key = headword.strip().lower()
+    gloss = dict(corpus.get("gloss_index", {}).get(key, {}))
+    if not gloss:
+        gloss = {
+            "zh": str(entry.get("chinese", "")),
+            "en_short": str(entry.get("english", "")),
+            "en_long": str(entry.get("english", "")),
+            "common": str(entry.get("common", "")),
+            "exam": str(entry.get("exam", "")),
+        }
+    gloss.setdefault("zh", "")
+    gloss.setdefault("en_short", "")
+    gloss.setdefault("en_long", "")
+    gloss.setdefault("common", "")
+    gloss.setdefault("exam", "")
+    return gloss
+
+
+def _load_llm_payload(value: str) -> dict[str, Any]:
+    try:
+        parsed = json.loads(value or "{}")
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _shorten_english(text: str, limit: int = 80) -> str:
+    cleaned = " ".join(str(text).split())
+    if len(cleaned) <= limit:
+        return cleaned
+    return cleaned[: limit - 3] + "..."
+
+
+def summarize_sentence(sentence: str, limit: int = 110) -> str:
+    text = " ".join(str(sentence).split())
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+
+def select_sentence_patterns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    priority = {"concession": 5, "contrast": 5, "causality": 5, "stance": 4, "emphasis": 3}
+    selected: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in sorted(
+        rows,
+        key=lambda row: (
+            priority.get(str(row.get("type", "")).lower(), 1),
+            row.get("frequency", 0),
+        ),
+        reverse=True,
+    ):
+        key = str(item.get("type", "")).lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        selected.append(item)
+        if len(selected) >= 5:
+            break
+    return selected
+
+
+def select_expression_candidates(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    selected = [item for item in rows if is_exportable_expression(item)]
+    selected.sort(
+        key=lambda item: (
+            1 if item.get("meaning") else 0,
+            int(item.get("article_count") or 0),
+            int(item.get("frequency") or 0),
+        ),
+        reverse=True,
+    )
+    return selected
 
 
 def render_review_plan() -> list[str]:

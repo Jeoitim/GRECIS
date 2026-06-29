@@ -7,6 +7,11 @@ from typing import Any
 
 from .models import AnalysisResult, Article
 
+try:
+    from wordfreq import zipf_frequency
+except Exception:  # pragma: no cover - optional fallback
+    zipf_frequency = None
+
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z'-]*")
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 
@@ -240,6 +245,18 @@ IRREGULAR_LEMMAS = {
     "studies": "study",
 }
 
+HIGH_SCHOOL_WORD_ZIPF_THRESHOLD = 5.5
+HIGH_VALUE_PHRASES = {
+    "at issue",
+    "take issue with",
+    "at stake",
+    "subject to",
+    "account for",
+    "result in",
+    "lead to",
+    "not so much A as B",
+}
+
 
 def split_sentences(text: str) -> list[str]:
     return [sentence.strip() for sentence in SENTENCE_RE.split(text.strip()) if sentence.strip()]
@@ -311,6 +328,8 @@ def word_frequencies(
         category = "domain terminology" if word in domain_words else "academic/general"
         if word in POLYSEMY_LEXICON:
             category = "polysemy"
+        if category != "polysemy" and _is_common_high_school_word(word):
+            continue
         rows.append(
             {
                 "word": word,
@@ -364,6 +383,8 @@ def extract_collocations(text: str, tokens: list[str], limit: int = 35) -> list[
         expression = " ".join(gram)
         if expression in existing:
             continue
+        if not _is_high_value_expression(expression, frequency, text, sentences):
+            continue
         rows.append(
             {
                 "expression": expression,
@@ -374,6 +395,7 @@ def extract_collocations(text: str, tokens: list[str], limit: int = 35) -> list[
                 "example_sentence": find_ngram_example(expression, sentences),
             }
         )
+    rows.sort(key=lambda item: (item["frequency"], item.get("importance", 0)), reverse=True)
     return rows[:limit]
 
 
@@ -431,6 +453,33 @@ def estimate_exam_value(
     score = 3.0 + min(domain_terms, 10) * 0.25 + min(len(polysemy), 10) * 0.35
     score += min(len(patterns), 10) * 0.2
     return round(min(score, 10.0), 1)
+
+
+def _is_common_high_school_word(word: str) -> bool:
+    if not zipf_frequency:
+        return False
+    if word in POLYSEMY_LEXICON:
+        return False
+    return zipf_frequency(word, "en") >= HIGH_SCHOOL_WORD_ZIPF_THRESHOLD
+
+
+def _is_high_value_expression(
+    expression: str, frequency: int, text: str, sentences: list[str]
+) -> bool:
+    if expression in HIGH_VALUE_PHRASES:
+        return True
+    if frequency >= 4:
+        return True
+    if " " not in expression:
+        return False
+    if zipf_frequency:
+        terms = [term for term in expression.split() if term]
+        if len(terms) >= 2 and any(zipf_frequency(term, "en") < 5.0 for term in terms):
+            return True
+    pattern = r"\b" + re.escape(expression) + r"\b"
+    if any(re.search(pattern, sentence.lower()) for sentence in sentences):
+        return len(expression.split()) >= 2 and len(expression) >= 10
+    return False
 
 
 def analyze_article(article: Article, llm_payload: dict[str, Any] | None = None) -> AnalysisResult:

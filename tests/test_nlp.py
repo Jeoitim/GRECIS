@@ -38,3 +38,22 @@ def test_extract_collocations_prioritizes_exam_phrases() -> None:
     by_expression = {row["expression"]: row for row in rows}
     assert by_expression["at issue"]["meaning"] == "争议焦点在于"
     assert by_expression["lead to"]["meaning"] == "导致；通向"
+
+
+def test_analyze_article_filters_common_high_school_words_from_vocab() -> None:
+    article = Article(
+        id="y",
+        title="Simple",
+        source="test",
+        text=" ".join(
+            [
+                "The issue is important because people can understand the policy and the result.",
+            ]
+            * 30
+        ),
+    )
+    result = analyze_article(article)
+    words = {item["word"] for item in result.word_frequencies}
+    assert "issue" in words
+    assert "people" not in words
+    assert "can" not in words

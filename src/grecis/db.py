@@ -188,19 +188,7 @@ class CorpusDB:
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                [
-                    (
-                        result.article_id,
-                        item["word"],
-                        item["lemma"],
-                        item["field"],
-                        item["category"],
-                        item["frequency"],
-                        item["importance"],
-                        item.get("example_sentence", ""),
-                    )
-                    for item in result.word_frequencies
-                ],
+                _unique_vocabulary_rows(result.article_id, result.word_frequencies, result.llm),
             )
             conn.executemany(
                 """
@@ -210,18 +198,16 @@ class CorpusDB:
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                [
-                    (
-                        result.article_id,
-                        item["expression"],
-                        item["type"],
-                        item["frequency"],
-                        item["importance"],
-                        item.get("meaning", ""),
-                        item.get("example_sentence", ""),
-                    )
-                    for item in result.collocations
-                ],
+                _unique_collocation_rows(result.article_id, result.collocations, result.llm),
+            )
+            conn.executemany(
+                """
+                INSERT INTO sentence_patterns (article_id, type, function, sentence, importance)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                _unique_sentence_pattern_rows(
+                    result.article_id, result.sentence_patterns, result.llm
+                ),
             )
             conn.executemany(
                 """
@@ -242,23 +228,6 @@ class CorpusDB:
                     for item in result.polysemy
                 ],
             )
-            conn.executemany(
-                """
-                INSERT INTO sentence_patterns (article_id, type, function, sentence, importance)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                [
-                    (
-                        result.article_id,
-                        item["type"],
-                        item["function"],
-                        item["sentence"],
-                        item["importance"],
-                    )
-                    for item in result.sentence_patterns
-                ],
-            )
-
     def fetch_report_rows(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
             articles = conn.execute(
@@ -285,6 +254,24 @@ class CorpusDB:
                     }
                 )
             return rows
+
+    def fetch_llm_rows(self) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT a.id AS article_id,
+                       a.source,
+                       a.url,
+                       a.published_at,
+                       a.metadata_json,
+                       an.llm_json
+                FROM articles a
+                JOIN analyses an ON an.article_id = a.id
+                WHERE an.llm_json IS NOT NULL AND an.llm_json != '{}'
+                ORDER BY a.created_at, a.id
+                """
+            ).fetchall()
+        return [dict(row) for row in rows]
 
     def aggregate_vocabulary(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -330,7 +317,16 @@ class CorpusDB:
                 ORDER BY frequency DESC, expression
                 """
             ).fetchall()
-        return [dict(row) for row in rows]
+        items = [dict(row) for row in rows]
+        items.sort(
+            key=lambda item: (
+                _collocation_priority(item),
+                item["frequency"],
+                item["importance"],
+            ),
+            reverse=True,
+        )
+        return items
 
     def aggregate_polysemy(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
@@ -419,6 +415,221 @@ class CorpusDB:
             metadata=json.loads(row["metadata_json"] or "{}"),
         )
 
+    @staticmethod
+    def _extract_llm_vocabulary(llm: dict[str, Any]) -> list[dict[str, Any]]:
+        payload = _normalize_llm_payload(llm)
+        rows: list[dict[str, Any]] = []
+        for item in payload.get("vocabulary", []):
+            if not isinstance(item, dict):
+                continue
+            lemma = str(item.get("lemma", "")).strip().lower()
+            if not lemma:
+                continue
+            importance = _llm_importance(item.get("exam_importance"))
+            category = _llm_category(item.get("exam_importance"), lemma)
+            if importance < 3 and category != "polysemy":
+                continue
+            rows.append(
+                {
+                    "word": lemma,
+                    "lemma": lemma,
+                    "field": _llm_field(item.get("estimated_level"), item.get("exam_importance")),
+                    "category": category,
+                    "frequency": _llm_frequency(item.get("exam_importance")),
+                    "importance": importance,
+                    "example_sentence": str(item.get("meaning_in_context", "")),
+                }
+            )
+        return rows
+
+    @staticmethod
+    def _extract_llm_collocations(llm: dict[str, Any]) -> list[dict[str, Any]]:
+        payload = _normalize_llm_payload(llm)
+        rows: list[dict[str, Any]] = []
+        for item in payload.get("vocabulary", []):
+            if not isinstance(item, dict):
+                continue
+            lemma = str(item.get("lemma", "")).strip().lower()
+            if not lemma or " " not in lemma:
+                continue
+            importance = _llm_importance(item.get("exam_importance"))
+            if importance < 3:
+                continue
+            rows.append(
+                {
+                    "expression": lemma,
+                    "type": "llm vocabulary phrase",
+                    "frequency": _llm_frequency(item.get("exam_importance")),
+                    "importance": importance,
+                    "meaning": str(item.get("meaning_in_context", "")),
+                    "example_sentence": str(item.get("meaning_in_context", "")),
+                }
+            )
+        return rows
+
+    @staticmethod
+    def _extract_llm_sentence_patterns(llm: dict[str, Any]) -> list[dict[str, Any]]:
+        payload = _normalize_llm_payload(llm)
+        rows: list[dict[str, Any]] = []
+        for item in payload.get("rhetoric", []):
+            if not isinstance(item, dict):
+                continue
+            sentence = str(item.get("original_sentence", "")).strip()
+            explanation = str(item.get("explanation", "")).strip()
+            if not sentence or not explanation:
+                continue
+            rows.append(
+                {
+                    "type": str(item.get("type", "llm rhetorical pattern")),
+                    "function": explanation,
+                    "sentence": sentence,
+                    "importance": 4,
+                }
+            )
+        return rows
+
+
+def _normalize_llm_payload(llm: dict[str, Any]) -> dict[str, Any]:
+    if not llm:
+        return {}
+    if isinstance(llm, str):
+        try:
+            parsed = json.loads(llm)
+        except json.JSONDecodeError:
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+    return llm if isinstance(llm, dict) else {}
+
+
+def _llm_importance(value: Any) -> int:
+    text = str(value or "").lower()
+    if text in {"high", "postgraduate"}:
+        return 5
+    if text in {"medium", "cet-6", "c1"}:
+        return 4
+    if text:
+        return 3
+    return 0
+
+
+def _llm_category(value: Any, lemma: str) -> str:
+    text = str(value or "").lower()
+    if "polysemy" in text:
+        return "polysemy"
+    if "idiom" in text or "expression" in text:
+        return "phrase"
+    if "legal" in text or "political" in text:
+        return "domain terminology"
+    if "academic" in text:
+        return "academic/general"
+    return "llm"
+
+
+def _llm_field(level: Any, importance: Any) -> str:
+    text = f"{level} {importance}".lower()
+    if "law" in text or "political" in text:
+        return "law"
+    if "econom" in text or "market" in text:
+        return "economics"
+    if "science" in text or "postgraduate" in text:
+        return "science"
+    if "environment" in text:
+        return "environment"
+    if "education" in text:
+        return "education"
+    if "psych" in text:
+        return "psychology"
+    if "soc" in text:
+        return "sociology"
+    return "unknown"
+
+
+def _llm_frequency(value: Any) -> int:
+    text = str(value or "").lower()
+    if text == "high":
+        return 5
+    if text == "medium":
+        return 3
+    if text == "low":
+        return 1
+    if text == "postgraduate":
+        return 4
+    if text == "cet-6":
+        return 3
+    return 2
+
+
+def _shorten_sentence(sentence: str, limit: int = 60) -> str:
+    text = sentence.strip()
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+
+def _unique_vocabulary_rows(
+    article_id: str, base_rows: list[dict[str, Any]], llm: dict[str, Any]
+) -> list[tuple[Any, ...]]:
+    merged: dict[tuple[str, str], dict[str, Any]] = {}
+    for item in base_rows:
+        merged[(item["lemma"], item["category"])] = item
+    for item in CorpusDB._extract_llm_vocabulary(llm):
+        merged.setdefault((item["lemma"], item["category"]), item)
+    return [
+        (
+            article_id,
+            item["word"],
+            item["lemma"],
+            item["field"],
+            item["category"],
+            item["frequency"],
+            item["importance"],
+            item.get("example_sentence", ""),
+        )
+        for item in merged.values()
+    ]
+
+
+def _unique_collocation_rows(
+    article_id: str, base_rows: list[dict[str, Any]], llm: dict[str, Any]
+) -> list[tuple[Any, ...]]:
+    merged: dict[str, dict[str, Any]] = {}
+    for item in base_rows:
+        merged[item["expression"]] = item
+    for item in CorpusDB._extract_llm_collocations(llm):
+        merged.setdefault(item["expression"], item)
+    return [
+        (
+            article_id,
+            item["expression"],
+            item["type"],
+            item["frequency"],
+            item["importance"],
+            item.get("meaning", ""),
+            item.get("example_sentence", ""),
+        )
+        for item in merged.values()
+    ]
+
+
+def _unique_sentence_pattern_rows(
+    article_id: str, base_rows: list[dict[str, Any]], llm: dict[str, Any]
+) -> list[tuple[Any, ...]]:
+    merged: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for item in base_rows:
+        merged[(item["type"], item["function"], item["sentence"])] = item
+    for item in CorpusDB._extract_llm_sentence_patterns(llm):
+        merged.setdefault((item["type"], item["function"], item["sentence"]), item)
+    return [
+        (
+            article_id,
+            item["type"],
+            item["function"],
+            item["sentence"],
+            item["importance"],
+        )
+        for item in merged.values()
+    ]
+
 
 def ensure_db(path: str | Path) -> CorpusDB:
     db = CorpusDB(path)
@@ -428,3 +639,27 @@ def ensure_db(path: str | Path) -> CorpusDB:
 
 def upsert_articles(db: CorpusDB, articles: Iterable[Article]) -> list[str]:
     return [db.upsert_article(article) for article in articles]
+
+
+def _collocation_priority(item: dict[str, Any]) -> tuple[int, int, int]:
+    expression = str(item.get("expression", ""))
+    if item.get("meaning"):
+        return (3, len(expression.split()), len(expression))
+    if item.get("type") in {
+        "legal/political expression",
+        "stance expression",
+        "argument expression",
+        "academic expression",
+        "causality expression",
+        "polysemy phrase",
+    }:
+        return (3, len(expression.split()), len(expression))
+    if item.get("type") == "3-gram":
+        return (2, len(expression.split()), len(expression))
+    if item.get("type") == "2-gram":
+        return (
+            1 if float(item.get("frequency", 0)) >= 4 else 0,
+            len(expression.split()),
+            len(expression),
+        )
+    return (1, len(expression.split()), len(expression))

@@ -7,7 +7,47 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+try:
+    from wordfreq import zipf_frequency
+except ImportError:  # pragma: no cover
+    zipf_frequency = None
+
 from .db import CorpusDB
+
+LOW_VALUE_EXPRESSIONS = {
+    "you can",
+    "she say",
+    "she said",
+    "you know",
+    "last year",
+    "last week",
+    "year ago",
+    "people who",
+    "those who",
+    "what you",
+    "what they",
+    "when they",
+    "when you",
+    "because they",
+    "how much",
+    "about how",
+    "said they",
+    "they can",
+    "they had",
+    "each other",
+}
+
+COMMON_PHRASE_WHITELIST = {
+    "account for",
+    "at issue",
+    "at stake",
+    "be subject to",
+    "make the case for",
+    "result in",
+    "take issue with",
+    "lead to",
+    "in effect",
+}
 
 
 def slugify(value: str) -> str:
@@ -185,6 +225,7 @@ def render_field_vocabulary(field: str, rows: list[dict[str, Any]]) -> str:
 
 
 def render_expressions(rows: list[dict[str, Any]]) -> str:
+    rows = [item for item in rows if is_exportable_expression(item)]
     return "\n".join(
         [
             "# Expressions",
@@ -207,6 +248,55 @@ def render_expressions(rows: list[dict[str, Any]]) -> str:
             "",
         ]
     )
+
+
+def is_exportable_expression(item: dict[str, Any]) -> bool:
+    expression = str(item.get("expression", ""))
+    normalized = expression.lower().strip()
+    if normalized in LOW_VALUE_EXPRESSIONS:
+        return False
+    expression_type = str(item.get("type", ""))
+    frequency = int(item.get("frequency") or 0)
+    article_count = int(item.get("article_count") or 0)
+    if normalized in COMMON_PHRASE_WHITELIST:
+        return True
+    if any(char.isdigit() for char in normalized):
+        return False
+    tokens = [token for token in normalized.split() if token]
+    if len(tokens) >= 2 and zipf_frequency:
+        token_scores = [zipf_frequency(token, "en") for token in tokens]
+        common_token_count = sum(score >= 5.5 for score in token_scores)
+        if expression_type == "2-gram":
+            if frequency >= 8 and article_count >= 2 and min(token_scores) < 5.2:
+                return True
+            if frequency >= 12 and article_count >= 4 and common_token_count < len(tokens):
+                return True
+            return False
+        if expression_type == "3-gram":
+            if frequency >= 4 and article_count >= 2 and min(token_scores) < 5.2:
+                return True
+            return False
+    if item.get("meaning"):
+        return expression_type not in {"2-gram", "3-gram"} and frequency >= 2
+    if expression_type == "2-gram":
+        return frequency >= 8 and article_count >= 2 and len(expression) >= 10
+    if expression_type == "3-gram":
+        return frequency >= 4 and article_count >= 2
+    return frequency >= 3
+
+
+def is_exportable_vocabulary(item: dict[str, Any]) -> bool:
+    word = str(item.get("word", "")).strip().lower()
+    category = str(item.get("category", ""))
+    if not word:
+        return False
+    if category == "polysemy":
+        return True
+    if word in {"can", "people", "thing", "make", "good", "big", "small"}:
+        return False
+    if zipf_frequency and zipf_frequency(word, "en") >= 5.5:
+        return False
+    return int(item.get("importance") or 0) >= 4 or int(item.get("article_count") or 0) >= 2
 
 
 def render_polysemy(rows: list[dict[str, Any]]) -> str:
