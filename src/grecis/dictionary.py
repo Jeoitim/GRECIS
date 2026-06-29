@@ -339,7 +339,12 @@ def fetch_from_llm(word: str) -> dict[str, str]:
             return {"phonetic": "", "zh": "", "en": "", "pos": ""}
             
         from openai import OpenAI
-        client = OpenAI(api_key=config.llm.api_key, base_url=config.llm.base_url or None)
+        client = OpenAI(
+            api_key=config.llm.api_key,
+            base_url=config.llm.base_url or None,
+            max_retries=0,
+            timeout=5.0
+        )
         
         prompt = (
             "You are a lexicographer helping Chinese postgraduate students prepare for English exams.\n"
@@ -408,10 +413,6 @@ def query_word(word: str) -> dict[str, str]:
                 "pos": ""  # Dictionary API usually doesn't have clean general POS
             }
             if entry_data["zh"] or entry_data["en"]:
-                # Try to populate POS from LLM if APIs succeed but POS is missing
-                llm_fallback = fetch_from_llm(word_key)
-                if llm_fallback and llm_fallback.get("pos"):
-                    entry_data["pos"] = llm_fallback["pos"]
                 cache[word_key] = entry_data
                 save_cache(cache)
                 return entry_data

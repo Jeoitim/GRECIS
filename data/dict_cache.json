@@ -12329,1780 +12329,1649 @@
     "zh": "零和对策，零和博弈（一方得益一方受损、两者得失相抵的情形）",
     "en": "a situation in which what is gained by one person or group is lost by another person or group"
   },
-  "fund": {
-    "phonetic": "/fʌnd/",
-    "zh": "基金；专款；资金；现款；（相当）数量；储备；为…提供资金；拨款给",
-    "en": "an amount of money that has been saved or has been made available for a particular purpose; money that is available to be spent; a company that manages money for people by investing it; the money managed by such a company; an amount or a supply of something; to provide money for something, usually something official",
-    "pos": "noun / verb"
+  "aberration": {
+    "phonetic": "/ˌæbəˈreɪʃn/",
+    "zh": "脱离常规；反常现象；异常行为",
+    "en": "a fact, an action or a way of behaving that is not usual, and that may be unacceptable"
   },
-  "program": {
-    "phonetic": "/ˈprəʊɡræm/",
-    "zh": "程序；编码指令；节目；计划；方案；活动安排；（演出或活动的）程序；节目单；演出介绍；（机器工作的）程序；（让人改变态度）按计划行事，做应该做的事；编写程序；计划；规划；安排；训练；培养",
-    "en": "a set of instructions in code that control the operations or functions of a computer; something that people watch on television or listen to on the radio; a plan of things that will be done or included in the development of something; a course of study; an organized order of performances or events; a thin book or piece of paper that gives you information about a play, a concert, etc.; a series of actions done by a machine, such as a washing machine; used to tell somebody that they should change their attitude and do what they are supposed to be doing; to give a computer, etc. a set of instructions to make it perform a particular task; to plan for something to happen, especially as part of a series of planned events; to make a person, an animal, etc. behave in a particular way, so that they do it without thinking about it; to give a machine instructions to do a particular task",
-    "pos": "noun / verb"
-  },
-  "higher": {
-    "phonetic": "/ˈhaɪə(r)/ | /ˈhaɪər/",
-    "zh": "高等级的；级别较高的；较重要的；（苏格兰）学生高级证书考试（旧时采用，应试年龄一般在 17 至 18 岁）",
-    "en": "at a more advanced level; greater in rank or importance than others; (in Scotland) an exam taken in a particular subject at a higher level than National 3, 4 and 5 qualifications. Highers are usually taken around the age of 17 to 18.",
-    "pos": "adjective / noun"
-  },
-  "emission": {
-    "phonetic": "/ɪˈmɪʃn/",
-    "zh": "（光、热、气等的）发出，射出，排放；排放物；散发物",
-    "en": "the production or sending out of light, heat, gas, etc.; gas, etc. that is sent out into the air",
-    "pos": "noun"
-  },
-  "fossil": {
-    "phonetic": "/ˈfɒsl/ | /ˈfɑːsl/",
-    "zh": "化石；老人；（尤指）老顽固，老古董",
-    "en": "the parts of a dead animal or a plant that have become hard and turned into rock; an old person, especially one who is unable to accept new ideas or adapt to changes",
-    "pos": "noun"
-  },
-  "device": {
-    "phonetic": "/dɪˈvaɪs/",
-    "zh": "装置；仪器；器具；设备；炸弹；爆炸性武器；爆炸装置；手段；策略；方法；技巧；花招；计谋；诡计；听任某人自行其是；对某人不加干涉",
-    "en": "an object or a piece of equipment that has been designed to do a particular job; a piece of computer equipment, especially a small one such as a smartphone; a bomb or weapon that will explode; a method of doing something that produces a particular result or effect; a plan or trick that is used to get something that somebody wants; a form of words that is intended to produce a particular effect in speech or writing; to leave somebody alone to do as they wish, and not tell them what to do",
-    "pos": "noun"
-  },
-  "dur": {
+  "about-face": {
     "phonetic": "",
-    "zh": "int. 唉（等于doh）; adj. 大调的，大音价的; n. （Dur）（奥地利、美、法）迪尔（...",
-    "en": "Major; in the major mode.",
-    "pos": ""
+    "zh": "态度或观点的彻底改变，大转变；about-face",
+    "en": "An is a complete change of attitude or opinion."
   },
-  "resident": {
-    "phonetic": "/ˈrezɪdənt/",
-    "zh": "居民；住户；（旅馆的）住宿者，旅客，房客；（美国的）高级专科住院实习医生；（在某地）居住的",
-    "en": "a person who lives in a particular place or who has their home there; a person who is staying in a hotel; a doctor working in a hospital in the US who is receiving special advanced training; living in a particular place",
-    "pos": "noun / adjective"
+  "abrasion": {
+    "phonetic": "/əˈbreɪʒn/",
+    "zh": "（皮肤、表皮）擦伤处；（表层）磨损处；磨损；磨蚀",
+    "en": "a damaged area of the skin where it has been rubbed against something hard and rough; damage to a surface caused by rubbing something very hard against it"
   },
-  "accountability": {
-    "phonetic": "/əˌkaʊntəˈbɪləti/",
-    "zh": "（对自己的决定、行为）负有责任，有说明义务",
-    "en": "the fact of being responsible for your decisions or actions and expected to explain them when you are asked",
-    "pos": "noun"
+  "absolve": {
+    "phonetic": "/əbˈzɒlv/ | /əbˈzɑːlv/ | /əbˈzɒlvz/ | /əbˈzɑːlvz/ | /əbˈzɒlvd/ | /əbˈzɑːlvd/ | /əbˈzɒlvɪŋ/ | /əbˈzɑːlvɪŋ/",
+    "zh": "宣告…无罪；判定…无责；赦免…的罪",
+    "en": "to state formally that somebody is not guilty or responsible for something; to give absolution to somebody"
   },
-  "threat": {
-    "phonetic": "/θret/",
-    "zh": "威胁；恐吓；凶兆；不祥之兆；构成威胁的人；形成威胁的事物",
-    "en": "a statement in which you tell somebody that you will punish or harm them, especially if they do not do what you want; the possibility of trouble, danger or disaster; a person or thing that is likely to cause trouble, danger, etc.",
-    "pos": "noun"
+  "abysmal": {
+    "phonetic": "/əˈbɪzməl/",
+    "zh": "极坏的；糟透的",
+    "en": "extremely bad or of a very low standard"
   },
-  "integrity": {
-    "phonetic": "/ɪnˈteɡrəti/",
-    "zh": "诚实正直；完整；完好",
-    "en": "the quality of being honest and having strong moral principles; the state of being whole and not divided",
-    "pos": "noun"
+  "acting": {
+    "phonetic": "/ˈæktɪŋ/",
+    "zh": "（戏剧、电影等中的）表演；演艺业；临时代理的",
+    "en": "the activity or profession of performing in plays, films, etc.; doing the work of another person for a short time"
   },
-  "educational": {
-    "phonetic": "/ˌedʒuˈkeɪʃənl/",
-    "zh": "教育的；有关教育的；有教育意义的",
-    "en": "connected with education; providing education",
-    "pos": "adjective"
+  "acutely": {
+    "phonetic": "/əˈkjuːtli/",
+    "zh": "深深感觉到；强烈意识到；（描述不快的感觉）极其，强烈地；严重地；危险地",
+    "en": "noticing or feeling something very strongly; (describing unpleasant feelings) very; very strongly; to a severe and dangerous degree"
   },
-  "humanity": {
-    "phonetic": "/hjuːˈmænəti/",
-    "zh": "（统称）人；人类；人性；人道；仁慈；人文学科",
-    "en": "people in general; the state of being a person rather than a god, an animal or a machine; the quality of being kind to people and animals by making sure that they do not suffer more than is necessary; the quality of being humane; the subjects of study that are about the way people think and behave, for example literature, language, history and philosophy",
-    "pos": "noun"
-  },
-  "solution": {
-    "phonetic": "/səˈluːʃn/",
-    "zh": "解决办法；处理手段；答案；解；谜底；溶液；溶解（过程）",
-    "en": "a way of solving a problem or dealing with a difficult situation; an answer to a puzzle or to a problem in mathematics; a liquid in which something is dissolved (= mixed in so that it forms part of the liquid); the process of dissolving a solid or gas in a liquid",
-    "pos": "noun"
-  },
-  "air-condition": {
+  "aesthetics": {
     "phonetic": "",
-    "zh": "v. 用空调调节；给..……装上空调",
-    "en": "To mechanically cool a space or an entire structure.",
-    "pos": ""
+    "zh": "(审) 美学",
+    "en": "is a branch of philosophy concerned with the study of the idea of beauty."
   },
-  "specy": {
+  "affluent": {
+    "phonetic": "/ˈæfluənt/",
+    "zh": "富裕的",
+    "en": "having a lot of money and a good standard of living"
+  },
+  "aftermath": {
+    "phonetic": "/ˈɑːftəmæθ/ | /ˈɑːftəmɑːθ/ | /ˈæftərmæθ/",
+    "zh": "（战争、事故、不快事情的）后果，创伤",
+    "en": "the situation that exists as a result of an important (and usually unpleasant) event, especially a war, an accident, etc."
+  },
+  "airtight": {
+    "phonetic": "/ˈeətaɪt/ | /ˈertaɪt/",
+    "zh": "密封的；不透气的",
+    "en": "not allowing air to get in or out"
+  },
+  "akin": {
+    "phonetic": "/əˈkɪn/",
+    "zh": "相似的；类似的",
+    "en": "similar to something"
+  },
+  "alignment": {
+    "phonetic": "/əˈlaɪnmənt/",
+    "zh": "排成直线；（国家、团体间的）结盟",
+    "en": "arrangement in a straight line; political support given to one country or group by another"
+  },
+  "allegiance": {
+    "phonetic": "/əˈliːdʒəns/",
+    "zh": "（对政党、宗教、统治者的）忠诚，效忠，拥戴",
+    "en": "a person’s continued support for a political party, religion, leader, etc."
+  },
+  "amenable": {
+    "phonetic": "/əˈmiːnəbl/ | /əˈmenəbl/",
+    "zh": "顺从的；顺服的；可用某种方式处理的",
+    "en": "easy to control; willing to be influenced by somebody/something; that you can treat in a particular way"
+  },
+  "amend": {
+    "phonetic": "/əˈmend/ | /əˈmendz/ | /əˈmendɪd/ | /əˈmendɪŋ/",
+    "zh": "修正，修订（法律、文件、声明等）",
+    "en": "to change a law, document, statement, etc. slightly in order to correct a mistake or to improve it"
+  },
+  "antagonistic": {
+    "phonetic": "/ænˌtæɡəˈnɪstɪk/",
+    "zh": "对立情绪的；对抗的；敌对的；敌意的",
+    "en": "showing or feeling opposition"
+  },
+  "appease": {
+    "phonetic": "/əˈpiːz/ | /əˈpiːzɪz/ | /əˈpiːzd/ | /əˈpiːzɪŋ/",
+    "zh": "安抚；抚慰；绥靖（满足另一国的要求以避免战争）",
+    "en": "to make somebody calmer or less angry by giving them what they want; to give a country what it wants in order to avoid war"
+  },
+  "appreciable": {
+    "phonetic": "/əˈpriːʃəbl/",
+    "zh": "（大得）可以觉察到的，足以认为重要的；可观的",
+    "en": "large enough to be noticed or thought important"
+  },
+  "apprehension": {
+    "phonetic": "/ˌæprɪˈhenʃn/",
+    "zh": "忧虑；担心；疑惧；恐惧；逮捕；拘押",
+    "en": "worry or fear that something unpleasant may happen; the act of capturing or arresting somebody, usually by the police"
+  },
+  "arable": {
+    "phonetic": "/ˈærəbl/",
+    "zh": "耕作的；可耕的",
+    "en": "connected with growing crops such as wheat"
+  },
+  "archipelago": {
+    "phonetic": "/ˌɑːkɪˈpeləɡəʊ/ | /ˌɑːrkɪˈpeləɡəʊ/",
+    "zh": "群岛；列岛",
+    "en": "a group of islands and the sea surrounding them"
+  },
+  "arguably": {
+    "phonetic": "/ˈɑːɡjuəbli/ | /ˈɑːrɡjuəbli/",
+    "zh": "（常用于形容词比较级或最高级前）可论证地，按理",
+    "en": "used (often before a comparative or superlative adjective) when you are stating an opinion that you believe you could give reasons to support"
+  },
+  "aspirational": {
+    "phonetic": "/ˌæspəˈreɪʃənl/",
+    "zh": "渴望成功的；一心想提高社会地位和生活水平的",
+    "en": "wanting very much to achieve success in your career or to improve your social status and standard of living; an aspirational goal or target is very ambitious and may be more than you can achieve, but is set in order to encourage you to try harder and achieve more"
+  },
+  "atrium": {
+    "phonetic": "/ˈeɪtriəm/ | /ˈeɪtriə/",
+    "zh": "（现代建筑物中央通常带有玻璃屋顶的）中庭，中厅；（古罗马大宅的）天井；心房",
+    "en": "a large high space, usually with a glass roof, in the centre of a modern building; an open space in the centre of an ancient Roman villa (= a large house); either of the two upper spaces in the heart that are used in the first stage of sending the blood around the body"
+  },
+  "automatic pilot": {
+    "phonetic": "/ˌɔːtəmætɪk ˈpaɪlət/",
+    "zh": "（飞机的）自动驾驶仪；（船的）自动操舵装置；习惯性地做；机械性地做",
+    "en": "a device in an aircraft or a ship that keeps it on a fixed course without the need for a person to control it; to do something without thinking because you have done the same thing many times before"
+  },
+  "avalanche": {
+    "phonetic": "/ˈævəlɑːnʃ/ | /ˈævəlæntʃ/",
+    "zh": "雪崩；山崩；崩塌",
+    "en": "a mass of snow, ice and rock that falls down the side of a mountain"
+  },
+  "backbone": {
+    "phonetic": "/ˈbækbəʊn/",
+    "zh": "脊梁骨；脊柱；支柱；骨干；基础；毅力；骨气",
+    "en": "the row of small bones that are connected together down the middle of the back; the most important part of a system, an organization, etc. that gives it support and strength; the strength of character that you need to do something difficult"
+  },
+  "backdrop": {
+    "phonetic": "/ˈbækdrɒp/ | /ˈbækdrɑːp/",
+    "zh": "（事件发生时）周围陪衬景物；（事态或活动的）背景；（舞台的）背景幕布",
+    "en": "everything that can be seen around an event or scene; the general conditions in which an event takes place, which sometimes help to explain that event; a painted piece of cloth that is hung behind the stage in a theatre as part of the scenery"
+  },
+  "backfire": {
+    "phonetic": "/ˌbækˈfaɪə(r)/ | /ˌbækˈfaɪər/ | /ˌbækˈfaɪəz/ | /ˌbækˈfaɪərz/ | /ˌbækˈfaɪəd/ | /ˌbækˈfaɪərd/ | /ˌbækˈfaɪərɪŋ/",
+    "zh": "产生事与愿违的不良（或危险）后果；逆火；回火",
+    "en": "to have the opposite effect to the one intended, with bad or dangerous results; to make a sudden noise like an explosion"
+  },
+  "backlog": {
+    "phonetic": "/ˈbæklɒɡ/ | /ˈbæklɔːɡ/",
+    "zh": "积压的工作",
+    "en": "a quantity of work that should have been done already, but has not yet been done"
+  },
+  "backstop": {
+    "phonetic": "/ˈbækstɒp/ | /ˈbækstɑːp/",
+    "zh": "体育；挡块：用于阻止球进入比赛区域的围栏或屏幕；他的一些投球命中率很高。；后挡板：站在击球者后面并在没有击中球的情况下将球接住的球员（1）；支撑：为了防止出现错误而导致的更严重的问题，预先完成或准备的事情；该国需要财政支持来应对银行倒闭。",
+    "en": "a fence or screen used to stop balls from going outside the playing area; the player who stands behind the person who is batting and catches the ball if he or she does not hit it; something that is done or prepared in advance in order to prevent worse problems if something goes wrong"
+  },
+  "balancing act": {
+    "phonetic": "/ˈbælənsɪŋ ækt/",
+    "zh": "平衡各方权益的行动",
+    "en": "a process in which somebody tries to please two or more people or groups who want different things"
+  },
+  "bandwidth": {
+    "phonetic": "/ˈbændwɪdθ/ | /ˈbændwɪtθ/",
+    "zh": "带宽；频宽；带宽值，频宽值（计算机网络或互联网接口一定时间内传送信息量的量度，按每秒传送的字节数计）",
+    "en": "a band of frequencies used for sending electronic signals; a measurement of the amount of information that a particular computer network or internet connection can send in a particular time. It is often measured in bits per second.; the energy or capacity that you need to do something"
+  },
+  "banner year": {
+    "phonetic": "/ˌbænə ˈjɪə(r)/ | /ˌbænə ˈjɜː(r)/ | /ˌbænər ˈjɪr/",
+    "zh": "辉煌的一年",
+    "en": "a year in which something is especially successful"
+  },
+  "barb": {
+    "phonetic": "/bɑːb/ | /bɑːrb/",
+    "zh": "（箭、钩的）倒钩，倒刺；挖苦（或伤人、带刺）的话",
+    "en": "the point of an arrow or a hook that is curved backwards to make it difficult to pull out; a remark that is meant to hurt somebody’s feelings"
+  },
+  "bargaining chip": {
+    "phonetic": "/ˈbɑːɡənɪŋ tʃɪp/ | /ˈbɑːrɡənɪŋ tʃɪp/",
+    "zh": "讨价还价的筹码；谈判中的有利条件",
+    "en": "a fact or a thing that a person or a group of people can use to get an advantage for themselves when they are trying to reach an agreement with another group"
+  },
+  "bargaining power": {
+    "phonetic": "/ˈbɑːɡənɪŋ paʊə(r)/ | /ˈbɑːrɡənɪŋ paʊər/",
+    "zh": "（谈判中一方的）讨价还价的能力",
+    "en": "the amount of control a person or group has when trying to reach an agreement with another group in a business or political situation"
+  },
+  "barrage": {
+    "phonetic": "/ˈbærɑːʒ/ | /bəˈrɑːʒ/",
+    "zh": "火力网；弹幕射击；（尤指）掩护炮火；接二连三的一大堆（质问或指责等）；堰；水坝；拦河坝",
+    "en": "the continuous firing of a large number of guns in a particular direction, especially to protect soldiers while they are attacking or moving towards the enemy; a large number of something, such as questions or comments, that are directed at somebody very quickly, one after the other, often in an aggressive way; a wall or barrier built across a river to store water, prevent a flood, etc."
+  },
+  "beacon": {
+    "phonetic": "/ˈbiːkən/",
+    "zh": "（指引车船等的）灯标，灯塔，立标；（导航）无线电信标台；（旧时）烽火",
+    "en": "a light that is placed somewhere to guide vehicles and warn them of danger; a radio station whose signal helps ships and aircraft to find their position; (in the past) a fire lit on top of a hill as a signal"
+  },
+  "bear out": {
     "phonetic": "",
-    "zh": "adj. 明确的，具体的；特定的；特有的，独特的；有特殊功能的，有特效的；（生物）种的；（关税，税）...",
-    "en": "",
-    "pos": ""
+    "zh": "证实；为…作证",
+    "en": "to show that somebody is right or that something is true"
   },
-  "heatwave": {
-    "phonetic": "/ˈhiːtweɪv/",
-    "zh": "酷热期；热浪",
-    "en": "a period of unusually hot weather",
-    "pos": "noun"
+  "becoming": {
+    "phonetic": "/bɪˈkʌmɪŋ/",
+    "zh": "相配的；合身的；合适的；与…相称的",
+    "en": "making the person wearing them look more attractive; suitable or appropriate for somebody or their situation"
   },
-  "moratorium": {
-    "phonetic": "/ˌmɒrəˈtɔːriəm/ | /ˌmɔːrəˈtɔːriəm/ | /ˌmɒrəˈtɔːriə/ | /ˌmɔːrəˈtɔːriə/",
-    "zh": "暂停，中止（尤指经官方同意的）",
-    "en": "a temporary stopping of an activity, especially by official agreement",
-    "pos": "noun"
-  },
-  "liv": {
-    "phonetic": "/lɪv/",
-    "zh": "女孩的名字，Olivia的缩写",
-    "en": "a first name for girls, short for Olivia",
-    "pos": ""
-  },
-  "tak": {
+  "beef up": {
     "phonetic": "",
-    "zh": "v. 携带，拿走；带去，引领；使达到，提升；拿，取；移走，拿开；偷走，误拿；取材于，收集；攻占，控制...",
-    "en": "",
-    "pos": ""
+    "zh": "使更大（或更好、更有意思等）",
+    "en": "to make something bigger, better, more interesting, etc."
   },
-  "cultural": {
-    "phonetic": "/ˈkʌltʃərəl/",
-    "zh": "与文化有关的；文化的；与艺术、文学、音乐等有关的",
-    "en": "connected with the culture of a particular society or group, its customs, beliefs, etc.; connected with art, literature, music, etc.",
-    "pos": "adjective"
+  "benign": {
+    "phonetic": "/bɪˈnaɪn/",
+    "zh": "善良的；和善的；慈祥的；无害的；良性的",
+    "en": "kind and gentle; not hurting anybody; not causing damage or harm; not dangerous or likely to cause death"
   },
-  "career": {
-    "phonetic": "/kəˈrɪə(r)/ | /kəˈrɪr/",
-    "zh": "生涯；职业；经历；事业；（尤指失控地）猛冲，疾驰，飞奔",
-    "en": "the series of jobs that a person has in a particular area of work, usually involving more responsibility as time passes; the period of time that you spend in your life working or doing a particular thing; to move forward very quickly, especially in a way that shows a loss of control",
-    "pos": "noun / verb"
+  "bereft": {
+    "phonetic": "/bɪˈreft/",
+    "zh": "完全没有，丧失，失去（某物）；感到失落",
+    "en": "completely without something; having lost something; sad and lonely because you have lost something"
   },
-  "gap": {
-    "phonetic": "/ɡæp/",
-    "zh": "缺口；空白；漏洞；开口；豁口；缺口；裂口；间断；间隔；间隙；分歧；隔阂；差距",
-    "en": "a space where something is missing; a space between two things or in the middle of something, especially because there is a part missing; a period of time when something stops, or between two events; a difference that separates people, or their opinions, situation, etc.",
-    "pos": "noun"
+  "best practice": {
+    "phonetic": "/ˌbest ˈpræktɪs/",
+    "zh": "（公司或机构的）最佳实践，最佳做法",
+    "en": "a way of doing something that is seen as a very good example of how it should be done and can be copied by other companies or organizations"
   },
-  "ritual": {
-    "phonetic": "/ˈrɪtʃuəl/",
-    "zh": "程序；仪规；礼节；（尤指）宗教仪式；习惯；老规矩；仪式上的；庆典的；习惯的；老套的；例行公事的",
-    "en": "a series of actions that are always performed in the same way, especially as part of a religious ceremony; something that is done regularly and always in the same way; done as part of a ritual or ceremony; always done or said in the same way, especially when this is not sincere",
-    "pos": "noun / adjective"
+  "bilateral": {
+    "phonetic": "/ˌbaɪˈlætərəl/",
+    "zh": "双方的；双边的；（身体部位）双侧的，对称的；（大脑）两半球的",
+    "en": "involving two groups of people or two countries; involving both of two parts or sides of the body or brain"
   },
-  "affidavit": {
-    "phonetic": "/ˌæfəˈdeɪvɪt/",
-    "zh": "宣誓书；宣誓陈述书",
-    "en": "a written statement that you swear is true, and that can be used as evidence in court",
-    "pos": "noun"
+  "bile": {
+    "phonetic": "/baɪl/",
+    "zh": "胆汁；愤怒；憎恨",
+    "en": "the green-brown liquid with a bitter unpleasant taste that is produced by the liver to help the body to deal with the fats we eat, and that can come into your mouth when you vomit with an empty stomach; a strong feeling of anger or hating somebody/something"
   },
-  "county": {
-    "phonetic": "/ˈkaʊnti/",
-    "zh": "（英国、爱尔兰的）郡；（美国的）县；典型英格兰上流社会人物的；世家子弟的",
-    "en": "one of a number of areas that some countries are divided into, each with its own local government; typical of English upper-class people",
-    "pos": "noun / adjective"
+  "biodegradable": {
+    "phonetic": "/ˌbaɪəʊdɪˈɡreɪdəbl/",
+    "zh": "可生物降解的",
+    "en": "a substance or chemical that is biodegradable can be changed by the action of bacteria to a natural state that will not harm the environment"
   },
-  "programme": {
-    "phonetic": "/ˈprəʊɡræm/",
-    "zh": "节目；计划；方案；活动安排；课程；（演出或活动的）程序；节目单；演出介绍；（机器工作的）程序；（让人改变态度）按计划行事，做应该做的事；计划；规划；安排；训练；培养；预调；预设",
-    "en": "something that people watch on television or listen to on the radio; a plan of things that will be done or included in the development of something; a course of study; an organized order of performances or events; a thin book or a piece of paper that gives you information about a play, a concert, etc.; a series of actions done by a machine, such as a washing machine; used to tell somebody that they should change their attitude and do what they are supposed to be doing; to plan for something to happen, especially as part of a series of planned events; to make a person, an animal, etc. behave in a particular way, so that they do it without thinking about it; to give a machine instructions to do a particular task",
-    "pos": "noun / verb"
+  "blind spot": {
+    "phonetic": "/ˈblaɪnd spɒt/ | /ˈblaɪnd spɑːt/",
+    "zh": "视线盲区（尤指车辆驾驶员看不见的路段）；无视；没有认识；（视网膜的）盲点；（无线电）盲区，静区",
+    "en": "an area that somebody cannot see, especially an area of the road when they are driving a car; if somebody has a blind spot about something, they ignore it or they are unwilling or unable to understand it; the part of the retina in the eye that is not sensitive to light; an area where a radio signal cannot be received"
   },
-  "writ": {
-    "phonetic": "/rɪt/",
-    "zh": "（法庭的）令状，书面命令；显而易见的；公然；明摆着；典型",
-    "en": "a legal document from a court telling somebody to do or not to do something; easy to see or understand; being a large or obvious example of the thing mentioned",
-    "pos": "noun / verb"
+  "blockbuster": {
+    "phonetic": "/ˈblɒkbʌstə(r)/ | /ˈblɑːkbʌstər/",
+    "zh": "一鸣惊人的事物；（尤指）非常成功的书（或电影）",
+    "en": "something very successful, especially a very successful book or film"
   },
-  "recovery": {
-    "phonetic": "/rɪˈkʌvəri/",
-    "zh": "恢复；痊愈；改善；回升；复苏；取回；收回；复得；（供刚做完手术的病人使用的）监护室",
-    "en": "the process of becoming well again after an illness or injury; the process of improving or becoming stronger again; the action or process of getting something back that has been lost or stolen; the room in a hospital where patients are kept immediately after an operation",
-    "pos": "noun"
+  "blowback": {
+    "phonetic": "/ˈbləʊbæk/",
+    "zh": "反吹；回吹；逆吹；违背初衷的结果",
+    "en": "a process in which gases expand or travel in a direction that is opposite to the usual one; the results of a political action or situation that are not what was intended or wanted"
   },
-  "dementia": {
-    "phonetic": "/dɪˈmenʃə/",
-    "zh": "痴呆",
-    "en": "a serious mental disorder caused by brain disease or injury, that affects the ability to think, remember and behave normally",
-    "pos": "noun"
+  "blue-chip": {
+    "phonetic": "/ˌbluː ˈtʃɪp/",
+    "zh": "（投资）稳妥可靠的；蓝筹的",
+    "en": "a blue-chip investment is thought to be safe and likely to make a profit"
   },
-  "didn": {
+  "body mass index": {
+    "phonetic": "/ˈbɒdi mæs ɪndeks/ | /ˈbɑːdi mæs ɪndeks/",
+    "zh": "体重指数；身体质量指数",
+    "en": "a measure of whether somebody weighs too much or too little, calculated by dividing their weight in kilograms by their height in metres squared"
+  },
+  "bohemian": {
+    "phonetic": "/bəʊˈhiːmiən/",
+    "zh": "行为举止不拘泥成规者；放荡不羁的艺术家",
+    "en": "a person, often somebody who is involved with the arts, who lives in a very informal way without following accepted rules of behaviour; living in a very informal way without following accepted rules of behaviour, and often involved in the arts"
+  },
+  "bombshell": {
+    "phonetic": "/ˈbɒmʃel/ | /ˈbɑːmʃel/",
+    "zh": "出乎意料的事情，意外消息（常指不幸）；金发美女",
+    "en": "an event or a piece of news which is unexpected and usually unpleasant; a very attractive woman with blonde hair"
+  },
+  "brace": {
+    "phonetic": "/breɪs/",
+    "zh": "箍子；夹子；支架；（儿童）牙箍；吊裤带；背带；双脚规形夹（支撑无力或受伤的腿的金属支架）；大括弧；大括号；猎获的一对鸟（或兽）；双管齐下；多重保障；（为困难或坏事）使做准备；使防备；使（身体或身体部位）顶住，抵住（以免跌倒等）；（做费劲的事之前）绷紧肌肉；加强；加固",
+    "en": "a device that holds things together or holds and supports them in position; a metal device that people, especially children, wear inside the mouth to help their teeth grow straight; long narrow pieces of cloth, leather, etc. for holding trousers up. They are fastened to the top of the trousers at the front and back and passed over the shoulders.; a metal support for weak or injured legs; either of the two marks, { }, used to show that the words, etc. between them are connected; a pair of birds or animals that have been killed in hunting; taking more actions than are really necessary to make sure that something succeeds or works as it should; to prepare somebody/yourself for something difficult or unpleasant that is going to happen; to press your body or part of your body strongly against something in order to stop yourself from falling; to contract the muscles in your body or part of your body before doing something that is physically difficult; to make something stronger or more solid by supporting it with something"
+  },
+  "brain drain": {
+    "phonetic": "/ˈbreɪn dreɪn/",
+    "zh": "（国家的）人才流失",
+    "en": "the movement of highly skilled and qualified people to a country where they can work in better conditions and earn more money"
+  },
+  "breathing room": {
+    "phonetic": "/ˈbriːðɪŋ ruːm/ | /ˈbriːðɪŋ rʊm/",
+    "zh": "短暂休息；喘息时间",
+    "en": "a short rest in the middle of a period of mental or physical effort; enough space to breathe comfortably"
+  },
+  "bring about": {
     "phonetic": "",
-    "zh": "aux. did not 的缩写",
-    "en": "",
-    "pos": ""
+    "zh": "导致；引起",
+    "en": "to make something happen"
   },
-  "proposal": {
-    "phonetic": "/prəˈpəʊzl/",
-    "zh": "提议；建议；动议；求婚",
-    "en": "a formal suggestion or plan; the act of making a suggestion; an act of formally asking somebody to marry you",
-    "pos": "noun"
+  "buckle": {
+    "phonetic": "/ˈbʌkl/ | /ˈbʌklz/ | /ˈbʌkld/ | /ˈbʌklɪŋ/",
+    "zh": "（使）搭扣扣住；（被）压垮，压弯；双腿发软；（皮带等的）搭扣，锁扣",
+    "en": "to fasten something or be fastened with a buckle; to become bent, damaged or broken under a weight or force; to bend, damage or break something in this way; when your knees or legs buckle or when you buckle at the knees, your knees become weak and you start to fall; a piece of metal or plastic used for joining the ends of a belt or for fastening a part of a bag, shoe, etc."
   },
-  "provider": {
-    "phonetic": "/prəˈvaɪdə(r)/ | /prəˈvaɪdər/",
-    "zh": "供应者；提供者；供养人",
-    "en": "a person or an organization that supplies somebody with something they need or want",
-    "pos": "noun"
+  "budge": {
+    "phonetic": "/bʌdʒ/ | /ˈbʌdʒɪz/ | /bʌdʒd/ | /ˈbʌdʒɪŋ/",
+    "zh": "（使）轻微移动，挪动；（使）改变主意，改变观点",
+    "en": "to move slightly; to make something/somebody move slightly; to change your opinion about something; to make somebody change their opinion"
   },
-  "cooler": {
-    "phonetic": "/ˈkuːlə(r)/ | /ˈkuːlər/",
-    "zh": "冷却器；冷藏器；（通常有冰和酒的）清凉饮料",
-    "en": "a machine that cools things, especially drinks; a container that keeps things cold, especially drinks; a drink with ice and usually wine in it",
-    "pos": "noun"
+  "buoy": {
+    "phonetic": "/bɔɪ/ | /ˈbuːi/",
+    "zh": "浮标；航标；鼓舞；鼓励；使漂浮；使浮起；使（价格）上浮；使（价格）维持于较高水平",
+    "en": "an object which floats on the sea or a river to mark the places where it is dangerous and where it is safe for boats to go; to make somebody feel cheerful or confident; to keep somebody/something floating on water; to keep prices at a high or acceptable level"
   },
-  "heritage": {
-    "phonetic": "/ˈherɪtɪdʒ/",
-    "zh": "遗产（指国家或社会长期形成的历史、传统和特色）",
-    "en": "the history, traditions, buildings and objects that a country or society has had for many years and that are considered an important part of its character; used to describe a traditional product, brand, type of animal or plant variety, especially one that is old-fashioned, rare and of high quality",
-    "pos": "noun"
+  "bureaucracy": {
+    "phonetic": "/bjʊəˈrɒkrəsi/ | /bjʊˈrɑːkrəsi/",
+    "zh": "官僚主义；官僚作风；官僚体制；实行官僚体制的国家",
+    "en": "the system of official rules and ways of doing things that a government or an organization has, especially when these seem to be too complicated; a system of government in which there are a large number of state officials who are not elected; a country with such a system"
   },
-  "wildfire": {
-    "phonetic": "/ˈwaɪldfaɪə(r)/ | /ˈwaɪldfaɪər/",
-    "zh": "像野火般蔓延；迅速传开",
-    "en": "a very big fire that spreads quickly and burns natural areas like woods, forests and grassland; to become known by more and more people very quickly",
-    "pos": "noun"
+  "burgeoning": {
+    "phonetic": "/ˈbɜːdʒənɪŋ/ | /ˈbɜːrdʒənɪŋ/",
+    "zh": "激增；迅速发展",
+    "en": "beginning to grow or develop rapidly"
   },
-  "route": {
-    "phonetic": "/ruːt/ | /raʊt/",
-    "zh": "路线；路途；（公共汽车和列车等的）常规路线，固定线路；途径；渠道；（用于美国干线公路号码前）；按某路线发送",
-    "en": "a way that you follow to get from one place to another; a fixed way along which a bus, train, etc. regularly travels or goods are regularly sent; a particular way of achieving something; used before the number of a main road in the US; to send somebody/something by a particular route",
-    "pos": "noun / verb"
+  "buzz": {
+    "phonetic": "/bʌz/ | /ˈbʌzɪz/ | /bʌzd/ | /ˈbʌzɪŋ/",
+    "zh": "发出嗡嗡声；发出蜂鸣声；充满兴奋（或活动等）；用蜂鸣器（发信号）；飞近（尤指作为警告或威胁）；嗡嗡声；蜂鸣声；唧唧喳喳的谈话声；（愉快、兴奋或成就的）强烈情感；传闻；谣传；给某人打电话",
+    "en": "to make a continuous low sound; to make a sound like a bee buzzing; to be full of excitement, activity, etc.; to call somebody to come by pressing a buzzer; to fly very close to somebody/something, especially as a warning or threat; a continuous sound like the one that a bee, a buzzer or other electronic device makes; the sound of people talking, especially in an excited way; a strong feeling of pleasure, excitement or achievement; news that people tell each other that may or may not be true; to phone somebody"
   },
-  "individual": {
-    "phonetic": "/ˌɪndɪˈvɪdʒuəl/",
-    "zh": "个人；某种类型的人；（尤指）古怪的人；与众不同的人；有个性的人；单独的；个别的；一个人的；供一人用的；独特的；与众不同的",
-    "en": "a person considered separately rather than as part of a group; a single member of a class of things; a person who is original and very different from others; a person of a particular type, especially a strange one; considered separately rather than as part of a group; connected with one person; designed for one person; typical of one particular person or thing in a way that is different from others",
-    "pos": "noun / adjective"
+  "camaraderie": {
+    "phonetic": "/ˌkæməˈrɑːdəri/ | /ˌkɑːməˈrɑːdəri/",
+    "zh": "同事情谊；友情",
+    "en": "a feeling of friendship and trust among people who work or spend a lot of time together"
   },
-  "recession": {
-    "phonetic": "/rɪˈseʃn/",
-    "zh": "经济衰退；经济萎缩；退后；撤回",
-    "en": "a difficult time for the economy of a country, when there is less trade and industrial activity than usual and more people are unemployed; the movement backwards of something from a previous position",
-    "pos": "noun"
+  "carbon footprint": {
+    "phonetic": "/ˌkɑːbən ˈfʊtprɪnt/ | /ˌkɑːrbən ˈfʊtprɪnt/",
+    "zh": "碳足迹（日常活动所产生的碳排放量的量度方式）",
+    "en": "a measure of the amount of carbon dioxide that is produced by the activities of a person or company"
   },
-  "enrollment": {
+  "carcinogen": {
+    "phonetic": "/kɑːˈsɪnədʒən/ | /kɑːrˈsɪnədʒən/",
+    "zh": "致癌物",
+    "en": "a substance that can cause cancer"
+  },
+  "caste": {
+    "phonetic": "/kɑːst/ | /kæst/",
+    "zh": "（印度教的四大）种姓；（尤指禁止其他等级成员进入的）社会阶层，社会等级；社会等级制度",
+    "en": "any of the four main divisions of Hindu society, originally those made according to functions in society; a social class, especially one whose members do not allow others to join it; the system of dividing society into classes based on differences in family origin, rank or wealth"
+  },
+  "casualty": {
+    "phonetic": "/ˈkæʒuəlti/",
+    "zh": "（战争或事故的）伤员，亡者，遇难者；受害者；毁坏物；损坏物；急诊室",
+    "en": "a person who is killed or injured in war or in an accident; a person who suffers or a thing that is destroyed when something else takes place; the part of a hospital where people who need immediate treatment are taken; a popular British television soap opera, set in a hospital. It has been broadcast regularly by the BBC since 1986."
+  },
+  "catalyst": {
+    "phonetic": "/ˈkætəlɪst/",
+    "zh": "催化剂；促使变化的人；引发变化的因素",
+    "en": "a substance that makes a chemical reaction happen faster without being changed itself; a person or thing that causes a change"
+  },
+  "catch-all": {
+    "phonetic": "/ˈkætʃ ɔːl/ | /ˈketʃ ɔːl/",
+    "zh": "装杂物的容器；放杂物的东西；笼统的一类（或描述）",
+    "en": "a thing for holding many small objects; a group or description that includes different things and that does not state clearly what is included or not; including several different things without stating clearly what is included or not"
+  },
+  "cater to": {
     "phonetic": "",
-    "zh": "n. 登记；入伍",
-    "en": "The act of enrolling or the state of being enrolled.",
-    "pos": ""
+    "zh": "满足需要；迎合",
+    "en": "to provide the things that a particular type of person wants, especially things that you do not approve of"
   },
-  "critical": {
-    "phonetic": "/ˈkrɪtɪkl/",
-    "zh": "批评的；批判性的；挑剔的；极重要的；关键的；至关紧要的；安危攸关的；危急的；有判断力的；判断公正（或审慎）的；根据（艺术、音乐、文学等）评论家的",
-    "en": "saying what you think is bad about somebody/something; extremely important because a future situation will be affected by it; serious, uncertain and possibly dangerous; involving making fair, careful judgements about the good and bad qualities of somebody/something; according to the judgement of critics of art, music, literature, etc.",
-    "pos": "adjective"
-  },
-  "feature": {
-    "phonetic": "/ˈfiːtʃə(r)/ | /ˈfiːtʃər/",
-    "zh": "特色；特征；特点；面容的一部分（如鼻、口、眼）；（报章、电视等的）特写，专题节目；（电影的）正片，故事片；以…为特色；是…的特征；起重要作用；占重要地位",
-    "en": "something important, interesting or typical of a place or thing; a part of somebody’s face such as their nose, mouth and eyes; a special article or programme about somebody/something; the main film in a cinema programme; to include a particular person or thing as a special feature; to have an important part in something",
-    "pos": "noun / verb"
-  },
-  "collective": {
-    "phonetic": "/kəˈlektɪv/",
-    "zh": "集体的；共有的；共同的；全体成员的；总体的；企业集团；合作农场；集体企业",
-    "en": "done or shared by all members of a group of people; involving a whole group or society; used to refer to all members of a group; a group of people who own a business or a farm and run it together; the business that they run",
-    "pos": "adjective / noun"
-  },
-  "governance": {
-    "phonetic": "/ˈɡʌvənəns/ | /ˈɡʌvərnəns/",
-    "zh": "统治；管理；统治方式；管理方式",
-    "en": "the activity of governing a country or controlling a company or an organization; the way in which a country is governed or a company or institution is controlled",
-    "pos": "noun"
-  },
-  "non-profit": {
-    "phonetic": "/ˌnɒn ˈprɒfɪt/ | /ˌnɑːn ˈprɑːfɪt/ | /ˌnɒn ˈprɒfɪt meɪkɪŋ/ | /ˌnɑːn ˈprɑːfɪt meɪkɪŋ/",
-    "zh": "不以营利为目的的；非营利的",
-    "en": "without the aim of making a profit",
-    "pos": "adjective"
-  },
-  "alert": {
-    "phonetic": "/əˈlɜːt/ | /əˈlɜːrt/ | /əˈlɜːts/ | /əˈlɜːrts/ | /əˈlɜːtɪd/ | /əˈlɜːrtɪd/ | /əˈlɜːtɪŋ/ | /əˈlɜːrtɪŋ/",
-    "zh": "向…报警；使警觉；使警惕；使戒备；使意识到；使认识到；警戒；戒备；警惕；警报；警觉的；警惕的；戒备的；意识到，注意到（问题或危险）",
-    "en": "to warn somebody about a dangerous situation or one that requires immediate action; to make somebody aware of something; a situation in which people are watching for danger and ready to deal with it; a warning of danger or of a problem; able to think quickly; quick to notice things; aware of something, especially a problem or danger",
-    "pos": "verb / noun / adjective"
-  },
-  "activist": {
-    "phonetic": "/ˈæktɪvɪst/",
-    "zh": "积极分子；活跃分子",
-    "en": "a person who works to achieve political or social change, especially as a member of an organization with particular aims",
-    "pos": "noun"
-  },
-  "quota": {
-    "phonetic": "/ˈkwəʊtə/",
-    "zh": "定额；限额；配额；定量；定额；指标；（候选人当选所需的）规定票数，最低票数",
-    "en": "a limited number or amount of people or things that is officially allowed; an amount of something that somebody expects or needs to have or achieve; a fixed number of votes that a candidate needs in order to be elected",
-    "pos": "noun"
-  },
-  "cue": {
-    "phonetic": "/kjuː/",
-    "zh": "暗示；提示；信号；（戏剧的）提示，暗示，尾白；（台球等的）球杆，弹子棒；恰好在这时；就在这时候；模仿…的样子做；学…的样；给（某人）暗示（或提示）",
-    "en": "an action or event that is a signal for somebody to do something; a few words or an action in a play that is a signal for another actor to do something; a long wooden stick with a leather tip, used for hitting the ball in the games of billiards, pool and snooker; at exactly the moment you expect or that is appropriate; to copy what somebody else does as an example of how to behave or what to do; to give somebody a signal so they know when to start doing something",
-    "pos": "noun / verb"
-  },
-  "fewer": {
+  "cave in": {
     "phonetic": "",
-    "zh": "adj. 较少的; pron. 更少的人（或物）",
-    "en": "",
-    "pos": ""
+    "zh": "塌落；塌陷；坍塌；让步；屈服；屈从",
+    "en": "to fall down and towards the centre; to finally do what somebody wants after you have been strongly opposing them"
   },
-  "participant": {
-    "phonetic": "/pɑːˈtɪsɪpənt/ | /pɑːrˈtɪsɪpənt/",
-    "zh": "参与者；参加者",
-    "en": "a person who is taking part in an activity or event",
-    "pos": "noun"
+  "cement": {
+    "phonetic": "/sɪˈment/",
+    "zh": "水泥；（干燥后硬化的）水泥；胶合剂；胶接剂；黏固剂；（共同利益联合起来的）纽带，凝聚力；（用水泥、胶等）黏结，胶合；加强，巩固（关系、协定等）",
+    "en": "a grey powder made by burning clay and lime that sets hard when it is mixed with water. Cement is used in building to stick stones and bricks together and to make very hard surfaces.; the hard substance that is formed when cement becomes dry and hard; a soft substance that becomes hard when dry and is used for sticking things together or filling in holes; something that joins people together in a common interest; to join two things together using cement, glue (= a sticky substance), etc.; to make a relationship, an agreement, etc. stronger"
   },
-  "shift": {
-    "phonetic": "/ʃɪft/",
-    "zh": "班；轮班；轮班工作时间；轮班职工；改变；转移；转换；变换；（计算机键盘或打字机上的）转换（键），换挡（键）；直筒式连衣裙；（旧时妇女穿的）直筒式内衣；转移；挪动；赶快；快速移动；改变；转向；改变观点（或态度、做事方式等）；推卸，转嫁（责任）；去除（污迹等）；销售，出售（尤指销路不好的商品）；换（挡）；（尤指讨论时）改变立场；变幻莫测；变化无常",
-    "en": "a period of time worked by a group of workers who start work as another group finishes; the workers who work a particular shift; a change in opinion, mood, policy, etc.; the system on a computer keyboard or typewriter that allows capital letters or a different set of characters to be typed; the key that operates this system; a woman’s simple straight dress; a simple straight piece of clothing worn by women in the past as underwear; to move, or move something, from one position or place to another; to move quickly; to change from one state, position, etc. to another; to change your opinion of or attitude towards something, or change the way that you do something; to make somebody else responsible for something you should do or something bad that you have done; to remove something such as a dirty mark; to sell goods, especially goods that are difficult to sell; to change the gears when you are driving a vehicle; to change your opinion about a subject, especially during a discussion; used to describe a situation that changes so often that it is difficult to understand or deal with it",
-    "pos": "noun / verb"
+  "centrepiece": {
+    "phonetic": "/ˈsentəpiːs/ | /ˈsentərpiːs/",
+    "zh": "最重要的项目（或物品）；桌子中央的装饰品",
+    "en": "the most important item; a decoration for the centre of a table"
   },
-  "homeowner": {
-    "phonetic": "/ˈhəʊməʊnə(r)/ | /ˈhəʊməʊnər/",
-    "zh": "房主",
-    "en": "a person who owns their house or flat",
-    "pos": "noun"
+  "cessation": {
+    "phonetic": "/seˈseɪʃn/",
+    "zh": "停止；终止；中断；暂停",
+    "en": "the stopping of something; a break in something"
   },
-  "option": {
-    "phonetic": "/ˈɒpʃn/ | /ˈɑːpʃn/",
-    "zh": "可选择的事物；选择；选择权；选择的自由；选修课；（未来的）买卖选择权；期权；选项；选择；保留选择余地；暂不决定；轻松的选择；捷径；购买（或出售）…的选择权",
-    "en": "something that you can choose to have or do; the freedom to choose what you do; a subject that a student can choose to study, but that they do not have to do; the right to buy or sell something at some time in the future; one of the choices you can make when using a computer program; to avoid making a decision now so that you still have a choice in the future; a choice that is thought to be easier because it involves less effort, difficulty, etc.; to buy or sell the right to own or use something at some time in the future",
-    "pos": "noun / verb"
-  },
-  "boost": {
-    "phonetic": "/buːst/ | /buːsts/ | /ˈbuːstɪd/ | /ˈbuːstɪŋ/",
-    "zh": "使增长；使兴旺；偷窃；帮助；激励；增长；提高；（发动机或电气设备的）功率增大；（从后面的）向上一推，一举",
-    "en": "to make something increase, or become better or more successful; to steal something; something that helps or encourages somebody/something; an increase in something; an increase in power in an engine or a piece of electrical equipment; an act of pushing somebody up from behind",
-    "pos": "verb / noun"
-  },
-  "capacity": {
-    "phonetic": "/kəˈpæsəti/",
-    "zh": "容量；容积；容纳能力；领悟（或理解、办事）能力；职位；职责；生产量；生产能力；（尤指车辆发动机的）容积，功率",
-    "en": "the number of things or people that a container or space can hold; the ability to understand or to do something; the official position or function that somebody has; the quantity that a factory, machine, etc. can produce; the size or power of a piece of equipment, especially the engine of a vehicle",
-    "pos": "noun"
-  },
-  "mov": {
+  "chalk up to": {
     "phonetic": "",
-    "zh": "v. （使）改变位置，（使）移动；搬家，搬迁；（使）变换，调动；（使）改变观点（或做法）；前进，进展...",
-    "en": "",
-    "pos": ""
+    "zh": "把某事归因于",
+    "en": "to consider that something is caused by something"
   },
-  "tuition": {
-    "phonetic": "/tjuˈɪʃn/ | /tuˈɪʃn/",
-    "zh": "（尤指对个人或小组的）教学，讲授，指导；（尤指大专院校的）学费",
-    "en": "the act of teaching something, especially to one person or to people in small groups; the money that you pay to be taught, especially in a college or university",
-    "pos": "noun"
+  "charter": {
+    "phonetic": "/ˈtʃɑːtə(r)/ | /ˈtʃɑːrtər/",
+    "zh": "（说明某部分民众应有权利的）宪章；（表明某一组织之宗旨和原则的）宪章，章程；（统治者或政府准许成立新的组织、城镇、大学等并授予某些权利的）特许状，许可证，凭照；（法律或政策的）不完善，漏洞，缺陷；（飞机、船等的）租赁；包租（飞机、船等）；特许设立；给予…特权；发给许可证（或凭照）",
+    "en": "a written statement describing the rights that a particular group of people should have; a written statement of the principles and aims of an organization; an official document stating that a government or political leader allows a new organization, town or university to be established and gives it particular rights; a law or policy that seems likely to help people do something bad; the hiring of a plane, boat, etc.; to hire a plane, boat, etc. for your own use; to state officially that a new organization, town or university has been established and has special rights"
   },
-  "opportunity": {
-    "phonetic": "/ˌɒpəˈtjuːnəti/ | /ˌɑːpərˈtuːnəti/",
-    "zh": "机会；时机",
-    "en": "a time when a particular situation makes it possible to do or achieve something; the third Mars Rover vehicle which landed on the planet Mars in 2004 and sent pictures of the planet back to NASA",
-    "pos": "noun"
+  "cheerleader": {
+    "phonetic": "/ˈtʃɪəliːdə(r)/ | /ˈtʃɪrliːdər/",
+    "zh": "拉拉队队员（尤见于美国，通常为女性）；（某一政治家、某种观点或做法等的）支持者，摇旗呐喊者",
+    "en": "(especially in the US) one of the members of a group of young people (usually women) wearing special uniforms, who encourage the crowd to cheer for their team at a sports event; a person who supports a particular politician, idea, or way of doing something"
   },
-  "mellon": {
+  "chilling": {
+    "phonetic": "/ˈtʃɪlɪŋ/",
+    "zh": "（常与残暴有关）令人恐惧的，令人害怕的",
+    "en": "frightening, usually because it is connected with something violent or cruel"
+  },
+  "chime in": {
     "phonetic": "",
-    "zh": "n. 梅隆（姓氏）",
-    "en": "",
-    "pos": ""
+    "zh": "插嘴；打断谈话",
+    "en": "to join or interrupt a conversation"
   },
-  "metric": {
-    "phonetic": "/ˈmetrɪk/",
-    "zh": "米制的；公制的；按公制制作的；用公制测量的；格律的；度量工具，衡量指标（尤用以考评企业、学校、计算机程序等的表现）；（诗的）用律；格律学",
-    "en": "based on the metric system; made or measured using the metric system; connected with the rhythm of a poem, produced by the arrangement of stress on the syllables in each line; a set of numbers or statistics used for measuring something, especially results that show how well a business, school, computer program, etc. is doing; the metric system; the use or study of metre in poetry",
-    "pos": "adjective / noun"
+  "civil servant": {
+    "phonetic": "/ˌsɪvl ˈsɜːvənt/ | /ˌsɪvl ˈsɜːrvənt/",
+    "zh": "（政府的）公务员，文职人员",
+    "en": "a person who works in the civil service"
   },
-  "spe": {
+  "classified": {
+    "phonetic": "/ˈklæsɪfaɪd/",
+    "zh": "机密的；保密的；分类的；归类的",
+    "en": "officially secret and available only to particular people; with information arranged in groups according to subjects; classified advertisements (= small advertisements in a newspaper or on a website, placed in sections according to their subjects)"
+  },
+  "clear-cut": {
+    "phonetic": "/ˌklɪə ˈkʌt/ | /ˌklɪr ˈkʌt/",
+    "zh": "明确的；明显的；易辨认的",
+    "en": "definite and easy to see or identify"
+  },
+  "clubbing": {
+    "phonetic": "/ˈklʌbɪŋ/",
+    "zh": "泡夜总会",
+    "en": "the activity of going to nightclubs regularly"
+  },
+  "clutch": {
+    "phonetic": "/klʌtʃ/ | /ˈklʌtʃɪz/ | /klʌtʃt/ | /ˈklʌtʃɪŋ/",
+    "zh": "紧握；抱紧；抓紧；（因害怕或痛苦）突然抓住；（在危难中）抓救命稻草，不放过任何微小的机会；（汽车等换挡用的）离合器踏板；（尤指发动机和排挡的）离合器；一群（人或动物）；一批（物品）；势力范围；控制；掌管；攫住；紧紧抓住；（一次下的）一窝蛋；（同时孵出的）一窝小鸟；（尤指出席正式场合时用的）女式小手提包",
+    "en": "to hold somebody/something tightly; to take hold of something suddenly, because you are afraid or in pain; to try all possible means to find a solution or some hope in a difficult or unpleasant situation, even though this seems very unlikely; the pedal in a car or other vehicle that you press with your foot so that you can change gear; a device in a machine that connects and disconnects working parts, especially the engine and the gears; a group of people, animals or things; power or control; a tight hold on somebody/something; a group of eggs that a bird lays at one time; the young birds that come out of a group of eggs at the same time; a small, flat bag that women carry in their hands, especially on formal occasions; at a critical moment; referring to or performing at an important moment that will decide the result of a game or competition"
+  },
+  "coax": {
+    "phonetic": "/kəʊks/ | /ˈkəʊksɪz/ | /kəʊkst/ | /ˈkəʊksɪŋ/",
+    "zh": "哄劝；劝诱",
+    "en": "to persuade somebody to do something by talking to them in a kind and gentle way"
+  },
+  "coercion": {
+    "phonetic": "/kəʊˈɜːʃn/ | /kəʊˈɜːrʒn/",
+    "zh": "强迫；胁迫",
+    "en": "the action of making somebody do something that they do not want to do, using force or threatening to use force"
+  },
+  "combative": {
+    "phonetic": "/ˈkɒmbətɪv/ | /kəmˈbætɪv/",
+    "zh": "好战的；好斗的；好争论的",
+    "en": "ready and willing to fight or argue"
+  },
+  "commonwealth": {
+    "phonetic": "/ˈkɒmənwelθ/ | /ˈkɑːmənwelθ/",
+    "zh": "英联邦（由英国和其他大多数曾经隶属于大英帝国的国家组成）；（用于美国肯塔基、马萨诸塞、宾夕法尼亚和弗吉尼亚四州的正式名称中）州；（与美国联系紧密的）自治政区；（用于某些政治上相互有联系的国家集团的名称）联合体",
+    "en": "an organization consisting of the United Kingdom and other countries, including most of the countries that used to be part of the British Empire; used in the official names of, and to refer to, some states of the US (Kentucky, Massachusetts, Pennsylvania and Virginia); an independent country that is strongly connected to the US; used in the names of some groups of countries or states that have chosen to be politically linked with each other; a period (1649–60) in English history when the country was governed without a king or queen. For the first four years after the death of King Charles I, the country was governed by the House of Commons. Then in 1653 the army gave power to Oliver Cromwell with the title of Lord Protector. The years 1653–9 are therefore known as the Protectorate . The Commonwealth ended with the Restoration of King Charles II."
+  },
+  "communal": {
+    "phonetic": "/kəˈmjuːnl/ | /ˈkɒmjənl/",
+    "zh": "（尤指居住在一起的人）共享的，共有的，共用的；（集体中）不同群体的，各团体的",
+    "en": "shared by, or for the use of, a number of people, especially people who live together; involving different groups of people in a community"
+  },
+  "composure": {
+    "phonetic": "/kəmˈpəʊʒə(r)/ | /kəmˈpəʊʒər/",
+    "zh": "沉着；镇静；镇定",
+    "en": "the state of being calm and in control of your feelings or behaviour"
+  },
+  "concur": {
+    "phonetic": "/kənˈkɜː(r)/ | /kənˈkɜːr/ | /kənˈkɜːz/ | /kənˈkɜːrz/ | /kənˈkɜːd/ | /kənˈkɜːrd/ | /kənˈkɜːrɪŋ/",
+    "zh": "同意；赞同",
+    "en": "to agree"
+  },
+  "conifer": {
+    "phonetic": "/ˈkɒnɪfə(r)/ | /ˈkɑːnɪfər/",
+    "zh": "针叶树",
+    "en": "any tree that produces hard dry fruit called cones. Most conifers are evergreen (= have leaves that stay on the tree all year)."
+  },
+  "conjure": {
+    "phonetic": "/ˈkʌndʒə(r)/ | /ˈkɑːndʒər/ | /ˈkʌndʒəz/ | /ˈkɑːndʒərz/ | /ˈkʌndʒəd/ | /ˈkɑːndʒərd/ | /ˈkʌndʒərɪŋ/ | /ˈkɑːndʒərɪŋ/",
+    "zh": "变魔术；变戏法；使…变戏法般地出现（或消失）；大名鼎鼎的人；重量级人物；影响巨大的事物；难记的名字；拗口的名字",
+    "en": "to do clever tricks such as making things seem to appear or disappear as if by magic; a person or thing that is well known and respected in a particular field; used when you mention a name that you think is difficult to remember or pronounce"
+  },
+  "conjure up": {
     "phonetic": "",
-    "zh": "adj. 明确的，具体的；特定的；特有的，独特的；有特殊功能的，有特效的；（生物）种的；（关税，税）...",
-    "en": "",
-    "pos": ""
+    "zh": "使…呈现于脑际；使想起；用咒语使…出现",
+    "en": "to make something appear as a picture in your mind; to make somebody/something appear by using special magic words"
   },
-  "van": {
-    "phonetic": "/væn/",
-    "zh": "客货车；厢式送货车；面包车（通常为 12 座左右）；（铁路上运送包裹、邮件等的）车厢；处于前沿；处于领先地位",
-    "en": "a covered vehicle with no side windows in its back half, usually smaller than a lorry, used for carrying goods or people; a covered vehicle with side windows, usually smaller than a lorry, that can carry about twelve passengers; a closed coach on a train for carrying bags, cases, etc. or mail; at the front or in the leading position",
-    "pos": "noun"
+  "conservationist": {
+    "phonetic": "/ˌkɒnsəˈveɪʃənɪst/ | /ˌkɑːnsərˈveɪʃənɪst/",
+    "zh": "自然环境保护主义者",
+    "en": "a person who takes an active part in the protection of the environment"
   },
-  "cod": {
-    "phonetic": "/kɒd/ | /kɑːd/",
-    "zh": "鳕鱼；假的；伪的；不真实的；货到付款；交货付现",
-    "en": "a large sea fish that is white inside and used for food; not real or what somebody claims it is; cash on delivery or (in American English) collect on delivery (payment for goods will be made when the goods are delivered)",
-    "pos": "noun / adjective / abbreviation"
+  "conspiracy": {
+    "phonetic": "/kənˈspɪrəsi/",
+    "zh": "密谋策划；阴谋",
+    "en": "a secret plan by a group of people to do something harmful or illegal"
   },
-  "colombia": {
-    "phonetic": "/kəˈlʌmbiə/",
-    "zh": "哥伦比亚（南美洲西北部国家）",
-    "en": "a country in north-western South America",
-    "pos": "noun"
+  "constabulary": {
+    "phonetic": "/kənˈstæbjələri/ | /kənˈstæbjəleri/",
+    "zh": "（英国某地区或城镇的）警察部队",
+    "en": "the police force of a particular area or town"
   },
-  "lilly": {
+  "convergence": {
+    "phonetic": "/kənˈvɜːdʒəns/ | /kənˈvɜːrdʒəns/",
+    "zh": "趋同：从不同方向一起开会和开会的过程；这发生的点；该市是河流交通的天然汇合点。；该图显示了两个大洋板块的收敛。；收敛：A和B变得非常相似或相同的过程；移动技术和互联网的融合将继续改变企业与消费者互动的方式。；鸟鸣声与人类合成音乐之间的融合",
+    "en": "the process of moving together from different directions and meeting; the point where this happens; the process of becoming very similar or the same"
+  },
+  "cooperative": {
+    "phonetic": "/kəʊˈɒpərətɪv/ | /kəʊˈɑːpərətɪv/",
+    "zh": "合作的；协作的；同心协力的；协助的；配合的；共同拥有共同经营利益共享的；合作的；合作企业；合作社组织",
+    "en": "involving doing something together or working together with others towards a shared aim; helpful by doing what you are asked to do; owned and run by the people involved, with the profits shared by them; a cooperative business or other organization"
+  },
+  "cornerstone": {
+    "phonetic": "/ˈkɔːnəstəʊn/ | /ˈkɔːrnərstəʊn/",
+    "zh": "基石；奠基石；最重要部分；基础；柱石",
+    "en": "a stone at the corner of the base of a building, often laid in a special ceremony; the most important part of something that the rest depends on"
+  },
+  "correlate": {
+    "phonetic": "/ˈkɒrəleɪt/ | /ˈkɔːrəleɪt/ | /ˈkɒrəleɪts/ | /ˈkɔːrəleɪts/ | /ˈkɒrəleɪtɪd/ | /ˈkɔːrəleɪtɪd/ | /ˈkɒrəleɪtɪŋ/ | /ˈkɔːrəleɪtɪŋ/",
+    "zh": "相互关联影响；相互依赖；显示（两个或多个事实或数字等）的紧密联系",
+    "en": "if two or more facts, figures, etc. correlate or if a fact, figure, etc. correlates with another, the facts are closely connected and affect or depend on each other; to show that there is a close connection between two or more facts, figures, etc.; one of two or more facts, figures, etc. that are closely connected and affect or depend on each other"
+  },
+  "correlation": {
+    "phonetic": "/ˌkɒrəˈleɪʃn/ | /ˌkɔːrəˈleɪʃn/",
+    "zh": "相互关系；相关；关联",
+    "en": "a connection between two things in which one thing changes as the other does"
+  },
+  "cough up": {
     "phonetic": "",
-    "zh": "n. 莉莉（女子名）；丽莱（香港时装公司）",
-    "en": "",
-    "pos": ""
+    "zh": "勉强给（尤指钱）",
+    "en": "to give something, especially money, unwillingly"
   },
-  "geoengineer": {
+  "counterweight": {
+    "phonetic": "/ˈkaʊntəweɪt/ | /ˈkaʊntərweɪt/",
+    "zh": "平衡抵消物；平衡重（或块、锤）",
+    "en": "a thing that has an equal but opposite effect to something else and can be used to limit the bad effects of something"
+  },
+  "coupled with": {
     "phonetic": "",
-    "zh": "n. 地球工程师：从事地球工程的专业人士，地球工程是一种大规模干预地球系统的技术，旨在减缓全球气候变...",
-    "en": "",
-    "pos": ""
+    "zh": "把…与…连接起来",
+    "en": "to be linked to another thing, situation, etc."
   },
-  "fashion": {
-    "phonetic": "/ˈfæʃn/",
-    "zh": "（衣服、发式等的）流行款式，时兴式样；时装业；（行为、活动等的）时尚，时兴；还过得去；还算可以；模仿…的式样；像…的风格；以…方式；做得很多；大量使用；大肆花费；（尤指用手工）制作，使成形，塑造",
-    "en": "a popular style of clothes, hair, etc. at a particular time or place; the state of being popular; the business of making or selling clothes in new and different styles; a popular way of behaving, doing an activity, etc.; to some extent, but not very well; in the style of somebody/something; in a particular way; used to emphasize that somebody is doing something or using something a lot; to make or shape something, especially with your hands",
-    "pos": "noun / verb"
+  "cover letter": {
+    "phonetic": "/ˈkʌvə letə(r)/ | /ˈkʌvər letər/",
+    "zh": "求职信：您发送的带有解释文档内容等内容的信件；发送简历和求职信给…",
+    "en": "a letter that you send with something explaining the contents of the document, etc. that you are sending"
   },
-  "scenario": {
-    "phonetic": "/səˈnɑːriəʊ/ | /səˈnæriəʊ/",
-    "zh": "设想；方案；预测；（电影或戏剧的）剧情梗概",
-    "en": "a description of how things might happen in the future; a written outline of what happens in a film or play",
-    "pos": "noun"
+  "coverage": {
+    "phonetic": "/ˈkʌvərɪdʒ/",
+    "zh": "新闻报道；（书、课程学习、电视等的）信息范围，信息质量；提供的数量；覆盖范围；（保险公司的）保险",
+    "en": "the reporting of news and sport in the media; the range or quality of information that is included in a book or course of study, on television, etc.; the amount of something that something provides; the extent to which something covers an area or a group of people; protection that an insurance company provides by promising to pay you money if a particular event happens"
   },
-  "mode": {
-    "phonetic": "/məʊd/",
-    "zh": "方式；风格；样式；（设备的）模式，工作状态；（情感或行为的）状态，状况；（衣着、艺术等的）形式，风格；（音乐的）调式；众数（一组数字中出现次数最多的数）",
-    "en": "a particular way of doing something; a particular type of something; the way in which a piece of equipment is set to perform a particular task; a particular way of feeling or behaving; a particular style or fashion in clothes, art, etc.; a set of notes in music that form a scale; the value that appears most frequently in a series of numbers",
-    "pos": "noun"
+  "covert": {
+    "phonetic": "/ˈkʌvət/ | /ˈkəʊvɜːt/ | /ˈkəʊvɜːrt/",
+    "zh": "秘密的；隐蔽的；暗中的；（动物可藏身的）矮树丛，灌木林",
+    "en": "secret or hidden, making it difficult to notice; an area of thick low bushes and trees where animals can hide"
   },
-  "full-time": {
-    "phonetic": "/ˌfʊl ˈtaɪm/",
-    "zh": "全日（制）；全职的（地）；全日的（地）",
-    "en": "for all the hours of a week during which people normally work or study, rather than just for a part of it",
-    "pos": "adjective, adverb"
+  "crafty": {
+    "phonetic": "/ˈkrɑːfti/ | /ˈkræfti/",
+    "zh": "巧妙的；（尤指）狡诈的，诡计多端的",
+    "en": "clever at getting what you want, especially by indirect or dishonest methods"
   },
-  "crypto": {
+  "crash out": {
     "phonetic": "",
-    "zh": "n. 秘密赞同者；密码学（同 cryptography）；加密货币（同 cryptocurrency...",
-    "en": "A secret supporter or follower.",
-    "pos": ""
+    "zh": "被淘汰",
+    "en": "to lose a game with the result that you have to stop playing in a competition"
   },
-  "gdp": {
+  "creed": {
+    "phonetic": "/kriːd/",
+    "zh": "信念；原则；纲领；宗教信仰；（基督教）信经",
+    "en": "a set of principles or religious beliefs; a statement of Christian belief that is spoken as part of some church services"
+  },
+  "criminal damage": {
+    "phonetic": "/ˌkrɪmɪnl ˈdæmɪdʒ/",
+    "zh": "刑事损害：人身伤害他人财产的犯罪；造成的损害；他对刑事损害认罪。",
+    "en": "the crime of physically harming somebody else's property; the damage caused"
+  },
+  "crippling": {
+    "phonetic": "/ˈkrɪplɪŋ/",
+    "zh": "使残废；使跛；使成瘸子；严重毁坏（或损害）",
+    "en": "damaging somebody's body so that they are no longer able to walk or move normally; seriously damaging or harming somebody/something"
+  },
+  "crony": {
+    "phonetic": "/ˈkrəʊni/",
+    "zh": "好友；密友",
+    "en": "a person that somebody spends a lot of time with"
+  },
+  "crude": {
+    "phonetic": "/kruːd/",
+    "zh": "天然的；自然的；冒犯的，粗俗的，粗鲁的（尤其有关性的）；粗略的；简略的；大概的；粗糙的；粗制的；原油；石油",
+    "en": "in its natural state, before it has been processed or refined; not changed or corrected; offensive or rude, especially about sex; simple and not very accurate but giving a general idea of something; simply made, not showing much skill or attention to detail; oil in its natural state, before it has been processed or refined"
+  },
+  "curate": {
+    "phonetic": "/ˈkjʊərət/ | /ˈkjʊrət/",
+    "zh": "（某教区的）助理牧师；好坏兼有之物；瑕瑜互见之物；管理（博物馆或美术馆的藏品）；策展；（尤在互联网上）精选并分享，策展（信息、图片、视频、音乐等）",
+    "en": "an assistant to a vicar (= a priest, who is in charge of the church or churches in a particular area); something that has some good parts and some bad ones; to select, organize and look after the objects or works of art in a museum or an art gallery, etc.; to collect, select and present information or items such as pictures, video, music, etc. for people to use or enjoy, using your professional or expert knowledge"
+  },
+  "curse": {
+    "phonetic": "/kɜːs/ | /kɜːrs/",
+    "zh": "咒骂语；骂人话；咒；咒语；祸根；祸端；祸水；诅咒；咒骂；诅咒；在心里诅咒；念咒语诅咒",
+    "en": "a rude or offensive word or phrase that some people use when they are very angry; a word or phrase that has a magic power to make something bad happen; something that causes harm or evil; menstruation (= the process or time of menstruating); to swear; to say rude things to somebody or think rude things about somebody/something; to use a magic word or phrase against somebody in order to harm them"
+  },
+  "cynic": {
+    "phonetic": "/ˈsɪnɪk/",
+    "zh": "认为人皆自私的人；愤世嫉俗者；悲观者；怀疑者",
+    "en": "a person who believes that people only do things to help themselves, rather than for good or sincere reasons; a person who does not believe that something good will happen or that something is important"
+  },
+  "cynicism": {
+    "phonetic": "/ˈsɪnɪsɪzəm/",
+    "zh": "认为人皆自私的人；愤世嫉俗者；悲观的；怀疑的",
+    "en": "the belief that people only do things to help themselves, rather than for good or sincere reasons; the belief that something good will not happen or that something is not important; the fact of being willing to do something that might hurt other people, if you can gain some advantage"
+  },
+  "czar": {
+    "phonetic": "/zɑː(r)/ | /zɑːr/",
+    "zh": "（在某领域向政府提供有关政策的建议的）政府顾问，政府高级官员",
+    "en": "the emperor of Russia in the past; an official whose job is to advise the government on policy in a particular area"
+  },
+  "damning": {
+    "phonetic": "/ˈdæmɪŋ/",
+    "zh": "谴责的；诅咒的；可以定罪的",
+    "en": "critical of somebody/something; suggesting that somebody is guilty"
+  },
+  "dampen": {
+    "phonetic": "/ˈdæmpən/ | /ˈdæmpənz/ | /ˈdæmpənd/ | /ˈdæmpənɪŋ/",
+    "zh": "弄湿；使潮湿；抑制，控制，减弱（感情、反应等）",
+    "en": "to make something slightly wet; to make something such as a feeling or a reaction less strong"
+  },
+  "death spiral": {
+    "phonetic": "/ˈdeθ spaɪrəl/",
+    "zh": "死亡螺旋：失控的飞机所走的路径，在掉落到地面时迅速转弯；飞机坠入海中之前陷入死亡螺旋。；死亡螺旋：一种情况正在迅速恶化，通常以灾难告终；该公司正陷入成本上升和销售下降的绝境。",
+    "en": "the path taken by an aircraft that is out of control and is turning round and round quickly while falling towards earth; a situation that is quickly getting worse, often one that ends in disaster"
+  },
+  "debunk": {
+    "phonetic": "/diːˈbʌŋk/ | /diːˈbʌŋks/ | /diːˈbʌŋkt/ | /diːˈbʌŋkɪŋ/",
+    "zh": "批判；驳斥；揭穿…的真相",
+    "en": "to show that an idea, a belief, etc. is false; to show that something is not as good as people think it is"
+  },
+  "dedicated": {
+    "phonetic": "/ˈdedɪkeɪtɪd/",
+    "zh": "献身的；专心致志的；一心一意的；专用的；专门用途的",
+    "en": "working hard at something because it is very important to you; designed to do only one particular type of work; used for one particular purpose only"
+  },
+  "dedication": {
+    "phonetic": "/ˌdedɪˈkeɪʃn/",
+    "zh": "献身；奉献；（建筑物等的）落成典礼；题献（作者在书、音乐作品、演出等开始前表示将其献给某人的一段话）",
+    "en": "the hard work and effort that somebody puts into an activity or a purpose because they think it is important; a ceremony that is held to show that a building or an object has a special purpose or is special to the memory of a particular person; the words that are used at the beginning of a book, piece of music, a performance, etc., or when receiving an award, to offer it to somebody as a sign of thanks or respect"
+  },
+  "degradation": {
+    "phonetic": "/ˌdeɡrəˈdeɪʃn/",
+    "zh": "堕落；落魄，潦倒（的境况）；毁坏，恶化（过程）",
+    "en": "a situation in which somebody has lost all self-respect and the respect of other people; the process of something being damaged or made worse"
+  },
+  "deluge": {
+    "phonetic": "/ˈdeljuːdʒ/",
+    "zh": "暴雨；大雨；洪水；涌现的事物；蜂拥而至的事物；使涌来；使充满；泛滥；淹没",
+    "en": "a severe flood; a sudden very heavy fall of rain; a large number of things that happen or arrive at the same time; to send or give somebody/something a large number of things at the same time; to flood a place with water"
+  },
+  "demotion": {
+    "phonetic": "/diːˈməʊʃn/",
+    "zh": "使降级，使降职，使降低地位（常作为惩罚）",
+    "en": "a move to a lower position or rank, often as a punishment"
+  },
+  "dent": {
+    "phonetic": "/dent/ | /dents/ | /ˈdentɪd/ | /ˈdentɪŋ/",
+    "zh": "使凹陷；使产生凹痕；损害，伤害，挫伤（信心、名誉等）；凹痕；凹坑；凹部；减少，削减（尤指资金）",
+    "en": "to make a hollow place in a hard surface, usually by hitting it; to damage somebody’s confidence, reputation, etc.; a hollow place in a hard surface, usually caused by something hitting it; to reduce the amount of something, especially money"
+  },
+  "deportation": {
+    "phonetic": "/ˌdiːpɔːˈteɪʃn/ | /ˌdiːpɔːrˈteɪʃn/",
+    "zh": "把（违法者或无居留权的人）驱逐出境；递解出境",
+    "en": "the act of forcing somebody to leave a country, usually because they have broken the law or because they have no legal right to be there"
+  },
+  "deprivation": {
+    "phonetic": "/ˌdeprɪˈveɪʃn/",
+    "zh": "贫困；丧失；剥夺",
+    "en": "the fact of not having something that you need, like enough food, money or a home; the process that causes this"
+  },
+  "derail": {
+    "phonetic": "/diːˈreɪl/ | /diːˈreɪlz/ | /diːˈreɪld/ | /diːˈreɪlɪŋ/",
+    "zh": "（使）脱轨，出轨",
+    "en": "to leave the track; to make a train do this; to stop a process from continuing in the way it was intended to"
+  },
+  "detached": {
+    "phonetic": "/dɪˈtætʃt/",
+    "zh": "单独的；独立的；不连接的；不带感情的；超然的；冷漠的；客观的；公正的；无偏见的",
+    "en": "not joined to another house on either side; showing a lack of feeling; not influenced by other people or by your own feelings"
+  },
+  "deterioration": {
+    "phonetic": "/dɪˌtɪəriəˈreɪʃn/ | /dɪˌtɪriəˈreɪʃn/",
+    "zh": "恶化；她恶化成严重的抑郁症",
+    "en": "the fact or process of becoming worse"
+  },
+  "devolve": {
     "phonetic": "",
-    "zh": "国内生产总值",
-    "en": "In economics, a country's is the total value of goods and services produced within a country in a year, not including its income from investments in other countries. is an abbreviation for (缩略=) 'gross domestic product'.",
-    "pos": ""
+    "zh": "使(权力、职责等)下放；使移交；devolve",
+    "en": "If you power, authority, or responsibility a less powerful person or group, or if it them, it is transferred to them."
   },
-  "bicentennial": {
-    "phonetic": "/ˌbaɪsenˈteniəl/",
-    "zh": "200 周年；200 周年纪念日",
-    "en": "the year, or the day, when you celebrate an important event that happened exactly 200 years earlier; connected with the year, or the day, when you celebrate an important event that happened exactly 200 years earlier",
-    "pos": "noun / adjective"
+  "differentiation": {
+    "phonetic": "/ˌdɪfəˌrenʃiˈeɪʃn/",
+    "zh": "区分；区别；辨别；（尤指不公正地）差别对待，区别对待",
+    "en": "the act of recognizing or showing that two things are not the same; treatment of people or things in different ways, especially unfairly; the process of a cell becoming different during growth and development"
   },
-  "wetland": {
-    "phonetic": "/ˈwetlənd/",
-    "zh": "湿地；沼泽地",
-    "en": "relating to or existing in areas of land that are naturally wet; an area of land that is naturally wet most or all of the time",
-    "pos": "adjective / noun"
+  "dim": {
+    "phonetic": "/dɪm/",
+    "zh": "暗淡的；昏暗的；微弱的；不明亮的；光线暗淡的；昏暗的；不分明的；不清楚的；朦胧的；隐约的；看不清的；视力差的；模糊的；不清晰的；模糊的；迟钝的；愚笨的；愚蠢的；不明朗的；不乐观的；对…持不赞成（或怀疑）态度；对…没有好感；（使）变暗淡，变微弱，变昏暗；（使）减弱，变淡漠，失去光泽",
+    "en": "not bright; where you cannot see well because there is not much light; that you cannot see well because there is not much light; not able to see well; that you cannot remember or imagine clearly; not intelligent; not giving any reason to have hope; not good; to think somebody/something is bad; to not have a good opinion of somebody/something; if a light dims or if you dim it, it becomes or you make it less bright; if a feeling or quality dims, or if something dims it, it becomes less strong"
   },
-  "positive": {
-    "phonetic": "/ˈpɒzətɪv/ | /ˈpɑːzətɪv/",
-    "zh": "良好的；有助益的；正面的；表示赞同的；拥护的；积极的；建设性的；朝着成功的；积极乐观的；自信的；阳性的；证明…存在的；有绝对把握；确信；肯定；证据确凿的；明确的；完全的；绝对的；正数的；正电的；正极的；优势；优点；阳性结果（或反应）；正片",
-    "en": "good or useful; expressing agreement or support; directed at dealing with something or producing a successful result; thinking about what is good in a situation; feeling confident and sure that something good will happen; showing clear evidence that a particular substance or medical condition is present; completely sure that something is correct or true; giving clear and definite proof or information; complete and definite; expressing something that is true, did happen, etc.; not containing words such as ‘no’, ‘not’, ‘never’, etc.; greater than zero; containing or producing the type of electricity that is carried by a proton; a good or useful quality or aspect; the result of a test or an experiment that shows that a substance or condition is present; a developed film showing light and dark areas and colours as they actually were, especially one printed from a negative",
-    "pos": "adjective / noun"
+  "discern": {
+    "phonetic": "/dɪˈsɜːn/ | /dɪˈsɜːrn/ | /dɪˈsɜːnz/ | /dɪˈsɜːrnz/ | /dɪˈsɜːnd/ | /dɪˈsɜːrnd/ | /dɪˈsɜːnɪŋ/ | /dɪˈsɜːrnɪŋ/",
+    "zh": "觉察出；识别；了解；（依稀）看出，分辨出，听出",
+    "en": "to know, recognize or understand something, especially something that is not obvious; to see or hear something, usually with difficulty"
   },
-  "literacy": {
-    "phonetic": "/ˈlɪtərəsi/",
-    "zh": "读写能力",
-    "en": "the ability to read and write; knowledge or skills in a specific area",
-    "pos": "noun"
+  "discerning": {
+    "phonetic": "/dɪˈsɜːnɪŋ/ | /dɪˈsɜːrnɪŋ/",
+    "zh": "有识别力的；有眼力的；有洞察力的",
+    "en": "able to show good judgement about the quality of somebody/something"
   },
-  "chore": {
-    "phonetic": "/tʃɔː(r)/ | /tʃɔːr/",
-    "zh": "日常事务；例行工作；令人厌烦的任务；乏味无聊的工作",
-    "en": "a task that you do regularly; an unpleasant or boring task",
-    "pos": "noun"
+  "disconnect": {
+    "phonetic": "/ˌdɪskəˈnekt/ | /ˌdɪskəˈnekts/ | /ˌdɪskəˈnektɪd/ | /ˌdɪskəˈnektɪŋ/",
+    "zh": "切断（燃气、水或电的供应）；切断（电话服务）；停止供应（水、电或燃气）；使分离；使脱离；使（电话线路）中断；（与互联网）断开",
+    "en": "to remove a piece of equipment from a supply of gas, water or electricity; to officially stop the supply of phone lines, water, electricity or gas to a building; to separate something from something; to break the contact between two people who are talking on the phone; to end a connection to the internet; to remove somebody's connection to a piece of equipment, especially a life support machine; a difference or lack of connection; a lack of connection with a network, a supply of electricity, the internet, etc."
   },
-  "overall": {
-    "phonetic": "/ˌəʊvərˈɔːl/",
-    "zh": "全面的；综合的；总体的；全部；总计；一般来说；大致上；总体上；外套；罩衣；工装服；连身工作服；工装裤",
-    "en": "including all the things or people that are involved in a particular situation; general; including everything or everyone; in total; generally; when you consider everything; a loose coat worn over other clothes to protect them from dirt, etc.; a loose piece of clothing like a shirt and trousers in one piece, made of heavy cloth and usually worn over other clothing by workers doing dirty work; a piece of clothing that consists of trousers with an extra piece of cloth covering the chest, held up by narrow pieces of cloth over the shoulders",
-    "pos": "adjective / adverb / noun"
+  "disdain": {
+    "phonetic": "/dɪsˈdeɪn/",
+    "zh": "鄙视；蔑视；鄙弃；不屑（做某事）",
+    "en": "the feeling that somebody/something is not good enough to deserve your respect or attention; to think that somebody/something is not good enough to deserve your respect; to refuse to do something because you think that you are too important to do it"
   },
-  "property": {
-    "phonetic": "/ˈprɒpəti/ | /ˈprɑːpərti/",
-    "zh": "所有物；财产；财物；不动产；房地产；房屋及院落；庄园；房地产；性质；特性",
-    "en": "a thing or things that are owned by somebody; a possession or possessions; land and buildings; a building or buildings and the surrounding land; a quality or characteristic that something has",
-    "pos": "noun"
+  "disgruntled": {
+    "phonetic": "/dɪsˈɡrʌntld/",
+    "zh": "不满的；不高兴的",
+    "en": "annoyed or disappointed because something has happened to upset you"
   },
-  "peer": {
-    "phonetic": "/pɪə(r)/ | /pɪr/",
-    "zh": "身份（或地位）相同的人；同龄人；同辈；（英国）贵族成员；仔细看；端详",
-    "en": "a person who is the same age or who has the same social status as you; (in the UK) a member of the nobility or the House of Lords; to look closely or carefully at something, especially when you cannot see it clearly",
-    "pos": "noun / verb"
+  "disingenuous": {
+    "phonetic": "/ˌdɪsɪnˈdʒenjuəs/",
+    "zh": "不真诚；不诚实；假装不知道",
+    "en": "not sincere, especially when you pretend to know less about something than you really do"
   },
-  "progressive": {
-    "phonetic": "/prəˈɡresɪv/",
-    "zh": "进步的；先进的；开明的；稳步的；逐步的；稳定发展的；（动词）进行时的，进行式的；进步人士；开明人士；改革派",
-    "en": "in favour of new ideas, modern methods and change; happening or developing steadily; connected with the form of a verb (for example I am waiting or It is raining) that is made from a part of be and the present participle. Progressive forms are used to express an action that continues for a period of time.; at a higher percentage as the total amount of money being taxed increases; a person who is in favour of new ideas, modern methods and change",
-    "pos": "adjective / noun"
+  "dismantling": {
+    "phonetic": "/dɪsˈmæntlɪŋ/",
+    "zh": "拆开，拆卸（机器或结构）；（逐渐）废除，取消",
+    "en": "the act of taking apart a machine or structure so that it is in separate pieces; the process of ending an organization or system gradually in an organized way"
   },
-  "lamar": {
+  "displacement": {
+    "phonetic": "/dɪsˈpleɪsmənt/",
+    "zh": "取代；替代；移位；免职；排水量",
+    "en": "the act of forcing somebody/something away from their home or position; the amount of a liquid moved out of place by something floating or put in it, especially a ship floating in water"
+  },
+  "dissection": {
+    "phonetic": "/dɪˈsekʃn/ | /daɪˈsekʃn/",
+    "zh": "解剖（人或动植物）；仔细研究；详细评论；剖析",
+    "en": "the act of cutting up a dead person, animal or plant in order to study it; the act of studying something closely and/or discussing it in great detail"
+  },
+  "dissonant": {
+    "phonetic": "/ˈdɪsənənt/",
+    "zh": "不和谐的；不和谐；不协调；不一致",
+    "en": "not sounding pleasant together; not in agreement"
+  },
+  "doctrine": {
+    "phonetic": "/ˈdɒktrɪn/ | /ˈdɑːktrɪn/",
+    "zh": "教义；主义；学说；信条；（政府政策的）正式声明",
+    "en": "a belief or set of beliefs held and taught by a Church, a political party, etc.; a statement of government policy"
+  },
+  "dogged": {
+    "phonetic": "/ˈdɒɡɪd/ | /ˈdɔːɡɪd/",
+    "zh": "顽强的；坚持不懈的",
+    "en": "showing determination; not giving up easily"
+  },
+  "domain": {
+    "phonetic": "/dəˈmeɪn/ | /dəʊˈmeɪn/",
+    "zh": "（知识、活动的）领域，范围，范畴；域；论域；定义域；（尤指旧时个人、国家等所拥有或统治的）领土，领地，势力范围；区域；定义域",
+    "en": "an area of knowledge or activity; especially one that somebody is responsible for; a set of websites on the internet that end with the same group of letters, for example ‘.com’, ‘.org’; lands owned or ruled by a particular person, government, etc., especially in the past; the range of possible values of a particular variable"
+  },
+  "domicile": {
+    "phonetic": "/ˈdɒmɪsaɪl/ | /ˈdɑːmɪsaɪl/ | /ˈdəʊmɪsaɪl/",
+    "zh": "（尤指正式或法律意义的）住处，住所，定居地",
+    "en": "the country that a person treats as their permanent home, or lives in and has a strong connection with; a person's home; the place where a company is registered for tax purposes; to treat a particular country as your permanent home; to live or be based in a place"
+  },
+  "dominion": {
+    "phonetic": "/dəˈmɪnjən/",
+    "zh": "统治（权）；管辖；支配；领土；版图；（英联邦）自治领",
+    "en": "authority to rule; control; an area controlled by one political leader; any of the countries of the British Commonwealth that had their own government"
+  },
+  "doomsday": {
+    "phonetic": "/ˈduːmzdeɪ/",
+    "zh": "最后审判日，世界末日（基督教认为在这一天世人都将接受上帝的审判）；直到世界末日；很长时间；永远",
+    "en": "the last day of the world when Christians believe that everyone will be judged by God; a very long time; forever"
+  },
+  "double take": {
+    "phonetic": "/ˌdʌbl ˈteɪk/",
+    "zh": "愣了一会儿才恍然大悟的反应",
+    "en": "if you do a double take, you wait for a moment before you react to something that has happened, because it is very surprising"
+  },
+  "douse": {
+    "phonetic": "/daʊs/ | /ˈdaʊsɪz/ | /daʊst/ | /ˈdaʊsɪŋ/",
+    "zh": "浇灭（火）；熄（灯）；往…上泼水；把…浸在液体里",
+    "en": "to stop a fire from burning by pouring water over it; to put out a light; to pour a lot of liquid over somebody/something; to soak somebody/something in liquid"
+  },
+  "downbeat": {
+    "phonetic": "/ˈdaʊnbiːt/",
+    "zh": "沉闷的；令人沮丧的；悲观的；不强烈的；消沉的；无热情的",
+    "en": "depressing; not having much hope for the future; not showing strong feelings or enthusiasm"
+  },
+  "downstream": {
+    "phonetic": "/ˌdaʊnˈstriːm/",
+    "zh": "顺流而下；在下游方向；在下游的；引发的；导致的",
+    "en": "in the direction in which a river flows; in a position along a river which is nearer the sea; happening as a consequence of something that has happened earlier"
+  },
+  "drastic": {
+    "phonetic": "/ˈdræstɪk/",
+    "zh": "极端的；急剧的；严厉的；猛烈的",
+    "en": "extreme in a way that has a sudden, serious or violent effect on something"
+  },
+  "drastically": {
+    "phonetic": "/ˈdræstɪkli/",
+    "zh": "极端的；急剧的；严厉的；猛烈的",
+    "en": "in an extreme way that has a sudden, serious or violent effect on something"
+  },
+  "drawn-out": {
+    "phonetic": "/ˌdrɔːn ˈaʊt/",
+    "zh": "持续很久的；拖长的",
+    "en": "lasting a very long time, often too long"
+  },
+  "dumping ground": {
+    "phonetic": "/ˈdʌmpɪŋ ɡraʊnd/",
+    "zh": "垃圾倾倒场",
+    "en": "a place where something that is not wanted is dumped (= left)"
+  },
+  "dust off": {
     "phonetic": "",
-    "zh": "n. 拉马尔（男名，姓氏）",
-    "en": "",
-    "pos": ""
+    "zh": "除去…的灰尘",
+    "en": "to remove dust, dirt, etc. from somebody/something; to use something again after a long period of not using it"
   },
-  "neighborhood": {
-    "phonetic": "/ˈneɪbə.hʊd/",
-    "zh": "n. 附近；街坊；接近；街区",
-    "en": "The quality of being a neighbor, of living nearby, next to each-other; proximity.",
-    "pos": ""
+  "ebb": {
+    "phonetic": "/eb/",
+    "zh": "落潮；退潮；处于低潮；状况不佳；涨落；盛衰；起伏；消长；退；落；衰弱；衰退；减退",
+    "en": "the period of time when the sea flows away from the land; in a poor state; worse than usual; the repeated, often regular, movement from one state to another; the repeated change in level, numbers or amount; to move away from the land; to become gradually weaker or less"
   },
-  "wilt": {
-    "phonetic": "/wɪlt/ | /wɪlts/ | /ˈwɪltɪd/ | /ˈwɪltɪŋ/",
-    "zh": "（使）枯萎，凋谢，蔫；变得委靡不振；发蔫；变得又累又乏；失去自信；（同一个人谈话时用，即 you will）",
-    "en": "to bend towards the ground because of the heat or a lack of water; to become weak or tired or less confident; used to mean ‘you will’, when talking to one person",
-    "pos": "verb"
+  "eclipse": {
+    "phonetic": "/ɪˈklɪps/",
+    "zh": "日食；月食；（重要性、权势等的）丧失，黯然失色，暗淡；遮住…的光；使失色；使相形见绌；使丧失重要性",
+    "en": "an occasion when the moon passes between the earth and the sun so that you cannot see all or part of the sun for a time; an occasion when the earth passes between the moon and the sun so that you cannot see all or part of the moon for a time; a loss of importance, power, etc. especially because somebody/something else has become more important, powerful, etc.; to cause an eclipse of the sun or the moon; to make somebody/something seem neither exciting nor important by comparison"
   },
-  "opposition": {
-    "phonetic": "/ˌɒpəˈzɪʃn/ | /ˌɑːpəˈzɪʃn/",
-    "zh": "（强烈的）反对，反抗，对抗；（事业、竞赛、游戏等的）对手，敌手，竞争者；反对党；在野党；对立；对立的事物；反对党的；在野的；强烈反对（或抵制）某人／某事物；对比；对照",
-    "en": "the act of strongly disagreeing with somebody/something, especially with the aim of preventing something from happening; the act of competing against somebody in a contest; the people you are competing against in business, a competition, a game, etc.; the main political party that is opposed to the government; the political parties that are in a parliament but are not part of the government; the state of being as different as possible; two things that are as different as possible; forming part of a parliament but not part of the government; disagreeing strongly with somebody/something, especially with the aim of preventing something from happening; contrasting two people or things that are very different",
-    "pos": "noun"
-  },
-  "fac": {
+  "edge out": {
     "phonetic": "",
-    "zh": "v. 使更容易，使便利；促进，推动",
-    "en": "",
-    "pos": ""
+    "zh": "逐渐将…排挤出",
+    "en": "to move somebody from their position or job gradually, especially when they are not fully aware of what is happening"
   },
-  "guilt": {
-    "phonetic": "/ɡɪlt/",
-    "zh": "内疚；悔恨；犯罪；罪行；有罪；罪责；责任；罪过；使人内疚的责备",
-    "en": "the unhappy feelings caused by knowing or thinking that you have done something wrong; the fact that somebody has done something illegal; blame or responsibility for doing something wrong or for something bad that has happened; things you say to somebody in order to make them feel guilty about something",
-    "pos": "noun / verb"
+  "eerie": {
+    "phonetic": "/ˈɪəri/ | /ˈɪri/",
+    "zh": "怪异的；神秘的；恐怖的",
+    "en": "strange, mysterious and frightening"
   },
-  "aging": {
-    "phonetic": "/ˈeɪdʒɪŋ/",
-    "zh": "变老；苍老；变旧；老化",
-    "en": "the process of growing old",
-    "pos": "noun"
+  "effigy": {
+    "phonetic": "/ˈefɪdʒi/",
+    "zh": "（名人、圣人或神的）雕像，塑像；（丑化人的）模拟像，画像",
+    "en": "a statue of a famous person, a saint or a god; a model of a person that makes them look ugly"
   },
-  "charity": {
-    "phonetic": "/ˈtʃærəti/",
-    "zh": "慈善机构（或组织）；慈善；赈济；施舍；仁爱；宽容；宽厚；博爱始于自家",
-    "en": "an organization for helping people in need; organizations for helping people in need, considered as a group; the money, food, help, etc. that they give; kind behaviour and sympathy towards other people, especially when you are judging them; you should help and care for your own family, etc. before you start helping other people",
-    "pos": "noun"
-  },
-  "hybrid": {
-    "phonetic": "/ˈhaɪbrɪd/",
-    "zh": "杂种动物；杂交植物；杂种；（不同事物的）混合物，合成物；混合动力车（使用两种不同能源，尤指汽油或柴油与电混合使用）",
-    "en": "having parents of different species or varieties; that is the product of mixing two or more different things; using two different types of power, especially petrol or diesel and electricity; an animal or plant that has parents of different species or varieties; something that is the product of mixing two or more different things; a vehicle that uses two different types of power, especially petrol or diesel and electricity; a bicycle that has been designed for use on the road or on rough ground",
-    "pos": "adjective / noun"
-  },
-  "install": {
-    "phonetic": "/ɪnˈstɔːl/ | /ɪnˈstɔːlz/ | /ɪnˈstɔːld/ | /ɪnˈstɔːlɪŋ/",
-    "zh": "安装；设置；安装（程序）；（常以正式仪式）使就职，任命；安顿；安置",
-    "en": "to fix equipment or furniture into position so that it can be used; to put a new program onto a computer; to put somebody in a new position of authority, often with an official ceremony; to make somebody/yourself comfortable in a particular place or position",
-    "pos": "verb"
-  },
-  "vision": {
-    "phonetic": "/ˈvɪʒn/",
-    "zh": "视力；视野；想象；幻象；梦幻；幻象；神示；异象；想象力；眼力；远见卓识；俊男；天仙；有…气质的人；（电视或影院屏幕的）影像，画面",
-    "en": "the ability to see; the area that you can see from a particular position; an idea or a picture in your imagination; a dream or similar experience, especially of a religious kind; the ability to think about or plan the future with great imagination and intelligence; a person of great beauty or who shows the quality mentioned; the picture on a television or cinema screen",
-    "pos": "noun"
-  },
-  "pledge": {
-    "phonetic": "/pledʒ/ | /ˈpledʒɪz/ | /pledʒd/ | /ˈpledʒɪŋ/",
-    "zh": "保证给予（或做）；正式承诺；使保证；使发誓；抵押；典当；宣誓参加美国大学生联谊会；保证；诺言；誓约；质钱；抵押品；发誓戒酒",
-    "en": "to formally promise to give or do something; to make somebody or yourself formally promise to do something; to leave something with somebody as a pledge; to promise to become a junior member of a fraternity or sorority; a serious promise; a sum of money or something valuable that you leave with somebody to prove that you will do something or pay back money that you owe; to make a promise never to drink alcohol",
-    "pos": "verb / noun"
-  },
-  "bot": {
-    "phonetic": "/bɒt/ | /bɑːt/",
-    "zh": "网上机器人；自动程序",
-    "en": "a computer program that runs automated tasks over the internet; a robot",
-    "pos": "noun"
-  },
-  "creative": {
-    "phonetic": "/kriˈeɪtɪv/",
-    "zh": "创造（性）的；创作的；有创造力的；（尤指艺术作品）创作的；表现创造力的；富于创造力的人；搞创作的人；创意；创作素材",
-    "en": "involving the use of skill and the imagination to produce something new or a work of art; having the skill and ability to produce something new, especially a work of art; showing this ability; a person whose job involves creative work; creative ideas or material",
-    "pos": "adjective / noun"
-  },
-  "conditioner": {
-    "phonetic": "/kənˈdɪʃənə(r)/ | /kənˈdɪʃənər/",
-    "zh": "护发剂；护发素；（洗衣后用的）柔顺剂",
-    "en": "a liquid or cream used to improve the condition of hair after washing; a liquid, used after washing clothes, that makes them softer",
-    "pos": "noun"
-  },
-  "initiative": {
-    "phonetic": "/ɪˈnɪʃətɪv/",
-    "zh": "倡议；新方案；主动性；积极性；自发性；掌握有利条件的能力（或机会）；主动权；（美国某些州的）公民立法提案程序",
-    "en": "a new plan for dealing with a particular problem or for achieving a particular purpose; the ability to decide and act on your own without waiting for somebody to tell you what to do; the power or opportunity to act and gain an advantage before other people do; (in some states of the US) a process by which ordinary people can suggest a new law by signing a petition",
-    "pos": "noun"
-  },
-  "lowest": {
+  "egg on": {
     "phonetic": "",
-    "zh": "adj. 最低的；最小的（low 的最高级）；最底下的",
-    "en": "Situated close to, or even below, the ground or another normal reference plane; not high or lofty.",
-    "pos": ""
+    "zh": "鼓动；怂恿；煽动",
+    "en": "to encourage somebody to do something, especially something that they should not do"
   },
-  "fake": {
-    "phonetic": "/feɪk/",
-    "zh": "假的；冒充的；伪造的；假货；赝品；冒充者；伪造；冒充；假装，佯装，装出（某种感情、有病等）",
-    "en": "not what somebody claims it is; appearing to be something it is not; made to look like something else; an object such as a work of art, a coin or a piece of jewellery that is not what somebody claims it is but has been made to look as if it is; a person who pretends to be what they are not in order to cheat people; to make something false appear to be real, especially in order to cheat somebody; to pretend to have a particular feeling, illness, etc.",
-    "pos": "adjective / noun / verb"
+  "embed": {
+    "phonetic": "/ɪmˈbed/ | /ɪmˈbedz/ | /ɪmˈbedɪd/ | /ɪmˈbedɪŋ/",
+    "zh": "把…牢牢地嵌入（或插入、埋入）；派遣（战地记者、摄影记者等）；嵌入（在 I'm aware that she knows 句中，she knows 为内嵌句）",
+    "en": "to fix something in a substance or solid object; to send a journalist, photographer, etc. to an area where there is fighting, so that he or she can travel with the army and report what is happening; to place a sentence inside another sentence. In the sentence ‘I’m aware that she knows’, she knows is an embedded sentence."
   },
-  "influential": {
-    "phonetic": "/ˌɪnfluˈenʃl/",
-    "zh": "有很大影响的；有支配力的",
-    "en": "having a lot of influence on somebody/something",
-    "pos": "adjective"
+  "emblematic": {
+    "phonetic": "/ˌembləˈmætɪk/",
+    "zh": "标志的；象征（性）的；特有的；典型的；有代表性的",
+    "en": "that represents or is a symbol of something; that is considered typical of a situation, an area of work, etc."
   },
-  "hunter-gatherer": {
-    "phonetic": "/ˌhʌntə ˈɡæðərə(r)/ | /ˌhʌntər ˈɡæðərər/",
-    "zh": "游猎采集部族成员",
-    "en": "a member of a group of people who do not live in one place but move around and live by hunting, fishing and gathering plants",
-    "pos": "noun"
+  "emulation": {
+    "phonetic": "/ˌemjuˈleɪʃn/",
+    "zh": "努力赶上；向…看齐",
+    "en": "the act of trying to do something as well as somebody else because you admire them; the act of a computer or computer program working in the same way as another computer or program and performing the same tasks"
   },
-  "automation": {
-    "phonetic": "/ˌɔːtəˈmeɪʃn/",
-    "zh": "自动化",
-    "en": "the use of machines and computers to do work that was previously done by people",
-    "pos": "noun"
+  "enclosure": {
+    "phonetic": "/ɪnˈkləʊʒə(r)/ | /ɪnˈkləʊʒər/",
+    "zh": "圈占地；圈用地；围场；圈地；（信中）附件",
+    "en": "a piece of land that is surrounded by a fence or wall and is used for a particular purpose; the act of placing a fence or wall around a piece of land; something that is placed in an envelope with a letter"
   },
-  "barrel": {
-    "phonetic": "/ˈbærəl/",
-    "zh": "桶；一桶（的量）；桶（石油计量单位，相当于 120 到 159 升）；枪管；很有趣；开心；快乐；易如反掌；探囊取物；手到擒来；全部；所有；（使某人）听从摆布，处于被动地位；（因别无选择）将就，凑合；（无法控制地）高速行进，飞驰",
-    "en": "a large round container, usually made of wood or metal, with flat ends and, usually, curved sides; the contents of or the amount contained in a barrel; a unit of measurement in the oil industry equal to between 120 and 159 litres; the part of a gun like a tube through which the bullets are fired; a lot of fun; used to emphasize how easy it is to do something; including everything; (to put/have somebody) in a situation in which they must accept or do what you want; to have to use things or people that are not the best or most suitable because the ones that were the best or most suitable are no longer available; to move very fast in a particular direction, especially in a way that you cannot control",
-    "pos": "noun / verb"
+  "endemic": {
+    "phonetic": "/enˈdemɪk/",
+    "zh": "地方性的；（某地或某集体中）特有的，流行的，难摆脱的",
+    "en": "regularly found in a particular place or among a particular group of people and difficult to get rid of"
   },
-  "fungu": {
+  "engender": {
+    "phonetic": "/ɪnˈdʒendə(r)/ | /ɪnˈdʒendər/ | /ɪnˈdʒendəz/ | /ɪnˈdʒendərz/ | /ɪnˈdʒendəd/ | /ɪnˈdʒendərd/ | /ɪnˈdʒendərɪŋ/",
+    "zh": "产生，引起（某种感觉或情况）",
+    "en": "to make a feeling or situation exist"
+  },
+  "ephemera": {
+    "phonetic": "/ɪˈfemərə/",
+    "zh": "只在短期内有用的事物",
+    "en": "things that are important or used for only a short period of time"
+  },
+  "ephemeral": {
+    "phonetic": "/ɪˈfemərəl/",
+    "zh": "短暂的；瞬息的",
+    "en": "lasting or used for only a short period of time"
+  },
+  "eradicate": {
+    "phonetic": "/ɪˈrædɪkeɪt/ | /ɪˈrædɪkeɪts/ | /ɪˈrædɪkeɪtɪd/ | /ɪˈrædɪkeɪtɪŋ/",
+    "zh": "根除；消灭；杜绝",
+    "en": "to destroy or get rid of something completely, especially something bad"
+  },
+  "ethnic cleansing": {
+    "phonetic": "/ˌeθnɪk ˈklenzɪŋ/",
+    "zh": "（尤用于新闻报道）种族清洗",
+    "en": "(used especially in news reports) the policy of forcing the people of a particular race or religion to leave an area or a country"
+  },
+  "eureka moment": {
+    "phonetic": "/juˈriːkə məʊmənt/",
+    "zh": "顿悟时刻；突发灵感的一刻",
+    "en": "the moment when you suddenly understand something important, have a great idea, or find the answer to a problem"
+  },
+  "evade": {
+    "phonetic": "/ɪˈveɪd/ | /ɪˈveɪdz/ | /ɪˈveɪdɪd/ | /ɪˈveɪdɪŋ/",
+    "zh": "逃脱；躲开；躲避；逃避，规避（尤指法律或道德责任）；回避，避开（处理或谈论某事）；使达不到；未发生在（某人）身上",
+    "en": "to escape from somebody/something or avoid meeting somebody; to find a way of not doing something, especially something that legally or morally you should do; to avoid dealing with or talking about something; to not come or happen to somebody"
+  },
+  "exacting": {
+    "phonetic": "/ɪɡˈzæktɪŋ/",
+    "zh": "严谨细致的；要求小心仔细的；要求严格的",
+    "en": "needing or demanding a lot of effort and care about details"
+  },
+  "exodus": {
+    "phonetic": "/ˈeksədəs/",
+    "zh": "（大批人同时）离开，外出，出去",
+    "en": "a situation in which many people leave a place at the same time"
+  },
+  "exorbitant": {
+    "phonetic": "/ɪɡˈzɔːbɪtənt/ | /ɪɡˈzɔːrbɪtənt/",
+    "zh": "过高的；高得离谱的",
+    "en": "much too high"
+  },
+  "expansive": {
+    "phonetic": "/ɪkˈspænsɪv/",
+    "zh": "广阔的；辽阔的；浩瀚的；广泛的；全面的；友善健谈的；开朗的；刺激经济扩展的",
+    "en": "covering a large amount of space; covering a large subject area, rather than trying to be exact and use few words; friendly and willing to talk a lot; encouraging economic expansion"
+  },
+  "extraneous": {
+    "phonetic": "/ɪkˈstreɪniəs/",
+    "zh": "没有直接联系的；无关的",
+    "en": "not directly connected with the particular situation you are in or the subject you are dealing with"
+  },
+  "falter": {
+    "phonetic": "/ˈfɔːltə(r)/ | /ˈfɔːltər/ | /ˈfɔːltəz/ | /ˈfɔːltərz/ | /ˈfɔːltəd/ | /ˈfɔːltərd/ | /ˈfɔːltərɪŋ/",
+    "zh": "衰弱；衰退；衰落；（嗓音）颤抖；结巴地说；支吾其词；蹒跚；摇晃；犹豫；畏缩",
+    "en": "to become weaker or less effective; to speak in a way that shows that you are not confident; to walk or behave in a way that shows that you are not confident"
+  },
+  "fast-track": {
+    "phonetic": "/ˈfɑːst træk/ | /ˈfæst træk/",
+    "zh": "加速…的进程",
+    "en": "connected with or taking a quick way to achieve something, for example a high position in a job; to make somebody’s progress in achieving something, for example a high position in a job, quicker than usual"
+  },
+  "feat": {
+    "phonetic": "/fiːt/",
+    "zh": "技艺；武艺；功绩；英勇事迹",
+    "en": "an action or a piece of work that needs skill, strength or courage"
+  },
+  "fertile": {
+    "phonetic": "/ˈfɜːtaɪl/ | /ˈfɜːrtl/",
+    "zh": "肥沃的；富饶的；能生育的；可繁殖的；能结果的；能产生好结果的；促进的；点子多的；想象力丰富的",
+    "en": "that plants grow well in; that can produce babies, young animals, fruit or new plants; that produces good results; that encourages activity; that produces a lot of new ideas"
+  },
+  "fervently": {
+    "phonetic": "/ˈfɜːvəntli/ | /ˈfɜːrvəntli/",
+    "zh": "热情的；热忱的；热诚的；热烈的",
+    "en": "in a way that shows very strong and sincere feelings about something"
+  },
+  "fiasco": {
+    "phonetic": "/fiˈæskəʊ/",
+    "zh": "惨败；可耻的失败；尴尬的结局",
+    "en": "something that does not succeed, often in a way that makes people feel embarrassed"
+  },
+  "fiddle": {
+    "phonetic": "/ˈfɪdl/ | /ˈfɪdlz/ | /ˈfɪdld/ | /ˈfɪdlɪŋ/",
+    "zh": "（尤指厌烦或紧张地）不断摸弄，不停摆弄；篡改；伪造；对…做手脚；拉小提琴；修理；调整；摆弄；欺诈；骗钱行为；骗局；难事；搞骗钱勾当；非常健康；当二把手；当副手；居次要地位",
+    "en": "to keep touching or moving something with your hands, especially because you are bored or nervous; to change the details or figures of something in order to try to get money dishonestly or gain an advantage; to play music on the violin; a musical instrument with strings, that you hold under your chin and play with a bow; something that is done dishonestly to get money; something that is difficult to do; to be doing something dishonest to get money; in very good physical condition; to be treated as less important than somebody/something; to have a less important position than somebody/something else"
+  },
+  "filing": {
+    "phonetic": "/ˈfaɪlɪŋ/",
+    "zh": "存档；归档；存档档案；归档记录；锉屑",
+    "en": "the act of putting documents, letters, etc. into a file; something that is placed in an official record; very small pieces of metal, made when a larger piece of metal is filed"
+  },
+  "fire drill": {
+    "phonetic": "/ˈfaɪə drɪl/ | /ˈfaɪər drɪl/",
+    "zh": "消防演习",
+    "en": "a practice of what people must do in order to escape safely from a fire in a building"
+  },
+  "fiscal year": {
+    "phonetic": "/ˌfɪskl ˈjɪə(r)/ | /ˌfɪskl ˈjɜː(r)/ | /ˌfɪskl ˈjɪr/",
+    "zh": "财政年度；会计年度",
+    "en": "a period of twelve months over which the accounts and taxes of a company or a person are calculated"
+  },
+  "fitness tracker": {
+    "phonetic": "/ˈfɪtnəs trækə(r)/ | /ˈfɪtnəs trækər/",
+    "zh": "健身追踪器在认真的运动员中很受欢迎。",
+    "en": "a device that you can wear that records your daily physical activity, as well as other information about your health, such as your heart rate"
+  },
+  "fizzle out": {
     "phonetic": "",
-    "zh": "n. 真菌，真菌类植物；霉菌；（尤指鱼的）真菌感染；迅速出现的令人讨厌的东西",
-    "en": "",
-    "pos": ""
+    "zh": "（顺利开始）结果失败，终成泡影；虎头蛇尾",
+    "en": "to gradually become less successful and end in a disappointing way"
   },
-  "elderly": {
-    "phonetic": "/ˈeldəli/ | /ˈeldərli/",
-    "zh": "年纪较大的，上了年纪的（婉辞，与 old 同义）；老人；上了年纪的人",
-    "en": "used as a polite word for ‘old’; people who are old",
-    "pos": "adjective / noun"
+  "flabbergasted": {
+    "phonetic": "/ˈflæbəɡɑːstɪd/ | /ˈflæbərɡæstɪd/",
+    "zh": "大吃一惊；目瞪口呆",
+    "en": "extremely surprised and/or shocked"
   },
-  "formal": {
-    "phonetic": "/ˈfɔːml/ | /ˈfɔːrml/",
-    "zh": "适合正式场合的；正规的；庄重的；正式的；合乎规矩的；正规的；方式上的；做法上的；形式上的；整齐的；布置井然的",
-    "en": "very correct and suitable for official or important occasions; official; following an agreed or official way of doing things; received in a school, college or university, with lessons, exams, etc., rather than gained just through practical experience; connected with the way something is done rather than what is done; arranged in a regular manner, according to a clear, exact plan",
-    "pos": "adjective"
+  "flint": {
+    "phonetic": "/flɪnt/",
+    "zh": "燧石；火石；打火石",
+    "en": "a type of very hard grey stone that can produce a spark when it is hit against steel; a piece of this stone; a piece of flint or hard metal that is used to produce a spark"
   },
-  "gam": {
+  "flounder": {
+    "phonetic": "/ˈflaʊndə(r)/ | /ˈflaʊndər/ | /ˈflaʊndəz/ | /ˈflaʊndərz/ | /ˈflaʊndəd/ | /ˈflaʊndərd/ | /ˈflaʊndərɪŋ/",
+    "zh": "不知所措；挠头；支吾；困难重重；艰苦挣扎；（在水、泥等中）挣扎；偏口鱼；比目鱼；鲽",
+    "en": "to struggle to know what to say or do or how to continue with something; to have a lot of problems and to be in danger of failing completely; to struggle to move or get somewhere in water, mud, etc.; a small flat sea fish that is used for food"
+  },
+  "fly-by-night": {
+    "phonetic": "/ˈflaɪ baɪ naɪt/",
+    "zh": "无信用（或不可靠）而唯利是图的",
+    "en": "a person or business that is dishonest and only interested in making money quickly; dishonest and only interested in making money quickly"
+  },
+  "follow through": {
     "phonetic": "",
-    "zh": "n. 鲸鱼群；（尤指海边，滩上的）社交，交谈；腿（尤指妇女漂亮的腿）; v. 社交，与……联欢；闲聊...",
-    "en": "A person's leg, especially an attractive woman's leg.",
-    "pos": ""
+    "zh": "（击球后球拍、球棒等）完成顺势动作；把…进行到底；完成（开了头的事）",
+    "en": "to complete a single movement of the arm when hitting the ball by continuing to move the club, racket, etc. after hitting it; to finish something that you have started"
   },
-  "skye": {
+  "food insecurity": {
+    "phonetic": "/ˌfuːd ɪnsɪˈkjʊərəti/ | /ˌfuːd ɪnsɪˈkjʊrəti/",
+    "zh": "粮食不安全：无法可靠地获得您可以负担得起的足够健康食品的状态；经历粮食不安全状况的家庭饮食质量下降或种类繁多。；估计有64％的人口已经遭受了长期粮食不安全的困扰。",
+    "en": "the state of not having reliable access to enough healthy food that you can afford"
+  },
+  "foot soldier": {
+    "phonetic": "/ˈfʊt səʊldʒə(r)/ | /ˈfʊt səʊldʒər/",
+    "zh": "步兵；（组织中从事乏味工作而不担责任，但又不可或缺的）群众员工",
+    "en": "a soldier who fights on foot, not on a horse or in a vehicle; a person in an organization who does work that is important but boring, and who has no power or responsibility"
+  },
+  "footprint": {
+    "phonetic": "/ˈfʊtprɪnt/",
+    "zh": "脚印；足迹；（某物所占的）空间量，面积；（通信卫星）覆盖区",
+    "en": "a mark left on a surface by a person’s foot or shoe or by an animal’s foot; a measure of the amount of the earth’s resources used by a person or a population that lives in a particular way; the amount of space that something fills; the area on the earth in which a signal from a communications satellite can be received"
+  },
+  "forage": {
+    "phonetic": "/ˈfɒrɪdʒ/ | /ˈfɔːrɪdʒ/ | /ˈfɒrɪdʒɪz/ | /ˈfɔːrɪdʒɪz/ | /ˈfɒrɪdʒd/ | /ˈfɔːrɪdʒd/ | /ˈfɒrɪdʒɪŋ/ | /ˈfɔːrɪdʒɪŋ/",
+    "zh": "觅（食）；（尤指用手）搜寻（东西）；（牛马的）饲料",
+    "en": "to search widely for food; to search for something, especially using the hands; food for horses and cows"
+  },
+  "foray": {
+    "phonetic": "/ˈfɒreɪ/ | /ˈfɔːreɪ/",
+    "zh": "（改变职业、活动的）尝试；突袭；闪电式袭击；短途（寻物）；短暂访问（新地方）",
+    "en": "an attempt to become involved in a different activity or profession; a short sudden attack made by a group of soldiers; a short journey to find a particular thing or to visit a new place"
+  },
+  "forefront": {
+    "phonetic": "/ˈfɔːfrʌnt/ | /ˈfɔːrfrʌnt/",
+    "zh": "处于最前列；进入重要地位（或主要地位）",
+    "en": "in or into an important or leading position in a particular group or activity"
+  },
+  "forgo": {
+    "phonetic": "/fɔːˈɡəʊ/ | /fɔːrˈɡəʊ/ | /fɔːˈɡəʊz/ | /fɔːrˈɡəʊz/ | /fɔːˈwent/ | /fɔːrˈwent/ | /fɔːˈɡɒn/ | /fɔːrˈɡɔːn/ | /fɔːˈɡəʊɪŋ/ | /fɔːrˈɡəʊɪŋ/",
+    "zh": "放弃，弃绝（想做的事或想得之物）",
+    "en": "to decide not to have or do something that you would like to have or do"
+  },
+  "freak": {
+    "phonetic": "/friːk/",
+    "zh": "狂热爱好者；（行为、外表、想法）怪异的人；怪人；（指人、动植物和东西）畸形；怪异的事；不寻常的事；不正常的；怪异的；（使）强烈反应，震惊，畏惧",
+    "en": "a person with a very strong interest in a particular subject; a person who is considered to be unusual because of the way they behave, look or think; a person, an animal, a plant or a thing that is not physically normal; a very unusual and unexpected event; very unusual and unexpected; if somebody freaks or if something freaks them, they react very strongly to something that makes them suddenly feel shocked, surprised, frightened, etc."
+  },
+  "free pass": {
     "phonetic": "",
-    "zh": "n. 匐犬（一种猎狐犬）；斯凯岛（苏格兰西部的岛）",
-    "en": "",
-    "pos": ""
+    "zh": "自由通行证；免费入场证",
+    "en": "A is an official document that allows a person to travel or to enter a particular building without having to pay."
   },
-  "diaspora": {
-    "phonetic": "/daɪˈæspərə/",
-    "zh": "（犹太人的）大流散；（任何民族或群体的）大移居",
-    "en": "the movement of the Jewish people away from their own country to live and work in other countries; Jewish people living and working in other countries; the movement of people from any nation or group away from their own country; people who have moved away from their own country",
-    "pos": "noun"
+  "frenzy": {
+    "phonetic": "/ˈfrenzi/",
+    "zh": "疯狂；狂乱；狂暴",
+    "en": "a state of great activity and strong emotion that is often violent or frightening and not under control"
   },
-  "rhetoric": {
-    "phonetic": "/ˈretərɪk/",
-    "zh": "华而不实的言语；花言巧语；修辞技巧；修辞",
-    "en": "speech or writing that is intended to influence people, but that is not completely honest or sincere; the art of using language in speech or writing in a special way that influences or entertains people",
-    "pos": "noun"
+  "fulfilling": {
+    "phonetic": "/fʊlˈfɪlɪŋ/",
+    "zh": "让人感觉有意义的；令人满足的",
+    "en": "causing somebody to feel satisfied and useful"
   },
-  "historic": {
-    "phonetic": "/hɪˈstɒrɪk/ | /hɪˈstɔːrɪk/",
-    "zh": "历史上著名（或重要）的；可名垂青史的；有史时期的",
-    "en": "important in history; likely to be thought of as important at some time in the future; of a period during which history was recorded; that took place in the past but was not dealt with at the time",
-    "pos": "adjective"
+  "fungus": {
+    "phonetic": "/ˈfʌŋɡəs/ | /ˈfʌŋɡiː/ | /ˈfʌŋɡaɪ/ | /ˈfʌndʒaɪ/",
+    "zh": "真菌（如蘑菇和霉）；霉；霉菌",
+    "en": "an organism (= a living thing) that is similar to a plant without leaves, flowers or green colouring, and that usually grows on plants or on decaying matter. mushrooms and mildew are both fungi.; a layer of mould or a similar fungus, for example on a plant or wall; an infection caused by a fungus"
   },
-  "historical": {
-    "phonetic": "/hɪˈstɒrɪkl/ | /hɪˈstɔːrɪkl/",
-    "zh": "（有关）历史的；有关历史研究的；历史学的；历史题材的",
-    "en": "connected with the past; connected with the study of history; about people and events in the past",
-    "pos": "adjective"
+  "furnish": {
+    "phonetic": "/ˈfɜːnɪʃ/ | /ˈfɜːrnɪʃ/ | /ˈfɜːnɪʃɪz/ | /ˈfɜːrnɪʃɪz/ | /ˈfɜːnɪʃt/ | /ˈfɜːrnɪʃt/ | /ˈfɜːnɪʃɪŋ/ | /ˈfɜːrnɪʃɪŋ/",
+    "zh": "在（房屋等）处布置家具；向（某人或某事物）供应，提供",
+    "en": "to put furniture in a house, room, etc.; to supply or provide somebody/something with something; to supply something to somebody"
   },
-  "protest": {
-    "phonetic": "/ˈprəʊtest/",
-    "zh": "抗议；抗议书（或行动）；反对；无奈地；不服气地；不甘心地；（公开）反对；抗议；坚决地表示；申辩",
-    "en": "the expression of strong dislike of or opposition to something; a statement or an action that shows this; unwillingly and after expressing disagreement; to say or do something to show that you disagree with something or think it is bad, especially publicly; to state clearly that something is true, especially when you have been accused of something or when other people do not believe you",
-    "pos": "noun / verb"
+  "gatekeeper": {
+    "phonetic": "/ˈɡeɪtkiːpə(r)/ | /ˈɡeɪtkiːpər/",
+    "zh": "看门人；守门人；门卫；看门人；把关系统",
+    "en": "a person whose job is to check and control who is allowed to go through a gate; a person, system, etc. that decides whether somebody/something will be allowed, or allowed to reach a particular place or person"
   },
-  "leadership": {
-    "phonetic": "/ˈliːdəʃɪp/ | /ˈliːdərʃɪp/",
-    "zh": "领导；领导地位；领导才能；领导应有的品质；领导班子；领导层",
-    "en": "the state or position of being a leader; the ability to be a leader or the qualities a good leader should have; a group of leaders of a particular organization, etc.",
-    "pos": "noun"
+  "generic": {
+    "phonetic": "/dʒəˈnerɪk/",
+    "zh": "一般的；普通的；通用的；无厂家商标的；无商标的",
+    "en": "shared by, including or typical of a whole group of things; not specific; not using the name of the company that made it; lacking imagination and so not original; a version of an existing product that is not made by a well-known company"
   },
-  "con": {
-    "phonetic": "/kɒn/ | /kɑːn/",
-    "zh": "诡计；骗局；欺骗；事物的利与弊；支持与反对；（尤指为钱财或使人为自己做某事而）欺骗，哄骗，诈骗",
-    "en": "a trick; an act of cheating somebody; a convict (= a person who has been found guilty of a crime and sent to prison); the advantages and disadvantages of something; to trick somebody, especially in order to get money from them or persuade them to do something for you",
-    "pos": "noun / verb"
+  "grace": {
+    "phonetic": "/ɡreɪs/",
+    "zh": "优美；优雅；文雅；高雅；风度；体面；宽限期；延缓期；恩宠；恩典；（饭前的）谢恩祈祷；（对大主教、公爵、公爵夫人、女公爵的尊称）大人，阁下，夫人；摆架子；装腔作势；为某人所赞同（或喜爱）；得到某人的欢心；（尤指因做了错事或不道德之事而）失去信任，失去尊重，失去恩宠；（尤指因做了错事或不道德之事的）失信；（尤指犯错后）知趣地做某事，通情达理地做某事；（天主教指灵魂上没有大罪的状态）受天主眷爱，蒙受恩宠；若非天助，区区岂能幸免；勉强地；不情愿地；无礼地；心甘情愿地；乐意地；高高兴兴地；纪元某年；公元某年；为…增色；为…锦上添花；装饰；使荣耀；使生辉；承蒙光临",
+    "en": "an attractive quality of movement that is smooth and done with control; a simple and beautiful quality; a quality of behaviour that is polite and pleasant and deserves respect; ways of behaving that people think are polite and acceptable; extra time that is given to somebody to enable them to pay a bill, finish a piece of work, etc.; the love that God shows towards the human race; a short prayer that is usually said before a meal to thank God for the food; used as a title of respect when talking to or about an archbishop, a duke or a duchess; a way of behaving that shows that somebody thinks that they are more important, etc. than they really are; to have somebody’s approval and be liked by them; to lose the trust or respect that people have for you, especially by doing something bad or morally wrong; a situation in which somebody loses the trust or respect that people have for them, especially because they have done something that is bad or morally wrong; to be polite enough to do something, especially when you have done something wrong; (in the Roman Catholic Church) having been forgiven by God for the wrong or evil things you have done; used to say that you could easily have been in the same difficult or unpleasant situation that somebody else is in; in an unwilling and/or rude way; in a willing and pleasant way; any particular year after the birth of Christ; to make something more attractive; to decorate something; to bring honour to somebody/something; to be kind enough to attend or take part in something; a first name for girls"
   },
-  "hugh": {
-    "phonetic": "/hjuː/",
-    "zh": "休：男孩的名字",
-    "en": "a first name for boys",
-    "pos": ""
+  "grail": {
+    "phonetic": "/ɡreɪl/",
+    "zh": "圣杯（据信为耶稣离世前所用）；渴望但永远得不到的东西；努力追求但永远不可能实现的目标（或理想）",
+    "en": "the cup or bowl believed to have been used by Jesus Christ before he died, that became a holy thing that people wanted to find; a thing that you try very hard to find or achieve, but never will"
   },
-  "lobby": {
-    "phonetic": "/ˈlɒbi/ | /ˈlɑːbi/",
-    "zh": "（公共建筑物进口处的）门厅，前厅，大厅；（英国议会的）民众接待厅；（就某议题企图影响从政者的）游说团体；（就某议题企图影响从政者的）游说；游说（从政者或政府）",
-    "en": "a large area inside the entrance of a public building where people can meet and wait; (in the British Parliament) a large hall that is open to the public and used for people to meet and talk to Members of Parliament; a group of people who try to influence politicians on a particular issue; an organized attempt by a group of people to influence politicians on a particular issue; to try to influence a politician or the government and, for example, persuade them to support or oppose a change in the law",
-    "pos": "noun / verb"
+  "graphic": {
+    "phonetic": "/ˈɡræfɪk/",
+    "zh": "绘画的；书画的；图样的；图案的；（尤指令人不快的事物）形象的，生动的，逼真的；（尤指电脑荧屏或报纸、书籍上的）图表，图形，图画",
+    "en": "connected with drawings and design, especially in the production of books, magazines, websites, etc.; very clear and full of details, especially about something unpleasant; a diagram or picture, especially one that appears on a computer screen or in a newspaper or book"
   },
-  "demographic": {
-    "phonetic": "/ˌdeməˈɡræfɪk/",
-    "zh": "人口统计数据；同类客户群体；人口的；人口学的",
-    "en": "data relating to the population and different groups within it; a section of the population who are of a similar age, the same sex, etc.; relating to the population and different groups within it",
-    "pos": "noun / adjective"
+  "grassroots": {
+    "phonetic": "/ˌɡrɑːsˈruːts/ | /ˌɡræsˈruːts/",
+    "zh": "基层民众；平民百姓；草根",
+    "en": "ordinary people in society or in an organization, rather than the leaders or people who make decisions"
   },
-  "bonuse": {
+  "grave": {
+    "phonetic": "/ɡreɪv/",
+    "zh": "坟墓；墓穴；坟头；死亡；去世；逝世；自掘坟墓；自取灭亡；自己害自己；一生；一世；从生到死；行将就木；命不久矣；大去之期不远；九泉之下不得安宁；严重的；重大的；严峻的；深切的；严肃的；庄严的；表情沉重的；钝重音符，沉音符，抑音符（标在元音上面表发音）",
+    "en": "a place in the ground where a dead person is buried; a way of referring to death or a person’s death; to do something that will have very harmful results for you; a way of referring to the whole of a person’s life, from birth until death; to be so old or ill that you are not likely to live much longer; likely to be very shocked or angry; very serious and important; giving you a reason to feel worried; serious in manner, as if something sad or important has just happened; a mark placed over a vowel in some languages to show how it should be pronounced, as over the e in the French word père"
+  },
+  "gridlock": {
+    "phonetic": "/ˈɡrɪdlɒk/ | /ˈɡrɪdlɑːk/",
+    "zh": "市区交通大堵塞；僵局（因意见分歧而无法采取行动）",
+    "en": "a situation in which there are so many cars in the streets of a town that the traffic cannot move at all; a situation in which people with different opinions are not able to agree with each other and so no action can be taken"
+  },
+  "grievous bodily harm": {
+    "phonetic": "/ˌɡriːvəs ˌbɒdɪli ˈhɑːm/ | /ˌɡriːvəs ˌbɑːdɪli ˈhɑːrm/",
+    "zh": "严重人体伤害（罪）",
+    "en": "the crime of causing somebody serious physical injury"
+  },
+  "grinding": {
+    "phonetic": "/ˈɡraɪndɪŋ/",
+    "zh": "没完没了的；无休止的；无改进的",
+    "en": "that never ends or improves; rough and unpleasant to listen to"
+  },
+  "ground zero": {
+    "phonetic": "/ˌɡraʊnd ˈzɪərəʊ/ | /ˌɡraʊnd ˈzɪrəʊ/",
+    "zh": "（核弹的）爆心投影点；归零地（2001 年 9 月 11 日炸毁的纽约双子大楼遗址）；开始；起点",
+    "en": "the point on the earth’s surface where a nuclear bomb explodes; the site of the Twin Towers in New York, destroyed on 11 September 2001; the beginning; a starting point for an activity"
+  },
+  "hacking": {
+    "phonetic": "/ˈhækɪŋ/",
+    "zh": "黑客行为",
+    "en": "the activity of using computers to get access to data in somebody else's computer or phone system without permission"
+  },
+  "hail": {
+    "phonetic": "/heɪl/ | /heɪlz/ | /heɪld/ | /ˈheɪlɪŋ/",
+    "zh": "赞扬（或称颂）…为（尤用于报章等）；招手叫（出租车或公共汽车）；跟…打招呼；向…喊；下雹；雹；冰雹；一阵像冰雹般袭来的事物；雹子般的一阵",
+    "en": "to describe somebody/something as being very good or special, especially in newspapers, etc.; to signal to a taxi or a bus, in order to get the driver to stop; to call to somebody in order to say hello to them or attract their attention; when it hails, small balls of ice fall like rain from the sky; small balls of ice that fall like rain; a large number or amount of something that is aimed at somebody in order to harm them"
+  },
+  "hallmark": {
+    "phonetic": "/ˈhɔːlmɑːk/ | /ˈhɔːlmɑːrk/",
+    "zh": "特征；特点；金银纯度印记（打在金、银、铂制品上，表示纯度、生产日期及产地）；给…打金银纯度印记",
+    "en": "a feature or quality that is typical of somebody/something; a mark put on gold, silver and platinum objects that shows the quality of the metal and gives information about when and where the object was made; to put a hallmark on metal goods"
+  },
+  "hand-wringing": {
+    "phonetic": "/ˈhændrɪŋɪŋ/",
+    "zh": "候选人和她的支持者在等待看到结果时经历了很多麻烦。；头条新闻称手机对我们的健康有害",
+    "en": "the behaviour that comes from being nervous or worried, especially when this seems excessive (= more than seems reasonable or appropriate)"
+  },
+  "handily": {
+    "phonetic": "/ˈhændɪli/",
+    "zh": "方便地；便利地；容易地；轻松地",
+    "en": "in a way that is handy (= convenient); easily"
+  },
+  "hard sell": {
+    "phonetic": "/ˌhɑːd ˈsel/ | /ˌhɑːrd ˈsel/",
+    "zh": "强行推销",
+    "en": "a method of selling that puts a lot of pressure on the customer to buy"
+  },
+  "hardened": {
     "phonetic": "",
-    "zh": "n. 奖金（bonus 的复数形式）",
-    "en": "",
-    "pos": ""
+    "zh": "硬心肠的；冷酷无情的；麻木不仁的；hardened",
+    "en": "If you describe someone as , you mean that they have had so much experience of something bad or unpleasant that they are no longer affected by it in the way that other people would be."
   },
-  "campuse": {
+  "harness": {
+    "phonetic": "/ˈhɑːnɪs/ | /ˈhɑːrnɪs/",
+    "zh": "马具；挽具；（用于人，起固定或保护作用的）背带，保护带；（尤指休息或假期结束后）做正常工作；（同某人）联手；密切合作；给（马等）上挽具；用挽具把…套到…上；控制，利用（以产生能量等）",
+    "en": "a set of narrow pieces of leather and metal pieces that is put around the head and body of an animal, especially a horse, so that the animal can be controlled and fastened to a carriage, etc.; a set of straps (= long narrow pieces of a strong material) for fastening something to a person’s body or to keep them from moving off or falling; doing your normal work, especially after a rest or a holiday; working closely with somebody in order to achieve something; to put a harness on a horse or other animal; to attach a horse or other animal to something with a harness; to control and use the force or strength of something to produce power or to achieve something"
+  },
+  "head-on": {
+    "phonetic": "/ˌhed ˈɒn/ | /ˌhed ˈɑːn/",
+    "zh": "迎头相撞的；正面相撞的；正面反对的；迎头的",
+    "en": "in which the front part of one vehicle hits the front part of another vehicle; in which people express strong views and deal with something in a direct way; in such a way that the front part of one vehicle hits the front part of another vehicle or thing; by expressing strong views and dealing with something in a direct way"
+  },
+  "heartland": {
+    "phonetic": "/ˈhɑːtlænd/ | /ˈhɑːrtlænd/",
+    "zh": "（国家或地区的）腹地，中心区域；（活动或政党的）重要场所，核心区域",
+    "en": "the central part of a country or an area; an area that is important for a particular activity or political party"
+  },
+  "heed": {
+    "phonetic": "/hiːd/ | /hiːdz/ | /ˈhiːdɪd/ | /ˈhiːdɪŋ/",
+    "zh": "留心，注意，听从（劝告或警告）；留心；注意；听从",
+    "en": "to pay careful attention to somebody’s advice or warning; to pay careful attention to somebody/something"
+  },
+  "hefty": {
+    "phonetic": "/ˈhefti/",
+    "zh": "大而重的；很大的；超出一般的；可观的；用力的；猛烈的",
+    "en": "big and heavy; large; larger than usual or expected; using a lot of force"
+  },
+  "heir apparent": {
+    "phonetic": "/ˌeər əˈpærənt/ | /ˌer əˈpærənt/",
+    "zh": "当然继承人；法定继承人；（职位的）确定接替者；确定接班者",
+    "en": "an heir whose legal right to receive somebody’s property, money or title cannot be taken away because it is impossible for somebody with a stronger claim to be born; a person who is expected to take the job of somebody when that person leaves"
+  },
+  "hike": {
+    "phonetic": "/haɪk/",
+    "zh": "远足；徒步旅行；（价格、花费等的）大幅度提高，猛增；滚开；走开；去…远足；做徒步旅行；把（价格、税率等）大幅提高",
+    "en": "a long walk in the country; a large or sudden increase in prices, costs, etc.; a rude way of telling somebody to go away; to go for a long walk in the country, especially for pleasure; to spend time hiking for pleasure; to increase prices, taxes, etc. suddenly by large amounts"
+  },
+  "hollow": {
+    "phonetic": "/ˈhɒləʊ/ | /ˈhɑːləʊ/",
+    "zh": "中空的；空心的；凹陷的；沉闷回荡的；空响的；无诚意的；虚伪的；无真正价值的；给人以真实（或空洞、虚假）的印象；凹陷处；坑洼处；洞；孔；围起来的空间；挖",
+    "en": "having a hole or empty space inside; sinking deeply into the face; making a low sound like that made by an empty object when it is hit; not sincere; without real value; to give the impression of not being sincere or true; to give the impression of being sincere/true or not sincere/true; an area that is lower than the surface around it, especially on the ground; a hole or an empty space inside something; to make a flat surface go inward in a curve"
+  },
+  "homely": {
+    "phonetic": "/ˈhəʊmli/",
+    "zh": "在家一样舒适的；犹如在自家一样的；简单且好的；家常的；热情友好并热衷家庭生活的；亲切喜家的；相貌平平的",
+    "en": "making you feel comfortable, as if you were in your own home; simple and good; warm and friendly and enjoying the pleasures of home and family; not attractive"
+  },
+  "hot flush": {
+    "phonetic": "/ˌhɒt ˈflʌʃ/ | /ˌhɑːt ˈflʌʃ/",
+    "zh": "热潮红（皮肤的灼热阵感，尤见于更年期女性）",
+    "en": "a sudden hot and uncomfortable feeling in the skin, especially experienced by women during the menopause"
+  },
+  "hubris": {
+    "phonetic": "/ˈhjuːbrɪs/",
+    "zh": "傲慢；狂妄",
+    "en": "the fact of being too proud. In literature, a character with this quality ignores warnings and laws and this usually results in their downfall and death."
+  },
+  "hysterical": {
+    "phonetic": "/hɪˈsterɪkl/",
+    "zh": "歇斯底里的；情绪狂暴不可抑止的；极其可笑的",
+    "en": "in a state of extreme excitement, and crying, laughing, etc. without any control; extremely funny"
+  },
+  "idiosyncratic": {
+    "phonetic": "/ˌɪdiəsɪŋˈkrætɪk/",
+    "zh": "特质：不寻常，特别是对人或事物",
+    "en": "unusual and particular to a person or thing"
+  },
+  "idyllic": {
+    "phonetic": "/ɪˈdɪlɪk/ | /aɪˈdɪlɪk/",
+    "zh": "平和美丽的；完美无瑕的",
+    "en": "peaceful and beautiful; perfect, without problems"
+  },
+  "impoverished": {
+    "phonetic": "/ɪmˈpɒvərɪʃt/ | /ɪmˈpɑːvərɪʃt/",
+    "zh": "赤贫的；不名一文的；贫乏的；贫瘠的；枯竭的",
+    "en": "very poor; without money; poor in quality, because something is missing"
+  },
+  "improvisation": {
+    "phonetic": "/ˌɪmprəvaɪˈzeɪʃn/ | /ɪmˌprɑːvəˈzeɪʃn/",
+    "zh": "即兴创作（音乐、台词、演讲词等）",
+    "en": "the act of inventing music, the words in a play, a statement, etc. while you are playing or speaking, instead of planning it in advance; something that is invented in this way"
+  },
+  "in situ": {
+    "phonetic": "/ˌɪn ˈsɪtjuː/ | /ˌɪn ˈsaɪtuː/",
+    "zh": "在原位；在原地；在合适地方",
+    "en": "in the original or correct place"
+  },
+  "incidental": {
+    "phonetic": "/ˌɪnsɪˈdentl/",
+    "zh": "附带发生的；次要的；非有意的；作为自然结果的；伴随而来的；免不了的；附带的次要事情",
+    "en": "happening in connection with something else, but not as important as it, or not intended; happening as a natural result of something; something that happens in connection with something else, but is less important"
+  },
+  "incite": {
+    "phonetic": "/ɪnˈsaɪt/ | /ɪnˈsaɪts/ | /ɪnˈsaɪtɪd/ | /ɪnˈsaɪtɪŋ/",
+    "zh": "煽动；鼓动",
+    "en": "to encourage somebody to do something violent, illegal or unpleasant, especially by making them angry or excited"
+  },
+  "incursion": {
+    "phonetic": "/ɪnˈkɜːʃn/ | /ɪnˈkɜːrʒn/",
+    "zh": "突然入侵；突然侵犯；袭击；（意外的）搅扰，介入",
+    "en": "a sudden attack on a place by foreign armies, etc.; the sudden appearance of something in a particular area of activity that is either not expected or not wanted"
+  },
+  "indict": {
+    "phonetic": "/ɪnˈdaɪt/ | /ɪnˈdaɪts/ | /ɪnˈdaɪtɪd/ | /ɪnˈdaɪtɪŋ/",
+    "zh": "控告；起诉",
+    "en": "to officially charge somebody with a crime"
+  },
+  "indispensable": {
+    "phonetic": "/ˌɪndɪˈspensəbl/",
+    "zh": "不可或缺的；必不可少的",
+    "en": "too important to be without"
+  },
+  "indoctrination": {
+    "phonetic": "/ɪnˌdɒktrɪˈneɪʃn/ | /ɪnˌdɑːktrɪˈneɪʃn/",
+    "zh": "强行灌输（信仰或学说）",
+    "en": "the act or process of forcing somebody to accept a particular belief or set of beliefs and not allowing them to consider any others"
+  },
+  "inequity": {
+    "phonetic": "/ɪnˈekwəti/",
+    "zh": "不公正的事；不公正；不公平",
+    "en": "something that is unfair; the state of being unfair"
+  },
+  "inextricably": {
+    "phonetic": "/ˌɪnɪkˈstrɪkəbli/ | /ɪnˈekstrɪkəbli/",
+    "zh": "不可分开地；密不可分地",
+    "en": "if two things are inextricably linked, etc., it is impossible to separate them"
+  },
+  "infuse": {
+    "phonetic": "/ɪnˈfjuːz/ | /ɪnˈfjuːzɪz/ | /ɪnˈfjuːzd/ | /ɪnˈfjuːzɪŋ/",
+    "zh": "使具有，注入（某特性）；全面影响；泡制（草药等）；泡；沏；输注（药物等）",
+    "en": "to make somebody/something have a particular quality; to have an effect on all parts of something; if you infuse herbs, etc. or they infuse, you put them in hot water until the taste has passed into the water; to slowly put a drug or other substance into a person’s vein"
+  },
+  "inhibition": {
+    "phonetic": "/ˌɪnhɪˈbɪʃn/ | /ˌɪnɪˈbɪʃn/",
+    "zh": "拘谨；拘束感；阻止；抑制；禁止",
+    "en": "a shy or nervous feeling that stops you from expressing your real thoughts or feelings; the act of limiting or preventing a process or an action"
+  },
+  "innate": {
+    "phonetic": "/ɪˈneɪt/",
+    "zh": "天生的；先天的；与生俱来的",
+    "en": "that you have when you are born"
+  },
+  "inner circle": {
+    "phonetic": "/ˌɪnə ˈsɜːkl/ | /ˌɪnər ˈsɜːrkl/",
+    "zh": "核心集团",
+    "en": "the small group of people who have a lot of power in an organization, or who control it"
+  },
+  "inroads": {
     "phonetic": "",
-    "zh": "（大学）校园; 大学; 校园内的草地（campuse 的复数）",
-    "en": "",
-    "pos": ""
+    "zh": "侵袭；侵入；inroads",
+    "en": "If one thing another, the first thing starts affecting or destroying the second."
   },
-  "first-generation": {
-    "phonetic": "/ˌfɜːst dʒenəˈreɪʃn/ | /ˌfɜːrst dʒenəˈreɪʃn/",
-    "zh": "最早",
-    "en": "having left your country to go and live in a new country; being the child of somebody who has left their country to go and live in a new country; being or connected with the earliest type of something to be developed, for example a machine or piece of software",
-    "pos": "adjective"
+  "instrumental": {
+    "phonetic": "/ˌɪnstrəˈmentl/",
+    "zh": "起重要作用；用乐器演奏的；为乐器谱写的；工具格；工具词；器乐曲",
+    "en": "important in making something happen; made by or for musical instruments; in the form that a noun, pronoun or adjective has when it refers to a thing that is used to do something; a piece of music (usually popular music) in which only musical instruments are used with no singing; the form of a noun, pronoun or adjective when it refers to a thing that is used to do something"
   },
-  "migrant": {
-    "phonetic": "/ˈmaɪɡrənt/",
-    "zh": "（为工作）移居者；移民；候鸟；迁徙动物；（为工作）迁移的；（随季节变化）迁徙的",
-    "en": "a person who moves from one place to another in order to find work or better living conditions; a bird or an animal that moves from one place to another according to the season; moving from one place to another in order to find work or better living conditions; moving from one place to another according to the season",
-    "pos": "noun / adjective"
+  "insurgent": {
+    "phonetic": "/ɪnˈsɜːdʒənt/ | /ɪnˈsɜːrdʒənt/",
+    "zh": "起义者；叛乱者；造反者",
+    "en": "fighting against the government or armed forces of their own country; a person fighting against the government or armed forces of their own country"
   },
-  "public-sector": {
+  "interfere": {
+    "phonetic": "/ˌɪntəˈfɪə(r)/ | /ˌɪntərˈfɪr/ | /ˌɪntəˈfɪəz/ | /ˌɪntərˈfɪrz/ | /ˌɪntəˈfɪəd/ | /ˌɪntərˈfɪrd/ | /ˌɪntəˈfɪərɪŋ/ | /ˌɪntərˈfɪrɪŋ/",
+    "zh": "干涉；干预；介入",
+    "en": "to get involved in and try to influence a situation that should not really involve you, in a way that annoys other people"
+  },
+  "interplay": {
+    "phonetic": "/ˈɪntəpleɪ/ | /ˈɪntərpleɪ/",
+    "zh": "相互影响（或作用）",
+    "en": "the way in which two or more things or people affect each other"
+  },
+  "intrinsically": {
+    "phonetic": "/ɪnˈtrɪnzɪkli/",
+    "zh": "固有的；内在的；本身的",
+    "en": "in a way that belongs to or is part of the real nature of somebody/something"
+  },
+  "intuitive": {
+    "phonetic": "/ɪnˈtjuːɪtɪv/ | /ɪnˈtuːɪtɪv/",
+    "zh": "凭直觉得到的；直觉的；有直觉力的；易懂的；使用简便的",
+    "en": "obtained by using your feelings rather than by considering the facts; able to understand something by using feelings rather than by considering the facts; easy to understand and to use"
+  },
+  "irrespective of": {
+    "phonetic": "/ɪrɪˈspektɪv əv/",
+    "zh": "不考虑；不管；不受…影响",
+    "en": "without considering something or being influenced by it"
+  },
+  "ivory tower": {
+    "phonetic": "/ˌaɪvəri ˈtaʊə(r)/ | /ˌaɪvəri ˈtaʊər/",
+    "zh": "象牙塔（指远离问题、脱离现实的小天地）",
+    "en": "a place or situation where you are separated from the problems and practical aspects of normal life and therefore do not have to worry about or understand them"
+  },
+  "jettison": {
+    "phonetic": "/ˈdʒetɪsn/ | /ˈdʒetɪsnz/ | /ˈdʒetɪsnd/ | /ˈdʒetɪsnɪŋ/",
+    "zh": "（为减轻重量而从行驶的飞机或船上）扔弃，丢弃，投弃；摆脱；除掉；处理掉；放弃，拒绝接受（想法、信念、计划等）",
+    "en": "to throw something out of a moving plane or ship to make it lighter; to get rid of something/somebody that you no longer need or want; to reject an idea, a belief, a plan, etc. that you no longer think is useful or likely to be successful"
+  },
+  "kin": {
+    "phonetic": "/kɪn/",
+    "zh": "（统称）家属，亲属，亲戚；亲戚朋友",
+    "en": "your family or your relatives; friends and relatives"
+  },
+  "knack": {
+    "phonetic": "/næk/",
+    "zh": "技能；本领；习惯；癖好",
+    "en": "a special skill or ability that you have naturally or can learn; a habit of doing something"
+  },
+  "labyrinth": {
+    "phonetic": "/ˈlæbərɪnθ/",
+    "zh": "迷宫；曲径",
+    "en": "a complicated series of paths, which it is difficult to find your way through"
+  },
+  "lamented": {
+    "phonetic": "/ləˈmentɪd/",
+    "zh": "令人悼念（或怀念）的；使人思念的",
+    "en": "missed very much"
+  },
+  "landslide": {
+    "phonetic": "/ˈlændslaɪd/",
+    "zh": "（山坡或悬崖的）崩塌，塌方，滑坡，地滑；一方选票占压倒多数的选举；一方占绝对优势的选举",
+    "en": "a mass of earth, rock, etc. that falls down the slope of a mountain or a cliff; an election in which one person or party gets very many more votes than the other people or parties"
+  },
+  "lap up": {
     "phonetic": "",
-    "zh": "公共部门，指由政府控制或拥有的经济部门",
-    "en": "Of or relating to a public sector.",
-    "pos": ""
+    "zh": "（不加考虑地）乐于接受；开怀畅饮",
+    "en": "to accept or receive something with great pleasure, without thinking about whether it is good, true or sincere; to drink all of something and to enjoy doing so"
   },
-  "handheld": {
-    "phonetic": "/ˈhændheld/",
-    "zh": "便携式的；手提式的",
-    "en": "a device, especially a computer, that is small enough to be held in the hand while being used; small enough to be held in the hand while being used",
-    "pos": "noun / adjective"
+  "legion": {
+    "phonetic": "/ˈliːdʒən/",
+    "zh": "（尤指古罗马的）军团；大量，大批（某类型的人）；很多；极多",
+    "en": "a large group of soldiers that forms part of an army, especially the one that existed in ancient Rome; a large number of people of one particular type; very many"
   },
-  "ndez": {
+  "level at": {
     "phonetic": "",
-    "zh": "n. 雄鹿",
-    "en": "",
-    "pos": ""
+    "zh": "（尤指对犯罪或犯错的人）公开指责，谴责",
+    "en": "to say publicly that somebody is to blame for something, especially a crime or a mistake"
   },
-  "volcanic": {
-    "phonetic": "/vɒlˈkænɪk/ | /vɑːlˈkænɪk/",
-    "zh": "火山的；火山引起的；火山产生的",
-    "en": "caused or produced by a volcano",
-    "pos": "adjective"
+  "lichen": {
+    "phonetic": "/ˈlaɪkən/ | /ˈlɪtʃən/",
+    "zh": "地衣",
+    "en": "a very small grey or yellow plant that spreads over the surface of rocks, walls and trees and does not have any flowers"
   },
-  "waterway": {
-    "phonetic": "/ˈwɔːtəweɪ/ | /ˈwɔːtərweɪ/",
-    "zh": "水路；航道",
-    "en": "a river, canal, etc. along which boats can travel",
-    "pos": "noun"
-  },
-  "whiplash": {
-    "phonetic": "/ˈwɪplæʃ/",
-    "zh": "鞭打；挥鞭伤，鞭打损伤（尤指车祸造成的颈部过度屈伸损伤）",
-    "en": "a hit with a whip; a neck injury caused when your head moves forward and back suddenly, especially in a car accident",
-    "pos": "noun"
-  },
-  "contract": {
-    "phonetic": "/ˈkɒntrækt/ | /ˈkɑːntrækt/",
-    "zh": "合同；合约；契约；（雇用杀人的）协议，合同；（使）收缩，缩小；感染（疾病）；得（病）；与…订立合同（或契约）；订立…的合同（或契约）；（与…）订立（婚约）；（与…）缔结（同盟）",
-    "en": "an official written agreement; an agreement to kill somebody for money; to become less or smaller; to make something become less or smaller; to get an illness; to make a legal agreement with somebody for them to work for you or provide you with a service; to make a legal agreement to work for somebody or provide them with a service; to formally agree to marry somebody/form an alliance with somebody",
-    "pos": "noun / verb"
-  },
-  "context": {
-    "phonetic": "/ˈkɒntekst/ | /ˈkɑːntekst/",
-    "zh": "（事情发生的）背景，环境，来龙去脉；上下文；语境",
-    "en": "the situation in which something happens and that helps you to understand it; the words that come just before and after a word, phrase or statement and help you to understand its meaning",
-    "pos": "noun"
-  },
-  "midlife": {
-    "phonetic": "/mɪdˈlaɪf/",
-    "zh": "中年；中年生活",
-    "en": "the middle part of your life when you are neither young nor old",
-    "pos": "noun"
-  },
-  "congressional": {
-    "phonetic": "/kənˈɡreʃənl/",
-    "zh": "立法机构的；代表大会的；（美国）国会的",
-    "en": "related to or belonging to a congress or the Congress in the US",
-    "pos": "adjective"
-  },
-  "monarchy": {
-    "phonetic": "/ˈmɒnəki/ | /ˈmɑːnərki/ | /ˈmɑːnɑːrki/",
-    "zh": "君主制；君主政体；君主国；君主及其家庭成员",
-    "en": "a system of government by a king or a queen; a country that is ruled by a king or a queen; the king or queen of a country and their family",
-    "pos": "noun"
-  },
-  "stay-at-home": {
-    "phonetic": "/ˈsteɪ ət həʊm/",
-    "zh": "全职照顾家庭的；不爱出门的人；恋家的人；死气沉沉的人",
-    "en": "a stay-at-home mother or father is one who stays at home to take care of their children instead of going out to work; a person who rarely goes out or does anything exciting",
-    "pos": "adjective / noun"
-  },
-  "exoskeleton": {
-    "phonetic": "/ˈeksəʊskelɪtn/",
-    "zh": "（昆虫等动物的）外骨骼",
-    "en": "a hard outer layer that protects the bodies of certain animals, such as insects; a machine attached to somebody's body to enable them to perform movements and actions more easily",
-    "pos": "noun"
-  },
-  "liberal": {
-    "phonetic": "/ˈlɪbərəl/",
-    "zh": "宽宏大度的；心胸宽阔的；开明的；（政治经济上）自由的，开明的；支持（社会、政治或宗教）变革的；（旧时）英国自由党的；（英国以外国家）自由党的；慷慨的；大方的；大量给予的；通识（教育）的；不完全准确的；不精确的；不严格的；理解且尊重他人意见的人；宽容的人；开明的人；支持（社会、政治或宗教）变革的人；（旧时）英国自由党成员；（英国以外国家的）自由党成员",
-    "en": "willing to understand and respect other people’s behaviour, opinions, etc., especially when they are different from your own; believing people should be able to choose how they behave; wanting or allowing a lot of political and economic freedom and supporting steady social, political or religious change; connected with the British Liberal Party in the past, or a Liberal Party in another country; generous; given in large amounts; a liberal education is about increasing somebody’s general knowledge and experience rather than particular skills; not completely accurate or exact; a person who understands and respects other people’s opinions and behaviour, especially when they are different from their own; a person who supports political, social and religious change; a member of the British Liberal Party in the past, or of a Liberal Party in another country",
-    "pos": "adjective / noun"
-  },
-  "perspective": {
-    "phonetic": "/pəˈspektɪv/ | /pərˈspektɪv/",
-    "zh": "态度；观点；思考方法；客观判断力；权衡轻重的能力；透视法；景观；远景",
-    "en": "a particular attitude towards something; a way of thinking about something; the ability to think about problems and decisions in a reasonable way without making them seem worse or more important than they really are; the art of creating an effect of depth and distance in a picture by representing people and things that are far away as being smaller than those that are nearer the front; a view, especially one in which you can see far into the distance",
-    "pos": "noun"
-  },
-  "prudence": {
-    "phonetic": "/ˈpruːdns/",
-    "zh": "谨慎的；慎重的；精明的",
-    "en": "a sensible and careful attitude when you make judgements and decisions; behaviour that avoids unnecessary risks; a first name for girls",
-    "pos": "noun"
-  },
-  "salon": {
-    "phonetic": "/ˈsælɒn/ | /səˈlɑːn/",
-    "zh": "美发厅；美容院；高级服装店；（大宅中的）客厅，会客室；沙龙（旧时作家、艺术家等在名流家中定期举行的聚会）",
-    "en": "a shop that gives customers hair or beauty treatment or that sells expensive clothes; a room in a large house used for entertaining guests; (in the past) a regular meeting of writers, artists and other guests at the house of a famous or important person",
-    "pos": "noun"
-  },
-  "deployment": {
-    "phonetic": "/dɪˈplɔɪmənt/",
-    "zh": "部署，调度（军队或武器）；有效地利用；调动",
-    "en": "the act of moving soldiers or weapons into a position where they are ready for military action; the act of using something effectively",
-    "pos": "noun"
-  },
-  "warfare": {
-    "phonetic": "/ˈwɔːfeə(r)/ | /ˈwɔːrfer/",
-    "zh": "战；作战；战争；（群体、公司等之间的）斗争，竞争，冲突",
-    "en": "the activity of fighting a war, especially using particular weapons or methods; the activity of competing in an aggressive way with another group, company, etc.",
-    "pos": "noun"
-  },
-  "endors": {
+  "line up": {
     "phonetic": "",
-    "zh": "v. （公开）赞同，认可；（在广告中对某种产品）宣传，吹捧；（尤指在支票背面）签名，背书；(在驾驶执...",
-    "en": "",
-    "pos": ""
+    "zh": "排成一行；站队；排队（等候）；使站成一队；使排列成一行；组织，安排（活动）；邀集（人做某事）；使…（与相关的另一物）排齐；使…对齐",
+    "en": "to stand in a line or row; to form a queue; to arrange people or things in a straight line or row; to arrange for an event or activity to happen, or arrange for somebody to be available to do something; to move one thing into a correct position in relation to another thing"
   },
-  "fiscal": {
-    "phonetic": "/ˈfɪskl/",
-    "zh": "财政的；国库的；国家岁入的",
-    "en": "connected with government or public money, especially taxes",
-    "pos": "adjective"
+  "living wage": {
+    "phonetic": "/ˌlɪvɪŋ ˈweɪdʒ/",
+    "zh": "基本生活工资；仅能维持生活的工资",
+    "en": "a wage that is high enough for somebody to buy the things they need in order to live"
   },
-  "loan": {
-    "phonetic": "/ləʊn/",
-    "zh": "贷款；借款；借出；贷给；被借出；借出，贷与（尤指钱）；出借（贵重物品给博物馆等）",
-    "en": "money that an organization such as a bank lends and somebody borrows; the act of lending something; the state of being lent; to lend something to somebody, especially money; to lend a valuable object to a museum, etc.",
-    "pos": "noun / verb"
+  "lobbyist": {
+    "phonetic": "/ˈlɒbiɪst/ | /ˈlɑːbiɪst/",
+    "zh": "游说（从政者或政府）",
+    "en": "a person whose job involves trying to influence politicians or the government and, for example, persuade them to support or oppose a change in the law"
   },
-  "rodr": {
+  "loom": {
+    "phonetic": "/luːm/ | /luːmz/ | /luːmd/ | /ˈluːmɪŋ/",
+    "zh": "赫然耸现；（尤指）令人惊恐地隐现；显得突出；逼近；令人忧虑，令人惊恐（并似乎难以避免）；织布机",
+    "en": "to appear as a large shape that is not clear, especially in a frightening way; to appear serious and and likely to happen soon; to be frightening and make you worried because something seems hard to avoid; a machine for making cloth by crossing threads over and under other threads that go in a different direction"
+  },
+  "lopsided": {
+    "phonetic": "/ˌlɒpˈsaɪdɪd/ | /ˌlɑːpˈsaɪdɪd/",
+    "zh": "一侧比另一侧低（或小等）的；向一侧倾斜的；不平衡的",
+    "en": "having one side lower, smaller, etc. than the other; lacking balance; with a lot more attention, points, votes, etc. on one side than the other"
+  },
+  "maneuver": {
+    "phonetic": "/məˈnuːvə(r)/ | /məˈnuːvər/",
+    "zh": "细致巧妙的移动；机动动作；策略；手段；花招；伎俩；军事演习；作战演习；改变事态的机会；回旋余地",
+    "en": "a movement performed with care and skill; a clever plan, action or movement that is used to give somebody an advantage; military exercises involving a large number of soldiers, ships, etc.; the chance to change the way that something happens and influence decisions that are made; to move or turn with skill or care; to move or turn something with skill or care; to control or influence a situation in a way that shows skill but is sometimes dishonest"
+  },
+  "manslaughter": {
+    "phonetic": "/ˈmænslɔːtə(r)/ | /ˈmænslɔːtər/",
+    "zh": "过失杀人",
+    "en": "the crime of killing somebody illegally but not deliberately"
+  },
+  "mantra": {
+    "phonetic": "/ˈmæntrə/ | /ˈmɑːntrə/",
+    "zh": "曼怛罗（某些宗教的念咒）；咒语",
+    "en": "a word, phrase or sound that is repeated again and again, especially during prayer or meditation; a statement or slogan that is often repeated"
+  },
+  "manual": {
+    "phonetic": "/ˈmænjuəl/",
+    "zh": "用手的；手工的；体力的；手动的；手控的；用手操作的；手工的；用手的；使用手册；说明书；指南；处于非自动状态；处于手动状态",
+    "en": "involving using the hands or physical strength; operated or controlled by hand rather than by machine or using electricity, etc.; connected with using the hands; a book that tells you how to do or operate something, especially one that comes with a machine, etc. when you buy it; a vehicle with a system of gears operated by the driver using a gear lever; not being operated by a machine, etc. but by hand"
+  },
+  "map onto": {
     "phonetic": "",
-    "zh": "n. （西）罗德里格斯（姓氏）",
-    "en": "",
-    "pos": ""
+    "zh": "把…与…相联系",
+    "en": "to link a group of qualities, items, etc. with their source, cause, position on a scale, etc."
   },
-  "sometime": {
-    "phonetic": "/ˈsʌmtaɪm/",
-    "zh": "在某时（不确切或尚未决定）；（指某人曾经是…）从前的，一度的；间或的；偶尔的",
-    "en": "at a time that you do not know exactly or has not yet been decided; used to refer to what somebody used to be; used to refer to what somebody does occasionally",
-    "pos": "adverb / adjective"
-  },
-  "connie": {
-    "phonetic": "/ˈkɒni/ | /ˈkɑːni/",
-    "zh": "康妮：女孩的名字，康斯坦斯的缩写",
-    "en": "a first name for girls, short for Constance",
-    "pos": ""
-  },
-  "cosmo": {
+  "mark up": {
     "phonetic": "",
-    "zh": "n. 科兹摩（男子名）；（美）都市性",
-    "en": "A cosmopolitan, a cocktail containing vodka, triple sec, lime juice and cranberry juice.",
-    "pos": ""
-  },
-  "dialogue": {
-    "phonetic": "/ˈdaɪəlɒɡ/ | /ˈdaɪəlɔːɡ/",
-    "zh": "（书、戏剧或电影中的）对话，对白；（尤指集体或国家间为解决问题、结束争端等进行的）对话",
-    "en": "a conversation in a book, play or film or in language teaching materials; a formal discussion between two groups or countries, especially when they are trying to solve a problem, end a disagreement, etc.",
-    "pos": "noun"
-  },
-  "forgiveness": {
-    "phonetic": "/fəˈɡɪvnəs/ | /fərˈɡɪvnəs/",
-    "zh": "原谅；宽恕；宽宏大量",
-    "en": "the act of forgiving somebody; the quality of being willing to forgive somebody",
-    "pos": "noun"
-  },
-  "gratitude": {
-    "phonetic": "/ˈɡrætɪtjuːd/ | /ˈɡrætɪtuːd/",
-    "zh": "感激之情；感谢",
-    "en": "the feeling of being grateful and wanting to express your thanks",
-    "pos": "noun"
-  },
-  "hottest": {
-    "phonetic": "",
-    "zh": "adj. 热的；最热门的；热烈的",
-    "en": "(of an object) Having a high temperature.",
-    "pos": ""
-  },
-  "legislature": {
-    "phonetic": "/ˈledʒɪslətʃə(r)/ | /ˈledʒɪsleɪtʃər/",
-    "zh": "立法机关",
-    "en": "a group of people who have the power to make and change laws",
-    "pos": "noun"
-  },
-  "logo": {
-    "phonetic": "/ˈləʊɡəʊ/",
-    "zh": "（某公司或机构的）标识，标志，徽标",
-    "en": "a printed design or symbol that a company or an organization uses as its special sign",
-    "pos": "noun"
-  },
-  "magicschool": {
-    "phonetic": "",
-    "zh": "魔法学校：指一所专门培养魔法师或魔法使用者的学校。",
-    "en": "",
-    "pos": ""
-  },
-  "outdoor": {
-    "phonetic": "/ˈaʊtdɔː(r)/ | /ˈaʊtdɔːr/",
-    "zh": "户外的；室外的",
-    "en": "used, happening or located outside rather than in a building",
-    "pos": "adjective"
-  },
-  "teen": {
-    "phonetic": "",
-    "zh": "十几岁，青少年时期(指从 13 岁到 19 岁)；teen；面向青少年的；由青少年完成的；青少年,十几岁的孩子(指从 13 岁到 19 岁)",
-    "en": "If you are in your , you are between thirteen and nineteen years old.; is used to describe things such as films, magazines, bands, or activities that are aimed at or are done by people who are in their teens.; A is someone aged between thirteen and nineteen years old.",
-    "pos": ""
-  },
-  "eruption": {
-    "phonetic": "/ɪˈrʌpʃn/",
-    "zh": "突然发生；爆发；突然发出（尤指叫喊）；突然（在皮肤上）出现",
-    "en": "an occasion when a volcano suddenly throws out burning rocks, smoke, etc.; an occasion when something starts happening, suddenly and violently; a sudden expression of very strong feelings, especially by shouting loudly; the sudden appearance of spots, etc. on your skin",
-    "pos": "noun"
-  },
-  "illustration": {
-    "phonetic": "/ˌɪləˈstreɪʃn/",
-    "zh": "（书、杂志等中的）图表，插图；图解；图示；例释；（说明事实的）故事，实例，示例",
-    "en": "a drawing or picture in a book, magazine, for decoration or to explain something; the process of illustrating something; a story, an event or an example that clearly shows the truth about something",
-    "pos": "noun"
-  },
-  "plantation": {
-    "phonetic": "/plɑːnˈteɪʃn/ | /plænˈteɪʃn/",
-    "zh": "种植园，种植场（尤指热带国家种植咖啡、甘蔗、橡胶等的大庄园）；木材林地；人造林",
-    "en": "a large area of land, especially in a hot country, where crops such as coffee, sugar, rubber, etc. are grown; a large area of land that is planted with trees to produce wood",
-    "pos": "noun"
-  },
-  "worst-case": {
-    "phonetic": "/ˈwɜːst keɪs/ | /ˈwɜːrst keɪs/",
-    "zh": "最坏情况的",
-    "en": "involving the worst situation that could happen",
-    "pos": "adjective"
-  },
-  "ain": {
-    "phonetic": "",
-    "zh": "adj. 自己的; n. （Ain）（马、美、英）艾因（人名）",
-    "en": "",
-    "pos": ""
-  },
-  "deli": {
-    "phonetic": "/ˈdeli/",
-    "zh": "（出售熟肉、干酪和进口风味食品的）熟食店，熟食柜台",
-    "en": "a shop or part of one that sells cooked meats and cheeses, and special or unusual foods that come from other countries",
-    "pos": "noun"
-  },
-  "footage": {
-    "phonetic": "/ˈfʊtɪdʒ/",
-    "zh": "（影片中的）连续镜头，片段",
-    "en": "part of a film showing a particular event; size or length measured in feet",
-    "pos": "noun"
-  },
-  "hospitality": {
-    "phonetic": "/ˌhɒspɪˈtæləti/ | /ˌhɑːspɪˈtæləti/",
-    "zh": "好客；殷勤；（款待客人、顾客等的）食物，饮料，服务；款待",
-    "en": "friendly and generous behaviour towards guests; food, drink or services that are provided by an organization for guests, customers, etc.",
-    "pos": "noun"
-  },
-  "slang": {
-    "phonetic": "/slæŋ/",
-    "zh": "俚语",
-    "en": "very informal words and expressions that are more common in spoken language, especially used by a particular group of people, for example, children, criminals, soldiers, etc.",
-    "pos": "noun"
-  },
-  "thai": {
-    "phonetic": "/taɪ/",
-    "zh": "泰国人；泰国的；泰国人的",
-    "en": "(a person) from Thailand",
-    "pos": "noun, adjective"
-  },
-  "accreditation": {
-    "phonetic": "/əˌkredɪˈteɪʃn/",
-    "zh": "达到标准；证明合格",
-    "en": "official approval given by an organization stating that somebody/something has achieved a required standard",
-    "pos": "noun"
-  },
-  "discomfort": {
-    "phonetic": "/dɪsˈkʌmfət/ | /dɪsˈkʌmfərt/",
-    "zh": "轻微的病痛；不舒服；不适；不安；不自在；尴尬；使人不舒服的事物；苦事；痛苦；使不舒服；使不安；使尴尬",
-    "en": "a feeling of slight pain or of being physically uncomfortable; a feeling of worry or being embarrassed; something that makes you feel uncomfortable or causes you a slight feeling of pain; to make somebody feel anxious or embarrassed",
-    "pos": "noun / verb"
-  },
-  "efficient": {
-    "phonetic": "/ɪˈfɪʃnt/",
-    "zh": "效率高的；有功效的",
-    "en": "doing something in a good, careful and complete way with no waste of time, money or energy",
-    "pos": "adjective"
-  },
-  "faculty": {
-    "phonetic": "/ˈfæklti/",
-    "zh": "（高等院校的）系，院；（高等院校中院、系的）全体教师；（某高等院校的）全体教师；官能；天赋；才能；能力",
-    "en": "a department or group of related departments in a college or university; all the teachers in a faculty of a college or university; all the teachers of a particular university or college; any of the physical or mental abilities that a person is born with; a particular ability for doing something",
-    "pos": "noun"
-  },
-  "intuition": {
-    "phonetic": "/ˌɪntjuˈɪʃn/ | /ˌɪntuˈɪʃn/",
-    "zh": "直觉力；（一种）直觉",
-    "en": "the ability to know something by using your feelings rather than considering the facts; an idea or a strong feeling that something is true although you cannot explain why",
-    "pos": "noun"
-  },
-  "motivate": {
-    "phonetic": "/ˈməʊtɪveɪt/ | /ˈməʊtɪveɪts/ | /ˈməʊtɪveɪtɪd/ | /ˈməʊtɪveɪtɪŋ/",
-    "zh": "成为…的动机；是…的原因；推动…甘愿苦干；激励；激发；（就所说的话）给出理由；说明…的原因",
-    "en": "to be the reason why somebody does something or behaves in a particular way; to make somebody want to do something, especially something that involves hard work and effort; to give reasons for something that you have stated",
-    "pos": "verb"
-  },
-  "rating": {
-    "phonetic": "/ˈreɪtɪŋ/",
-    "zh": "等级；级别；收视率；收听率；表示电影分级的数字（或字母）；电影的等级；海军士兵；水手",
-    "en": "a measurement of how good, popular, important, etc. somebody/something is, especially in relation to other people or things; a set of figures that show how many people watch or listen to a particular television or radio programme, used to show how popular a programme is; a number or letter that shows which groups of people a particular film is suitable for; a sailor in the navy who is not an officer",
-    "pos": "noun"
-  },
-  "recruiter": {
-    "phonetic": "/rɪˈkruːtə(r)/ | /rɪˈkruːtər/",
-    "zh": "吸收（新成员）；征募（新兵）",
-    "en": "a person whose job is to find new people to join a company, an organization, the armed forces, etc.",
-    "pos": "noun"
-  },
-  "regional": {
-    "phonetic": "/ˈriːdʒənl/",
-    "zh": "地区的；区域的；地方的",
-    "en": "of or relating to a region",
-    "pos": "adjective"
-  },
-  "shad": {
-    "phonetic": "/ʃæd/",
-    "zh": "n. 河鲱；西鲱属及黑海鲱属，鲱科; n. （Shad）（美、英、巴基斯坦）沙德（人名）",
-    "en": "Any one of several species of food fishes that make up the genus Alosa in the family Clupeidae, to which the herrings also belong; river herring.",
-    "pos": ""
-  },
-  "ventilation": {
-    "phonetic": "/ˌventɪˈleɪʃn/",
-    "zh": "使（房间、建筑物等）通风；使通气",
-    "en": "the fact of allowing fresh air to enter and move around a room, building, etc.",
-    "pos": "noun"
-  },
-  "blog": {
-    "phonetic": "/blɒɡ/ | /blɑːɡ/",
-    "zh": "博客；网志；写博客；写网志",
-    "en": "a website where an individual person, or people representing an organization, write regularly about recent events or topics that interest them, usually with photos and links to other websites that they find interesting; to keep a blog; to write something in a blog",
-    "pos": "noun / verb"
-  },
-  "drainage": {
-    "phonetic": "/ˈdreɪnɪdʒ/",
-    "zh": "排水；放水；排水系统",
-    "en": "the process by which water or liquid waste is drained from an area; a system of drains",
-    "pos": "noun"
-  },
-  "hydropower": {
-    "phonetic": "",
-    "zh": "n. 水力发出的电力；水力发电",
-    "en": "Hydroelectric power",
-    "pos": ""
-  },
-  "insurer": {
-    "phonetic": "/ɪnˈʃʊərə(r)/ | /ɪnˈʃɔːrə(r)/ | /ɪnˈʃʊrər/",
-    "zh": "承保人；保险公司",
-    "en": "a person or company that provides people with insurance",
-    "pos": "noun"
-  },
-  "lawn": {
-    "phonetic": "/lɔːn/",
-    "zh": "草坪；草地；上等细棉布（或麻布）",
-    "en": "an area of ground covered in short grass in a garden or park, or used for playing a game on; a type of fine cotton or linen cloth used for making clothes",
-    "pos": "noun"
-  },
-  "monocropp": {
-    "phonetic": "",
-    "zh": "[农学] 单一作物制",
-    "en": "",
-    "pos": ""
-  },
-  "navigable": {
-    "phonetic": "/ˈnævɪɡəbl/",
-    "zh": "可航行的；适于通航的",
-    "en": "wide and deep enough for ships and boats to sail on; on which it is easy to find the information, section, etc. that you want",
-    "pos": "adjective"
-  },
-  "regenerative": {
-    "phonetic": "/rɪˈdʒenərətɪv/",
-    "zh": "再生的：具有使某事物重新发展或变得强大的作用",
-    "en": "having the effect of making something develop or grow strong again",
-    "pos": "adjective"
-  },
-  "scrapp": {
-    "phonetic": "",
-    "zh": "adj. 报废的；已经销毁的; v. 废弃（scrap 的过去式）",
-    "en": "",
-    "pos": ""
-  },
-  "timber": {
-    "phonetic": "/ˈtɪmbə(r)/ | /ˈtɪmbər/",
-    "zh": "（用于建筑或制作物品的）树木，林木；用材林；（建筑等用的）木材，木料；（建造房屋用的）大木料，栋木；（造船用的）肋材；（砍伐树木时喊）放树啦！",
-    "en": "trees that are grown to be used in building or for making things; wood that is prepared for use in building, etc.; a long heavy piece of wood used in building a house or ship; used to warn people that a tree that has been cut is about to fall",
-    "pos": "noun"
-  },
-  "tropical": {
-    "phonetic": "/ˈtrɒpɪkl/ | /ˈtrɑːpɪkl/",
-    "zh": "热带的；来自热带的；产于热带的",
-    "en": "coming from, found in or typical of the tropics",
-    "pos": "adjective"
-  },
-  "typically": {
-    "phonetic": "/ˈtɪpɪkli/",
-    "zh": "通常；一般；典型地；具有代表性地；不出所料；果然",
-    "en": "used to say that something usually happens in the way that you are stating; in a way that shows the usual qualities or features of a particular type of person, thing or group; in the way that you expect somebody/something to behave",
-    "pos": "adverb"
-  },
-  "unlock": {
-    "phonetic": "/ˌʌnˈlɒk/ | /ˌʌnˈlɑːk/ | /ˌʌnˈlɒks/ | /ˌʌnˈlɑːks/ | /ˌʌnˈlɒkt/ | /ˌʌnˈlɑːkt/ | /ˌʌnˈlɒkɪŋ/ | /ˌʌnˈlɑːkɪŋ/",
-    "zh": "（用钥匙）开…的锁；发现；揭示；揭开；解除（手机）的网络锁定",
-    "en": "to open the lock of a door, window, etc., usually using a key; to discover something and let it be known; to enable a mobile phone to use any network rather than only one particular one; to use a code or password to get access to more data or features on a computer or phone, or in a computer game",
-    "pos": "verb"
-  },
-  "episodic": {
-    "phonetic": "/ˌepɪˈsɒdɪk/ | /ˌepɪˈsɑːdɪk/",
-    "zh": "偶尔发生的；不定期的；由松散片段组成的；有许多片段的",
-    "en": "happening occasionally and not at regular intervals; containing or consisting of many separate and different events",
-    "pos": "adjective"
-  },
-  "epidemic": {
-    "phonetic": "/ˌepɪˈdemɪk/",
-    "zh": "流行病；（坏事迅速的）泛滥，蔓延",
-    "en": "a large number of cases of a particular disease or medical condition happening at the same time in a particular community; a sudden rapid increase in how often something bad happens; occurring more and more frequently in a particular place; with large numbers of cases occurring at the same time in a particular community",
-    "pos": "noun / adjective"
-  },
-  "fertility": {
-    "phonetic": "/fəˈtɪləti/ | /fərˈtɪləti/",
-    "zh": "富饶；丰产；能生育性；可繁殖性；想象力丰富；能生育的；可繁殖的；能结果的",
-    "en": "the quality in land or soil of making plants grow well; the ability to produce babies, young animals, fruit or new plants",
-    "pos": "noun"
-  },
-  "follower": {
-    "phonetic": "/ˈfɒləʊə(r)/ | /ˈfɑːləʊər/",
-    "zh": "拥护者；追随者；信徒；爱好者；仿效者；追随者；（微博客上某人的）关注者",
-    "en": "a person who supports and admires a particular person or set of ideas; a person who is very interested in a particular activity and follows all the recent news about it; a person who does things after somebody else has done them first; a person who chooses to regularly receive somebody’s messages using a social media service",
-    "pos": "noun"
-  },
-  "grin": {
-    "phonetic": "/ɡrɪn/ | /ɡrɪnz/ | /ɡrɪnd/ | /ˈɡrɪnɪŋ/",
-    "zh": "露齿而笑；咧着嘴笑；粲然而笑；默默忍受；苦笑着忍受；眉开眼笑；笑得合不拢嘴；露齿的笑；咧着嘴笑",
-    "en": "to smile widely; to accept pain or bad luck without complaining; to be smiling, etc. a lot because you are very pleased about something; a wide smile; to stop smiling, especially because somebody else is annoyed and does not think the situation is funny",
-    "pos": "verb / noun"
-  },
-  "healthcare": {
-    "phonetic": "/ˈhelθ keə(r)/ | /ˈhelθ ker/",
-    "zh": "医疗（服务）",
-    "en": "the service of providing medical care",
-    "pos": "noun"
-  },
-  "ire": {
-    "phonetic": "/ˈaɪə(r)/ | /ˈaɪər/",
-    "zh": "愤怒",
-    "en": "anger",
-    "pos": "noun"
-  },
-  "isn": {
-    "phonetic": "",
-    "zh": "不是（等于 is not）",
-    "en": "",
-    "pos": ""
-  },
-  "largely": {
-    "phonetic": "/ˈlɑːdʒli/ | /ˈlɑːrdʒli/",
-    "zh": "在很大程度上；多半；主要地",
-    "en": "to a great extent; mostly or mainly",
-    "pos": "adverb"
-  },
-  "multicultural": {
-    "phonetic": "/ˌmʌltiˈkʌltʃərəl/ | /ˌmʌltaɪˈkʌltʃərəl/",
-    "zh": "多元文化的；多种文化融合的",
-    "en": "for or including people of several different races, religions, languages and traditions",
-    "pos": "adjective"
-  },
-  "selection": {
-    "phonetic": "/sɪˈlekʃn/",
-    "zh": "选择；挑选；选拔；被挑选的人（或物）；被选中者；入选者；可供选择的事物",
-    "en": "the process of choosing somebody/something from a group of people or things, usually according to a system; a number of people or things that have been chosen from a larger group; a collection of things from which something can be chosen",
-    "pos": "noun"
-  },
-  "social-media": {
-    "phonetic": "",
-    "zh": "社交媒体：通过社交网络和微博等电子通讯方式，用户可以创建在线社区，分享信息、想法、个人信息和其他内容...",
-    "en": "",
-    "pos": ""
-  },
-  "transfer": {
-    "phonetic": "/trænsˈfɜː(r)/ | /trænsˈfɜːr/ | /trænsˈfɜːz/ | /trænsˈfɜːrz/ | /trænsˈfɜːd/ | /trænsˈfɜːrd/ | /trænsˈfɜːrɪŋ/",
-    "zh": "（使）转移，搬迁；（使）调动；转职；转学；改变（环境）；（使在旅途中）转乘，换乘，倒车；转存，转录（资料、音乐等）；改编；转移（感情）；传染（疾病）；让与，转让（权力等）；转让；让与；转会，使转会（尤指职业足球队）；搬迁；转移；调动；变换；（旅途中的）中转，换乘，改变路线；转车票；换乘票；（运动员）转会；转印图画，转印图案（利用挤压或加热，可从纸上转印到物体的表面）；迁移（将已习得的行为在新的情况下应用）",
-    "en": "to move from one place to another; to move something/somebody from one place to another; to move from one job, school, situation, etc. to another; to arrange for somebody to move; to change to a different vehicle during a journey; to arrange for somebody to change to a different vehicle during a journey; to copy information, music, an idea, etc. from one method of recording or presenting it to another; to be recorded or presented in a different way; if you transfer a feeling, a disease, or power, etc. from one person to another, the second person has it, often instead of the first; to officially arrange for something to belong to somebody else or for somebody else to control something; to move, or to move somebody, to a different sports team, especially a professional football (soccer) team; to send a phone call that you have received to another phone number; the act of moving somebody/something from one place, group or job to another; an occasion when this happens; an act of changing to a different place, vehicle or route when you are travelling; a ticket that allows a passenger to continue their journey on another bus or train; the act of moving a sports player from one club or team to another; a picture or design that can be removed from a piece of paper and stuck onto a surface, for example by being pressed or heated; the process of using behaviour that has already been learnt in one situation in a new situation",
-    "pos": "verb / noun"
-  },
-  "unclear": {
-    "phonetic": "/ˌʌnˈklɪə(r)/ | /ˌʌnˈklɪr/",
-    "zh": "不清楚的；不确定的；难以掌握的；不完全明白；不理解",
-    "en": "not clear or definite; difficult to understand or be sure about; not fully understanding something",
-    "pos": "adjective"
-  },
-  "shar": {
-    "phonetic": "",
-    "zh": "n. 莎尔（女子名）",
-    "en": "",
-    "pos": ""
-  },
-  "dearth": {
-    "phonetic": "/dɜːθ/ | /dɜːrθ/",
-    "zh": "缺乏；不足",
-    "en": "a lack of something; the fact of there not being enough of something",
-    "pos": "noun"
-  },
-  "bas": {
-    "phonetic": "/bʌs/",
-    "zh": "停止；足够；巴斯！别烦我！",
-    "en": "stop; enough",
-    "pos": "exclamation"
-  },
-  "increasingly": {
-    "phonetic": "/ɪnˈkriːsɪŋli/",
-    "zh": "越来越多地；不断增加地",
-    "en": "more and more all the time",
-    "pos": "adverb"
-  },
-  "threaten": {
-    "phonetic": "/ˈθretn/ | /ˈθretnz/ | /ˈθretnd/ | /ˈθretnɪŋ/",
-    "zh": "扬言要；威胁；恐吓；预示凶兆；有…危险；危及；对…构成威胁",
-    "en": "to say that you will cause trouble, hurt somebody, etc. if you do not get what you want; to seem likely to happen or cause something unpleasant; to be a danger to something",
-    "pos": "verb"
-  },
-  "robotic": {
-    "phonetic": "/rəʊˈbɒtɪk/ | /rəʊˈbɑːtɪk/",
-    "zh": "机器人的；像机器人的；呆板机械的",
-    "en": "connected with robots; like a robot, making stiff movements, speaking without feeling or expression, etc.",
-    "pos": "adjective"
-  },
-  "undergraduate": {
-    "phonetic": "/ˌʌndəˈɡrædʒuət/ | /ˌʌndərˈɡrædʒuət/ | /ˈʌndəɡræd/ | /ˈʌndərɡræd/",
-    "zh": "本科生",
-    "en": "a university or college student who is studying for their first degree",
-    "pos": "noun"
-  },
-  "earlier": {
-    "phonetic": "",
-    "zh": "[early的比较级]；早些时候；先前；之前；earlier",
-    "en": "is the comparative of .; is used to refer to a point or period in time before the present or before the one you are talking about.",
-    "pos": ""
-  },
-  "trillion": {
-    "phonetic": "/ˈtrɪljən/",
-    "zh": "万亿；兆；大量；无数；百万兆",
-    "en": "1 000 000 000 000; one million million; a very large amount; one million million million; 1 000 000 000 000 000 000",
-    "pos": "number"
-  },
-  "extraction": {
-    "phonetic": "/ɪkˈstrækʃn/",
-    "zh": "提取；提炼；拔出；开采；（有…）血统；族裔；拔牙",
-    "en": "the act or process of removing or obtaining something from something else; having a particular family origin; the process of removing a tooth",
-    "pos": "noun"
-  },
-  "assign": {
-    "phonetic": "/əˈsaɪn/ | /əˈsaɪnz/ | /əˈsaɪnd/ | /əˈsaɪnɪŋ/",
-    "zh": "分配（某物）；分派，布置（工作、任务等）；指定；指派；委派；派遣；确定（价值、功能、时间、地点）；转让，让与（财产、权利）",
-    "en": "to give somebody something that they can use, or some work or responsibility; to provide a person for a particular task or position; to send a person to work under the authority of somebody or in a particular group; to say that something has a particular value or function, or happens at a particular time or place; to say that your property or rights now belong to somebody else",
-    "pos": "verb"
-  },
-  "clip": {
-    "phonetic": "/klɪp/",
-    "zh": "电影片段；（金属或塑料的）夹子，回形针；首饰别针；剪短；修剪；（用手）猛击，抽打；子弹夹；弹匣；迅速；很快地；夹住；别住；被夹住；剪（掉）；修剪；碰撞（某物的边缘或侧面）；从…剪下；限制某人的自由（或权力）",
-    "en": "a short part of a film that is shown separately; a small metal or plastic object used for holding things together or in place; a piece of jewellery that fastens to your clothes; the act of cutting something to make it shorter; a quick hit with your hand; a set of bullets in a metal container that is placed in or attached to a gun for firing; quickly; to fasten something to something else with a clip; to be fastened with a clip; to cut something with scissors or shears, in order to make it shorter or neater; to remove something from somewhere by cutting it off; to hit the edge or side of something; to cut something out of something else using scissors; to limit a person’s freedom or power",
-    "pos": "noun / verb"
-  },
-  "ed-tech": {
-    "phonetic": "",
-    "zh": "abbr. 教育科技（educational technology）",
-    "en": "",
-    "pos": ""
-  },
-  "electrician": {
-    "phonetic": "/ɪˌlekˈtrɪʃn/",
-    "zh": "电工；电气技师",
-    "en": "a person whose job is to connect, repair, etc. electrical equipment",
-    "pos": "noun"
-  },
-  "graduat": {
-    "phonetic": "",
-    "zh": "n. 大学毕业生，学士学位获得者；毕业生; v. 获得学位（尤指学士），大学毕业；毕业（尤指中学）；...",
-    "en": "",
-    "pos": ""
-  },
-  "mainstream": {
-    "phonetic": "/ˈmeɪnstriːm/",
-    "zh": "主流思想；主流群体；使为大多数人所接受；让（身心有缺陷的儿童）融入主流教育",
-    "en": "the ideas and opinions that are thought to be normal because they are shared by most people; the people whose ideas and opinions are most accepted; considered normal because it reflects what is done or accepted by most people; mainstream education is for children who do not have any special needs or difficulties; to make a particular idea or opinion accepted by most people; to include children with mental or physical problems in ordinary school classes",
-    "pos": "noun / adjective / verb"
-  },
-  "modernization": {
-    "phonetic": "/ˌmɒdənaɪˈzeɪʃn/ | /ˌmɑːdərnəˈzeɪʃn/",
-    "zh": "使（制度、方法等）现代化",
-    "en": "the process of making a system, methods, etc. more modern and more suitable for use at the present time",
-    "pos": "noun"
-  },
-  "overheat": {
-    "phonetic": "/ˌəʊvəˈhiːt/ | /ˌəʊvərˈhiːt/ | /ˌəʊvəˈhiːts/ | /ˌəʊvərˈhiːts/ | /ˌəʊvəˈhiːtɪd/ | /ˌəʊvərˈhiːtɪd/ | /ˌəʊvəˈhiːtɪŋ/ | /ˌəʊvərˈhiːtɪŋ/",
-    "zh": "变得过热；使过热；发展过热，过于活跃（以致物价高涨）",
-    "en": "to become or to make something become too hot; to be too active, with rising prices",
-    "pos": "verb"
-  },
-  "philosophy": {
-    "phonetic": "/fəˈlɒsəfi/ | /fəˈlɑːsəfi/",
-    "zh": "哲学；哲学体系；思想体系；人生哲学；生活的信条（或态度）",
-    "en": "the study of the nature and meaning of the universe and of human life; a particular set or system of beliefs resulting from the search for knowledge about life and the universe; a set of beliefs or an attitude to life that guides somebody’s behaviour",
-    "pos": "noun"
-  },
-  "retake": {
-    "phonetic": "/ˌriːˈteɪk/ | /ˌriːˈteɪks/ | /ˌriːˈtʊk/ | /ˌriːˈteɪkən/ | /ˌriːˈteɪkɪŋ/",
-    "zh": "收复（失地）；恢复控制；重考；（通常指）补考；重拍（电影镜头）",
-    "en": "to take control of something such as a town again; to take an exam or a test again, usually after failing it the first time; the act of filming a scene in a film again, because it was not right before; the act of taking an exam or a test again, usually after failing it the first time",
-    "pos": "verb / noun"
-  },
-  "shortcut": {
-    "phonetic": "/ˈʃɔːtkʌt/ | /ˈʃɔːrtkʌt/",
-    "zh": "近路；捷径；（做某事的）快捷办法，捷径",
-    "en": "a quicker or shorter way of getting to a place; a way of doing something that is quicker than the usual way; a record of the address of a file, website, or other data that is made so you can access the file, etc. quickly",
-    "pos": "noun"
-  },
-  "simultaneously": {
-    "phonetic": "/ˌsɪmlˈteɪniəsli/ | /ˌsaɪmlˈteɪniəsli/",
-    "zh": "同时发生（或进行）的；同步的",
-    "en": "at the same time as something else",
-    "pos": "adverb"
-  },
-  "bel": {
-    "phonetic": "/bel/",
-    "zh": "贝尔，贝（声音计量单位，等于 10 分贝）",
-    "en": "a measurement of sound equal to 10 decibels",
-    "pos": "noun"
-  },
-  "biomass": {
-    "phonetic": "/ˈbaɪəʊmæs/",
-    "zh": "生物量（单位面积或体积中所含的生物个体总量或其总质量）；生物质（活着的或刚死去的动植物的天然腐化物质，用于燃料或工业生产，尤其是发电）",
-    "en": "the total quantity or mass (= weight) of plants and animals in a particular area or volume; natural materials from living or recently dead plants, trees and animals, used as fuel and in industrial production, especially in the generation of electricity",
-    "pos": "noun"
-  },
-  "cannot": {
-    "phonetic": "/ˈkænɒt/ | /ˈkænɑːt/",
-    "zh": "不可以 不能",
-    "en": "the negative of can; can not",
-    "pos": ""
-  },
-  "cop": {
-    "phonetic": "/kɒp/ | /kɑːp/",
-    "zh": "警察；（当场被抓获时说）这是罪有应得，抓得有理；不太好；不怎么样；遭受；忍受；注意到；抓住，握住（某物）；被罚；受罚；被杀；避重就轻地认罪（以求轻判）",
-    "en": "a police officer; used by somebody who is caught doing something wrong, to say that they admit that they are wrong; not very good; to receive or suffer something unpleasant; to notice something; to take hold of something; to be punished; to be killed; to admit in court to being guilty of a small crime in the hope of receiving less severe punishment for a more serious crime",
-    "pos": "noun / verb"
-  },
-  "exploration": {
-    "phonetic": "/ˌekspləˈreɪʃn/",
-    "zh": "勘探；勘查；探索；探究；研究；探测",
-    "en": "the act of travelling through a place in order to find out about it or look for something in it; an examination of something in order to find out about it",
-    "pos": "noun"
-  },
-  "foam": {
-    "phonetic": "/fəʊm/",
-    "zh": "泡沫橡胶；海绵橡胶；泡沫；泡沫剂（用于洗涤、剃须、灭火等）；有泡沫；起泡沫；口吐白沫（尤指因发病或暴怒）；大发雷霆",
-    "en": "a soft light rubber material, full of small holes, that is used for seats, mattresses, etc.; a mass of very small air bubbles on the surface of a liquid; a chemical substance that forms or produces a soft mass of very small bubbles, used for washing, shaving (= cutting hair from the skin), or putting out fires, for example; to have or produce a mass of small bubbles; to have a mass of small bubbles in and around its mouth, especially because it is sick or angry; to be very angry",
-    "pos": "noun / verb"
-  },
-  "largest": {
-    "phonetic": "/ˈlɑːd͡ʒɪst/",
-    "zh": "adj. 多量的，最大的（large 的最高级）",
-    "en": "Of considerable or relatively great size or extent.",
-    "pos": ""
-  },
-  "mismanagement": {
-    "phonetic": "/ˌmɪsˈmænɪdʒmənt/",
-    "zh": "管理不善：对问题或情况的不良管理；政府对经济的管理不善",
-    "en": "bad management of a problem or situation",
-    "pos": "noun"
-  },
-  "monetary": {
-    "phonetic": "/ˈmʌnɪtri/ | /ˈmɑːnɪteri/",
-    "zh": "货币的，钱的（尤指一国的货币）",
-    "en": "connected with money, especially all the money in a country",
-    "pos": "adjective"
-  },
-  "nagpur": {
-    "phonetic": "",
-    "zh": "n. 那格浦尔（印度中部城市）",
-    "en": "",
-    "pos": ""
-  },
-  "transformation": {
-    "phonetic": "/ˌtrænsfəˈmeɪʃn/ | /ˌtrænsfərˈmeɪʃn/",
-    "zh": "（彻底的）变化，改观，转变，改革；（用于南非）民主改革",
-    "en": "a complete change in somebody/something; the process of making institutions and organizations more democratic",
-    "pos": "noun"
-  },
-  "turbine": {
-    "phonetic": "/ˈtɜːbaɪn/ | /ˈtɜːrbaɪn/",
-    "zh": "涡轮机；汽轮机",
-    "en": "a machine or part of a machine that produces continuous turning power from a fast-moving flow of a liquid or gas, using a set of vanes attached to a wheel or rotor",
-    "pos": "noun"
-  },
-  "classical-music": {
-    "phonetic": "",
-    "zh": "古典音乐：包括莫扎特、海顿等古典时期的音乐，以及欧美地区更为严谨、正式的音乐形式，与民间音乐或流行音...",
-    "en": "",
-    "pos": ""
-  },
-  "encod": {
-    "phonetic": "",
-    "zh": "v. 把……译成密码（或电码）；给（计算机程序）编码；用外语表达；（基因）对生成（某种物质或行为）负...",
-    "en": "",
-    "pos": ""
-  },
-  "engagement": {
-    "phonetic": "/ɪnˈɡeɪdʒmənt/",
-    "zh": "订婚；订婚期间；（尤指正式的或与工作有关的）约定，约会，预约；（与…的）密切关系；（对…的）了解；战斗；交战；雇用；聘用",
-    "en": "an agreement to marry somebody; the period during which two people are engaged; an arrangement to do something at a particular time, especially something official or something connected with your job; being involved with somebody/something in an attempt to understand them/it; fighting between two armies, etc.; an arrangement to employ somebody; the process of employing somebody",
-    "pos": "noun"
-  },
-  "orchestra": {
-    "phonetic": "/ˈɔːkɪstrə/ | /ˈɔːrkɪstrə/",
-    "zh": "管弦乐队；（剧场的）正厅前排座位",
-    "en": "a large group of people who play various musical instruments together, led by a conductor; the seats that are nearest to the stage in a theatre",
-    "pos": "noun"
-  },
-  "recording": {
-    "phonetic": "/rɪˈkɔːdɪŋ/ | /rɪˈkɔːrdɪŋ/",
-    "zh": "录制的音像；录音；视频；录像；录制；（正式的）记录，记载",
-    "en": "sound or pictures that have been recorded on computer files or on CD, DVD, video, etc.; the process of making a record, film, radio or television show, etc.; the process or act of writing down and storing information for official purposes",
-    "pos": "noun"
-  },
-  "teeth": {
-    "phonetic": "",
+    "zh": "提价；加价；涨价；审校；标注排版说明",
+    "en": "to increase the price of something; to mark or correct a text, etc., for example for printing"
+  },
+  "markedly": {
+    "phonetic": "/ˈmɑːkɪdli/ | /ˈmɑːrkɪdli/",
+    "zh": "明显地：以一种容易注意到的方式",
+    "en": "in a way that is easy to notice"
+  },
+  "marriage bureau": {
+    "phonetic": "/ˈmærɪdʒ bjʊərəʊ/ | /ˈmærɪdʒ bjʊrəʊ/",
+    "zh": "婚姻介绍所",
+    "en": "an organization that introduces people who are looking for somebody to marry"
+  },
+  "marshal": {
+    "phonetic": "/ˈmɑːʃl/ | /ˈmɑːrʃl/",
+    "zh": "（英国）陆军元帅，空军元帅；司仪；典礼官；（美国法院的）执行官；（一些美国城市的）警察局长，消防局长；结集；收集；安排；控制人群；组织；维持秩序",
+    "en": "an officer of the highest rank in the armed forces of some countries; a person responsible for making sure that public events, especially sports events, take place without any problems, and for controlling crowds; (in the US) an officer whose job is to put court orders into effect; (in some US cities) an officer of high rank in a police or fire department; to gather together and organize the people, things, ideas, etc. that you need for a particular purpose; to control or organize a large group of people, especially soldiers"
+  },
+  "materialistic": {
+    "phonetic": "/məˌtɪəriəˈlɪstɪk/ | /məˌtɪriəˈlɪstɪk/",
+    "zh": "物质享乐主义的；贪图享乐的",
+    "en": "caring more about money and possessions than anything else"
+  },
+  "maverick": {
+    "phonetic": "/ˈmævərɪk/",
+    "zh": "持不同意见者；独行其是者；言行与众不同者",
+    "en": "independent, with unusual opinions; a person who does not behave or think like everyone else, but who has independent, unusual opinions"
+  },
+  "means test": {
+    "phonetic": "/ˈmiːnz test/",
+    "zh": "收入调查，经济情况调查（以确定是否可领取政府补贴等）",
+    "en": "an official check of somebody’s wealth or income in order to decide if they are poor enough to receive money from the government, etc. for a particular purpose"
+  },
+  "mediocre": {
+    "phonetic": "/ˌmiːdiˈəʊkə(r)/ | /ˌmiːdiˈəʊkər/",
+    "zh": "平庸的；普通的；平常的",
+    "en": "not very good; of only average standard"
+  },
+  "menial": {
+    "phonetic": "/ˈmiːniəl/",
+    "zh": "不需技巧的；枯燥的；报酬低的；仆人；佣人",
+    "en": "not considered important; not needing special skills and often boring or badly paid; a person with a menial job"
+  },
+  "merit": {
+    "phonetic": "/ˈmerɪt/",
+    "zh": "优点；美德；价值；值得赞扬（或奖励、钦佩）的特点；功绩；长处；（学校考试或作业的）良好；（在校操行好而获得的）良好；应得；值得",
+    "en": "the quality of being good and of deserving praise or reward; a good feature that deserves praise or reward; a grade in an exam or for a piece of work at school or university that is very good; a special mark or award given as a reward for good behaviour at school; to deserve praise, attention, etc."
+  },
+  "midwife": {
+    "phonetic": "/ˈmɪdwaɪf/ | /ˈmɪdwaɪvz/",
+    "zh": "助产士；接生员；产婆",
+    "en": "a person, especially a woman, who is trained to help women give birth to babies"
+  },
+  "militarization": {
+    "phonetic": "/ˌmɪlɪtəraɪˈzeɪʃn/ | /ˌmɪlɪtərəˈzeɪʃn/",
+    "zh": "向（某地）派遣武装力量",
+    "en": "the act of making something operate in a similar way to the armed forces; the act of sending armed forces to an area"
+  },
+  "minimalist": {
+    "phonetic": "/ˈmɪnɪməlɪst/",
+    "zh": "极简抽象派艺术家；简约主义者",
+    "en": "using very simple ideas or a very small number of simple elements; an artist, a musician or a designer who uses very simple ideas or a very small number of simple elements in their work"
+  },
+  "mire": {
+    "phonetic": "/ˈmaɪə(r)/ | /ˈmaɪər/",
+    "zh": "泥潭；泥沼",
+    "en": "an area of deep mud"
+  },
+  "moan": {
+    "phonetic": "/məʊn/ | /məʊnz/ | /məʊnd/ | /ˈməʊnɪŋ/",
+    "zh": "呻吟；抱怨；呼啸；发出萧萧声；呻吟声；（尤指风的）呼啸声，萧萧声",
+    "en": "to make a long deep sound, usually because you are unhappy or suffering or are experiencing sexual pleasure; to complain about something in a way that other people find annoying; to make a long deep sound; a long deep sound, usually made because you are unhappy or suffering or are experiencing sexual pleasure; a complaint about something; a long deep sound, especially the sound that is made by the wind"
+  },
+  "modus operandi": {
+    "phonetic": "/ˌməʊdəs ˌɒpəˈrændiː/ | /ˌməʊdəs ˌɑːpəˈrændiː/",
+    "zh": "工作方法",
+    "en": "a particular method of working"
+  },
+  "monopoly": {
+    "phonetic": "/məˈnɒpəli/ | /məˈnɑːpəli/",
+    "zh": "垄断；专营服务；被垄断的商品（或服务）；独占；专利；专利品；“大富翁”（棋类游戏，游戏者以玩具钞票买卖房地产）",
+    "en": "the complete control of trade in particular goods or the supply of a particular service; a type of goods or a service that is controlled in this way; the complete control, possession or use of something; a thing that belongs only to one person or group and that other people cannot share; a board game in which players have to pretend to buy and sell land and houses, using pieces of paper that look like money"
+  },
+  "mount": {
+    "phonetic": "/maʊnt/ | /maʊnts/ | /ˈmaʊntɪd/ | /ˈmaʊntɪŋ/",
+    "zh": "准备；安排；组织开展；逐步增加；骑上；乘上；跨上；登上；爬上；攀登；镶嵌；安置；爬上（雌性动物的背）交配；守卫；看守；保卫；山；山峰；坐骑；衬纸板；载片；裱褙；托架；支撑架",
+    "en": "to organize and begin something; to increase gradually; to get on a bicycle, horse, etc. in order to ride it; to go up something, or up on to something that is raised; to fix something into position on something, so that you can use it, look at it or study it; to get onto the back of a female animal in order to have sex; to watch or protect somebody/something; a mountain or a hill; a horse that you ride on; something such as a piece of card or glass that you put something on or attach something to, to display it; something that an object stands on or is attached to for support"
+  },
+  "mull": {
+    "phonetic": "/mʌl/ | /mʌlz/ | /mʌld/ | /ˈmʌlɪŋ/",
     "zh": "",
-    "en": "is the plural of .",
-    "pos": ""
+    "en": "a large island of the Inner Hebrides in Scotland. It is known for its high cliffs and beautiful scenery, and is popular with tourists."
   },
-  "accru": {
+  "mundane": {
+    "phonetic": "/mʌnˈdeɪn/",
+    "zh": "单调的；平凡的",
+    "en": "not interesting or exciting"
+  },
+  "murky": {
+    "phonetic": "/ˈmɜːki/ | /ˈmɜːrki/",
+    "zh": "浑浊的；污浊的；昏暗的；阴暗的；朦胧的；隐晦的；含糊的；暧昧可疑的",
+    "en": "not clear; dark or dirty with mud or another substance; dark and unpleasant because of smoke, fog, etc.; not clearly known and suspected of not being honest"
+  },
+  "mute": {
+    "phonetic": "/mjuːt/",
+    "zh": "沉默的；不出声的；无声的；哑的；弱音器；哑巴；消音；减音；减弱（尤指乐器）的声音；减弱；缓解",
+    "en": "not speaking; not expressed in speech; unable to speak; the mute button on a phone, television, etc.; a device made of metal, rubber or plastic that you use to make the sound of a musical instrument softer; a person who is not able to speak; to turn off the sound on a phone, television, etc.; to make the sound of something, especially a musical instrument, quieter or softer, sometimes using a mute; to make something weaker or less severe"
+  },
+  "myth": {
+    "phonetic": "/mɪθ/",
+    "zh": "神话；神话故事；虚构的东西；荒诞的说法；不真实的事",
+    "en": "a story from ancient times, especially one that was told to explain natural events or to describe the early history of a people; this type of story; something that many people believe but that does not exist or is false"
+  },
+  "narcissistic": {
+    "phonetic": "/ˌnɑːsɪˈsɪstɪk/ | /ˌnɑːrsɪˈsɪstɪk/",
+    "zh": "自我陶醉，自赏，自恋（尤指对自己的容貌）",
+    "en": "admiring yourself too much, especially your appearance"
+  },
+  "navigator": {
+    "phonetic": "/ˈnævɪɡeɪtə(r)/ | /ˈnævɪɡeɪtər/",
+    "zh": "（飞机、船舶等上的）领航员",
+    "en": "a person who navigates, for example on a ship or an aircraft"
+  },
+  "non-committal": {
+    "phonetic": "/ˌnɒn kəˈmɪtl/ | /ˌnɑːn kəˈmɪtl/",
+    "zh": "态度不明朗的；不表态的；含糊的",
+    "en": "not giving an opinion; not showing which side of an argument you agree with"
+  },
+  "non-invasive": {
+    "phonetic": "/ˌnɒn ɪnˈveɪsɪv/ | /ˌnɑːn ɪnˈveɪsɪv/",
+    "zh": "非侵入的；非创伤的；无创的",
+    "en": "not involving cutting into the body"
+  },
+  "notch": {
+    "phonetic": "/nɒtʃ/ | /nɑːtʃ/",
+    "zh": "等级；档次；位阶；（表面或边缘的）V 形刻痕，圆形切口；赢取；获得；（在表面或边缘）刻 V 形痕，刻下切口",
+    "en": "a level on a scale, often marking quality or achievement; a V-shape or a circle cut in an edge or a surface, sometimes used to keep a record of something; each of a series of holes, for example in a belt; to achieve something such as a win or a high score; to make a small cut in the shape of a V in an edge or a surface"
+  },
+  "notch up": {
     "phonetic": "",
-    "zh": "v. （利益、好处等）产生，形成；（钱不断地）积累，增加；准备累算偿付",
-    "en": "",
-    "pos": ""
+    "zh": "赢得；达到",
+    "en": "If you something such as a score or total, you achieve it."
   },
-  "alloparent": {
+  "oblige": {
+    "phonetic": "/əˈblaɪdʒ/ | /əˈblaɪdʒɪz/ | /əˈblaɪdʒd/ | /əˈblaɪdʒɪŋ/",
+    "zh": "（以法律、义务等）强迫，迫使；（根据要求或需要）帮忙，效劳",
+    "en": "to force somebody to do something, by law, because it is a duty, etc.; to help somebody by doing what they ask or what you know they want"
+  },
+  "obsessed": {
     "phonetic": "",
-    "zh": "n. 异亲",
-    "en": "",
-    "pos": ""
+    "zh": "对…着迷的；受…困扰的；为…心神不宁的；obsessed",
+    "en": "If someone is a person or thing, they keep thinking about them and find it difficult to think about anything else."
   },
-  "coastal": {
-    "phonetic": "/ˈkəʊstl/",
-    "zh": "沿海的；靠近海岸的",
-    "en": "of or near a coast",
-    "pos": "adjective"
+  "off-label": {
+    "phonetic": "/ˌɒf ˈleɪbl/ | /ˌɔːf ˈleɪbl/",
+    "zh": "（药物）有标签外作用的，未按标签说明使用的",
+    "en": "relating to the use of a drug for something other than what it was originally created for; in a way that uses a drug for something other than what it was originally created for"
   },
-  "credibility": {
-    "phonetic": "/ˌkredəˈbɪləti/",
-    "zh": "可信性；可靠性",
-    "en": "the quality that somebody/something has that makes people believe or trust them",
-    "pos": "noun"
-  },
-  "decay": {
-    "phonetic": "/dɪˈkeɪ/",
-    "zh": "腐烂；腐朽；（社会、机构、制度等的）衰败，衰退，衰落；（使）腐烂，腐朽；（建筑、地方等）破败，衰落，衰败；（力量、影响等）衰弱，衰退，衰减",
-    "en": "the process or result of being destroyed by natural causes or by not being cared for (= of decaying); the process of a society, an institution, a system, etc. being gradually destroyed; the process by which a radioactive substance changes to a different form by sending out radiation; to be destroyed gradually by natural processes; to destroy something in this way; if a building or an area decays, its condition slowly becomes worse; to become less powerful and lose influence over people, society, etc.",
-    "pos": "noun / verb"
-  },
-  "distribution": {
-    "phonetic": "/ˌdɪstrɪˈbjuːʃn/",
-    "zh": "分配；分布；分发；分送；（商品）运销，经销，分销",
-    "en": "the way that something is spread or exists over a particular area or among a particular group of people; the act of giving or sharing something out among a number of people; the system of transporting and delivering a product",
-    "pos": "noun"
-  },
-  "evolutionary": {
-    "phonetic": "/ˌiːvəˈluːʃənri/ | /ˌevəˈluːʃənri/ | /ˌevəˈluːʃəneri/",
-    "zh": "进化的；演变的；逐渐发展的",
-    "en": "connected with evolution; connected with slow steady development and change",
-    "pos": "adjective"
-  },
-  "exposure": {
-    "phonetic": "/ɪkˈspəʊʒə(r)/ | /ɪkˈspəʊʒər/",
-    "zh": "面临，遭受（危险或不快）；揭露；（在电视、报纸等上的）亮相，被报道；挨冻；受寒；曝光时间；（照一张照片的）软片，底片，胶片；暴露；显露",
-    "en": "the state of being in a place or situation where there is no protection from something harmful or unpleasant; the fact of having the true facts about somebody/something told after they have been hidden because they are bad, dishonest or illegal; the fact of being discussed or mentioned on television, in newspapers, etc.; the fact of experiencing something new or different; a medical condition caused by being out in very cold weather for too long without protection; the length of time for which light is allowed into the camera when taking a photograph; a length of film in a camera that is used to take a photograph; the act of showing something that is usually hidden",
-    "pos": "noun"
-  },
-  "goalkeeper": {
-    "phonetic": "/ˈɡəʊlkiːpə(r)/ | /ˈɡəʊlkiːpər/ | /ˈɡəʊli/",
-    "zh": "守门员",
-    "en": "a player whose job is to stop the ball from going into his or her own team’s goal",
-    "pos": "noun"
-  },
-  "highlight": {
-    "phonetic": "/ˈhaɪlaɪt/ | /ˈhaɪlaɪts/ | /ˈhaɪlaɪtɪd/ | /ˈhaɪlaɪtɪŋ/",
-    "zh": "突出；强调；将（文本的某部分）用彩笔做标记；将（计算机屏幕的某区域）增强亮度；使醒目；挑染（将部分头发染成浅色）；最好（或最精彩、最激动人心）的部分；挑染的头发；（图画或照片的）强光部分",
-    "en": "to emphasize something, especially so that people give it more attention; to mark part of a text with a special coloured pen, or to mark an area on a computer screen, to emphasize it or make it easier to see; to make some parts of your hair a lighter colour than the rest by using a chemical substance on them; the best, most interesting or most exciting part of something; areas of hair that are lighter than the rest, usually because a chemical substance has been put on them; the light or bright part of a picture or photograph",
-    "pos": "verb / noun"
-  },
-  "infant": {
-    "phonetic": "/ˈɪnfənt/",
-    "zh": "婴儿；幼儿；四岁到七岁之间的学童；供婴幼儿用的；初期的；初创期的",
-    "en": "a baby or very young child; a child at school between the ages of four and seven; designed to be used by infants; new and not yet developed",
-    "pos": "noun / adjective"
-  },
-  "influenc": {
-    "phonetic": "",
-    "zh": "n. 影响，作用；势力，影响力；有影响的人（或事物）; v. 影响，对……起作用",
-    "en": "",
-    "pos": ""
-  },
-  "lender": {
-    "phonetic": "/ˈlendə(r)/ | /ˈlendər/",
-    "zh": "放款人",
-    "en": "a person or an organization that lends money",
-    "pos": "noun"
-  },
-  "middle-income": {
-    "phonetic": "",
-    "zh": "adj. 中等收入的",
-    "en": "",
-    "pos": ""
-  },
-  "multiculturalism": {
-    "phonetic": "/ˌmʌltiˈkʌltʃərəlɪzəm/ | /ˌmʌltaɪˈkʌltʃərəlɪzəm/",
-    "zh": "多元文化主义（重视社会中各种文化）",
-    "en": "the practice of giving importance to all cultures in a society",
-    "pos": "noun"
-  },
-  "objective": {
-    "phonetic": "/əbˈdʒektɪv/",
-    "zh": "目标；目的；（望远镜或显微镜的）物镜；客观的；就事论事的；不带个人感情的；客观存在的；基于事实的；宾格的",
-    "en": "something that you are trying to achieve; the lens in a telescope or microscope that is nearest to the object being looked at; not influenced by personal feelings or opinions; considering only facts; existing outside the mind; based on facts that can be proved; the objective case is the one which is used for the object of a sentence",
-    "pos": "noun / adjective"
-  },
-  "paralyz": {
-    "phonetic": "",
-    "zh": "vt. 使麻痹；使瘫痪",
-    "en": "",
-    "pos": ""
-  },
-  "photographic": {
-    "phonetic": "/ˌfəʊtəˈɡræfɪk/",
-    "zh": "摄影的；摄制的；照片的",
-    "en": "connected with photographs or photography",
-    "pos": "adjective"
-  },
-  "poorest": {
-    "phonetic": "",
-    "zh": "adj. 可怜的; adj. 低劣的; adj. 贫困的（poor的最高级 ）",
-    "en": "With no or few possessions or money, particularly in relation to contemporaries who do have them.",
-    "pos": ""
-  },
-  "prosperity": {
-    "phonetic": "/prɒˈsperəti/ | /prɑːˈsperəti/",
-    "zh": "兴旺；繁荣；成功；昌盛",
-    "en": "the state of being successful, especially in making money",
-    "pos": "noun"
-  },
-  "reader": {
-    "phonetic": "/ˈriːdə(r)/ | /ˈriːdər/",
-    "zh": "读者；读书…的人；阅读量大的人；（报刊等的）读者；简易读物；读本；准教授（英国大学教师，仅次于教授）；电子阅读器；电子识读机；缩微软片阅读机",
-    "en": "a person who reads, especially one who reads a lot or in a particular way; a person who reads a particular newspaper, magazine, etc.; an easy book that is intended to help people learn to read their own or a foreign language; a senior teacher at a British university just below the rank of a professor; an electronic device that reads data stored in one form and changes it into another form so that a computer can perform operations on it; a machine that produces on a screen a large image of a text stored on a microfiche or microfilm",
-    "pos": "noun"
-  },
-  "reshape": {
-    "phonetic": "/ˌriːˈʃeɪp/ | /ˌriːˈʃeɪps/ | /ˌriːˈʃeɪpt/ | /ˌriːˈʃeɪpɪŋ/",
-    "zh": "改变…的形状（或结构）；重塑；改组",
-    "en": "to change the shape or structure of something",
-    "pos": "verb"
-  },
-  "richest": {
-    "phonetic": "/ˈɹɪt͡ʃəst/",
-    "zh": "深的; 富裕的; 强烈的（rich 的最高级）",
-    "en": "Wealthy: having a lot of money and possessions.",
-    "pos": ""
-  },
-  "tolerant": {
-    "phonetic": "/ˈtɒlərənt/ | /ˈtɑːlərənt/",
-    "zh": "忍受的；容忍的；宽容的；能在困难条件下生存（或操作）的；能耐…的",
-    "en": "able to accept what other people say or do even if you do not agree with it; able to survive or operate in difficult conditions",
-    "pos": "adjective"
-  },
-  "trapp": {
-    "phonetic": "",
-    "zh": "n. 暗色岩",
-    "en": "",
-    "pos": ""
-  },
-  "wheelchair": {
-    "phonetic": "/ˈwiːltʃeə(r)/ | /ˈwiːltʃer/",
-    "zh": "轮椅",
-    "en": "a special chair with wheels, used by people who cannot walk because of illness, an accident, etc.",
-    "pos": "noun"
-  },
-  "millennial": {
-    "phonetic": "/mɪˈleniəl/",
-    "zh": "千禧年：与一千年有关；地球自转速度的减速度在千禧年的时间尺度上将不是恒定的。；千禧年：与一千年的周年纪念有关；纽约时代广场的千禧庆典；千禧一代：与21世纪初成年的一代人相关；千禧一代现在正在政治上留下印记，并塑造未来。；千禧世代：持有或表明相信，当基督重返地球时，将有一个幸福与和平的未来时代。；金提出了关于平等和民族康复的千禧年愿景。；千禧一代：属于21世纪初成人的一代人；千禧一代愿意冒险，并认为职业转变是正常的。",
-    "en": "connected with a period of a thousand years; connected with the anniversary of a thousand years; connected with the generation of people who became adults in the early 21st century; holding or showing the belief that there will come a future age of happiness and peace when Christ will return to Earth; a person who belongs to the generation who became adults in the early 21st century",
-    "pos": "adjective / noun"
-  },
-  "younger": {
-    "phonetic": "/ˈjʌŋɡə/",
-    "zh": "adj. 更年轻的，年纪更小的；更未成熟的，更没经验的；更年轻人似的，更朝气的；小……（用于称呼与父...",
-    "en": "In the early part of growth or life; born not long ago.",
-    "pos": ""
-  },
-  "monarch": {
-    "phonetic": "/ˈmɒnək/ | /ˈmɑːnərk/ | /ˈmɑːnɑːrk/",
-    "zh": "君主；帝王",
-    "en": "a person who rules a country, for example a king or a queen",
-    "pos": "noun"
-  },
-  "to the tune of": {
-    "phonetic": "",
-    "zh": "使用……的曲调：指使用某首特定歌曲的曲调。; 以……的金额：用于强调某事物（如金钱）的数量或程度相当...",
-    "en": "",
-    "pos": ""
-  },
-  "purports": {
-    "phonetic": "",
-    "zh": "v．声称，表明：表示某事物的意图、目的或含义。",
-    "en": "To convey, imply, or profess outwardly (often falsely).",
-    "pos": ""
-  },
-  "spawned": {
-    "phonetic": "",
-    "zh": "v. 引起（spawn 的过去分词）；孵出",
-    "en": "To produce or deposit (eggs) in water.",
-    "pos": ""
-  },
-  "stakes": {
-    "phonetic": "/steɪks/",
-    "zh": "n. 赌注；风险（stake 的复数）；利益; v. 用桩支撑；以……打赌（stake 的第三人称单...",
-    "en": "A piece of wood or other material, usually long and slender, pointed at one end so as to be easily driven into the ground as a marker or a support or stay.",
-    "pos": ""
-  },
-  "state of emergency": {
-    "phonetic": "",
-    "zh": "紧急状态：一种非常困难或危险的情况，政府为了重新掌控局面而给予自己特殊权力或暂停正常的法律程序。",
-    "en": "An unusually difficult or dangerous situation in which a government gives itself special powers or suspends normal legal procedures so as to regain control.",
-    "pos": ""
-  },
-  "decimated": {
-    "phonetic": "",
-    "zh": "vt. 摧毁；大幅度下降（decimate 的过去式及过去分词）",
-    "en": "To kill one-tenth of a group, (specifically) as a military punishment in the Roman army selected by lot, usually carried out by the surviving soldiers.",
-    "pos": ""
-  },
-  "eat one's words": {
-    "phonetic": "",
-    "zh": "收回自己的话：后悔或撤回之前所说的话。",
-    "en": "To regret or retract what one has said.",
-    "pos": ""
-  },
-  "humanities": {
-    "phonetic": "/hjuˈmæn.ɪ.tiz/",
-    "zh": "n. 人文学科（humanity 的复数）",
-    "en": "The study of Ancient Greek and Latin, their literature, history, etc., sometimes inclusive of the study of the ancient Mediterranean generally.",
-    "pos": ""
-  },
-  "implications": {
-    "phonetic": "",
-    "zh": "n. 暗指，暗示；蕴含，含义；（可能带来的）影响（implication 的复数）",
-    "en": "The act of implicating.",
-    "pos": ""
-  },
-  "in the wake of": {
-    "phonetic": "",
-    "zh": "在……之后；随着……发生",
-    "en": "Following",
-    "pos": ""
-  },
-  "incentives": {
-    "phonetic": "",
-    "zh": "n. 激励；奖励；诱因；奖励措施（incentive 的复数）",
-    "en": "Something that motivates, rouses, or encourages.",
-    "pos": ""
-  },
-  "iucn": {
-    "phonetic": "",
-    "zh": "abbr. 国际自然保护联盟 (International Union for Conservati...",
-    "en": "",
-    "pos": ""
-  },
-  "make ends meet": {
-    "phonetic": "",
-    "zh": "维持生计；收支平衡",
-    "en": "To have enough money to cover expenses; to get by financially; to get through the pay period (sufficient to meet the next payday).",
-    "pos": ""
-  },
-  "prospects": {
-    "phonetic": "/ˈpɹɒspɛkts/",
-    "zh": "n. （发生好事情的）可能性，机会；成功的机会；前景，前途；有前途的候选人；景色（prospect ...",
-    "en": "The region which the eye overlooks at one time; view; scene; outlook.",
-    "pos": ""
-  },
-  "refrain from": {
-    "phonetic": "",
-    "zh": "避免，克制：不做某事或不说某话，通常是因为它可能会有负面影响或后果。",
-    "en": "",
-    "pos": ""
-  },
-  "relegated": {
-    "phonetic": "",
-    "zh": "vt. 使贬职；使降级（relegate 的过去式和过去分词）",
-    "en": "Exile, banish, remove, or send away.",
-    "pos": ""
-  },
-  "laid off": {
-    "phonetic": "",
-    "zh": "裁员：指企业或雇主基于业务上的考量，暂时或永久中止雇用个人或集体雇员的行为。",
-    "en": "",
-    "pos": ""
-  },
-  "sovereign wealth fund": {
-    "phonetic": "",
-    "zh": "主权财富基金：一种由国家拥有的投资基金，投资于股票、债券、房地产、贵金属等实体和金融资产。",
-    "en": "",
-    "pos": ""
-  },
-  "political appointee": {
-    "phonetic": "",
-    "zh": "出于政治考虑而任命的人员; 政务官",
-    "en": "",
-    "pos": ""
-  },
-  "action level": {
-    "phonetic": "",
-    "zh": "行动水平：有害或有毒物质或污染物（如铅、石棉、苯或辐射）的浓度水平，超过该水平被认为足以需要采取监管...",
-    "en": "",
-    "pos": ""
-  },
-  "acute crisis": {
-    "phonetic": "",
-    "zh": "急性危机：指突然发生的、紧急的、严重的危机事件。",
-    "en": "",
-    "pos": ""
+  "omnibus": {
+    "phonetic": "/ˈɒmnɪbəs/ | /ˈɑːmnɪbəs/",
+    "zh": "（广播、电视）综合节目；（若干种作品的）汇编，选集；公共汽车；综合性的；选编的",
+    "en": "a television or radio programme that combines several recent programmes in a series; a large book that contains a number of books, for example novels by the same author; a bus; including many things or different types of thing; a British television programme about the arts. It was broadcast by the BBC from 1967 to 2003. Each programme was usually about one particular artist.; a US cultural television programme broadcast on CBS on Sunday afternoons from 1952 to 1961. It was presented by Alistair Cooke and offered a mixture of plays, music, talks with artistic people, and even comedy."
   }
 }
