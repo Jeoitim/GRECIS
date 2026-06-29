@@ -10,6 +10,24 @@ from .db import CorpusDB
 from .export import is_exportable_expression, is_exportable_vocabulary, stars, table, truncate
 from .dictionary import query_word
 
+def safe_print(msg: str, end: str = "\n", flush: bool = True) -> None:
+    try:
+        print(msg, end=end, flush=flush)
+    except UnicodeEncodeError:
+        try:
+            import sys
+            encoding = sys.stdout.encoding or 'utf-8'
+            encoded_bytes = (msg + end).encode(encoding, errors='backslashreplace')
+            sys.stdout.buffer.write(encoded_bytes)
+            if flush:
+                sys.stdout.flush()
+        except Exception:
+            try:
+                ascii_msg = msg.encode('ascii', errors='backslashreplace').decode('ascii')
+                print(ascii_msg, end=end, flush=flush)
+            except Exception:
+                pass
+
 def highlight_word(sentence: str, word: str) -> str:
     if not sentence or not word:
         return sentence
@@ -66,10 +84,10 @@ def write_redbook(
     corpus_vocab = rank_vocabulary_for_redbook(corpus["vocabulary"], seed_words)
     
     grouped_corpus: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    print(f"[Export] Categorizing and querying {len(corpus_vocab)} corpus vocabulary items...", flush=True)
+    safe_print(f"[Export] Categorizing and querying {len(corpus_vocab)} corpus vocabulary items...", flush=True)
     for idx, item in enumerate(corpus_vocab):
         if idx % 50 == 0 or idx == len(corpus_vocab) - 1:
-            print(f"[Export] Processing corpus vocab: {idx + 1}/{len(corpus_vocab)} ({item['word']})", flush=True)
+            safe_print(f"[Export] Processing corpus vocab: {idx + 1}/{len(corpus_vocab)} ({item['word']})", flush=True)
         domain_key = map_field_to_domain_key(item.get("field", ""), item["word"])
         grouped_corpus[domain_key].append(item)
         
