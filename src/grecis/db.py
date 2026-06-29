@@ -228,6 +228,7 @@ class CorpusDB:
                     for item in result.polysemy
                 ],
             )
+
     def fetch_report_rows(self) -> list[dict[str, Any]]:
         with self.connect() as conn:
             articles = conn.execute(
@@ -433,7 +434,7 @@ class CorpusDB:
                 {
                     "word": lemma,
                     "lemma": lemma,
-                    "field": _llm_field(item.get("estimated_level"), item.get("exam_importance")),
+                    "field": _llm_field(item),
                     "category": category,
                     "frequency": _llm_frequency(item.get("exam_importance")),
                     "importance": importance,
@@ -525,14 +526,25 @@ def _llm_category(value: Any, lemma: str) -> str:
     return "academic/general"
 
 
-def _llm_field(level: Any, importance: Any) -> str:
-    text = f"{level} {importance}".lower()
+def _llm_field(item: dict[str, Any]) -> str:
+    explicit = str(
+        item.get("domain") or item.get("field") or item.get("topic") or item.get("subdomain") or ""
+    ).lower()
+    lemma = str(item.get("lemma") or "").lower()
+    meaning = str(item.get("meaning_in_context") or item.get("common_meaning") or "").lower()
+    text = " ".join(
+        [
+            explicit,
+            str(item.get("estimated_level") or ""),
+            str(item.get("exam_importance") or ""),
+            lemma,
+            meaning,
+        ]
+    ).lower()
     if "law" in text or "political" in text:
         return "law"
     if "econom" in text or "market" in text:
         return "economics"
-    if "science" in text or "postgraduate" in text:
-        return "science"
     if "environment" in text:
         return "environment"
     if "education" in text:
@@ -541,6 +553,14 @@ def _llm_field(level: Any, importance: Any) -> str:
         return "psychology"
     if "soc" in text:
         return "sociology"
+    if any(term in text for term in ["health", "medical", "clinical", "patient", "disease"]):
+        return "health"
+    if any(
+        term in text for term in ["technology", "digital", "algorithm", "ai", "data", "platform"]
+    ):
+        return "technology"
+    if "science" in text or "research" in text or "postgraduate" in text:
+        return "science"
     return "unknown"
 
 
