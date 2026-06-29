@@ -20,7 +20,7 @@ Analyze the following article. For difficult vocabulary items, classify them int
 For each item provide:
 lemma, meaning_in_context, common_meaning,
 why_chinese_students_misunderstand_it, estimated_level, exam_importance.
-Return compact JSON only.
+Return compact JSON only. Do NOT output any <think> tags or thinking process. Output raw JSON directly.
 """
 
 RHETORIC_PROMPT = """Analyze the rhetorical structure of this article.
@@ -30,7 +30,7 @@ author attitude expressions, argument development patterns, hedging expressions,
 and stance markers.
 For each item provide:
 original_sentence, type, explanation, importance_for_chinese_postgraduate_reading.
-Return compact JSON only.
+Return compact JSON only. Do NOT output any <think> tags or thinking process. Output raw JSON directly.
 """
 
 ARTICLE_VALUE_PROMPT = """Evaluate the usefulness of this article for
@@ -40,7 +40,7 @@ Provide scores from 1 to 10 for vocabulary_difficulty, sentence_complexity,
 logical_structure, domain_knowledge_density, similarity_to_previous_exam_passages.
 Also provide primary_domain and a probability distribution over:
 politics, law, economics, science, environment, sociology, psychology, education.
-Return compact JSON only.
+Return compact JSON only. Do NOT output any <think> tags or thinking process. Output raw JSON directly.
 """
 
 
@@ -63,7 +63,7 @@ class LLMAnalyzer:
         return cls(model=model, api_key=api_key or None, base_url=base_url or None)
 
     def enabled(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key) or bool(self.base_url)
 
     def analyze(self, article: Article) -> dict[str, Any]:
         if not self.enabled():
@@ -71,7 +71,14 @@ class LLMAnalyzer:
 
         from openai import OpenAI
 
-        client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+        base_url = self.base_url
+        if base_url:
+            base_url = base_url.strip()
+            if "11434" in base_url and not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
+                base_url = base_url.rstrip("/") + "/v1"
+
+        api_key = self.api_key or "ollama"
+        client = OpenAI(api_key=api_key, base_url=base_url)
         article_text = article.text[:12000]
         payload = {
             "title": article.title,
@@ -99,6 +106,8 @@ class LLMAnalyzer:
 
 def parse_jsonish(text: str) -> Any:
     cleaned = text.strip()
+    import re
+    cleaned = re.sub(r"<think>.*?</think>", "", cleaned, flags=re.DOTALL).strip()
     if cleaned.startswith("```"):
         cleaned = cleaned.strip("`")
         cleaned = cleaned.removeprefix("json").strip()

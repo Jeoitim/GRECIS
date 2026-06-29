@@ -356,11 +356,18 @@ def get_llm_client():
         try:
             from .config import load_config
             config = load_config()
-            if config.llm.api_key:
+            if config.llm.api_key or config.llm.base_url:
                 from openai import OpenAI
+                base_url = config.llm.base_url
+                if base_url:
+                    base_url = base_url.strip()
+                    if "11434" in base_url and not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
+                        base_url = base_url.rstrip("/") + "/v1"
+                
+                api_key = config.llm.api_key or "ollama"
                 _LLM_CLIENT = OpenAI(
-                    api_key=config.llm.api_key,
-                    base_url=config.llm.base_url or None,
+                    api_key=api_key,
+                    base_url=base_url or None,
                     max_retries=0,
                     timeout=5.0
                 )
@@ -384,7 +391,7 @@ def fetch_from_llm(word: str) -> dict[str, str]:
             "2. 'zh': the core Chinese meanings separated by semicolons (e.g. '放弃；遗弃')\n"
             "3. 'en': the core English definition (e.g. 'to leave a place, thing, or person forever')\n"
             "4. 'pos': the part of speech (e.g. 'noun', 'verb', 'adjective')\n"
-            "Do NOT return any markdown wrapping or extra text. Return compact JSON only."
+            "Do NOT output any <think> tags or thinking process. Return compact JSON only."
         )
         
         response = client.chat.completions.create(
