@@ -330,22 +330,34 @@ def query_word_local(word_key: str) -> dict[str, str] | None:
                 
     return None
 
+_LLM_CLIENT = None
+
+def get_llm_client():
+    global _LLM_CLIENT
+    if _LLM_CLIENT is None:
+        try:
+            from .config import load_config
+            config = load_config()
+            if config.llm.api_key:
+                from openai import OpenAI
+                _LLM_CLIENT = OpenAI(
+                    api_key=config.llm.api_key,
+                    base_url=config.llm.base_url or None,
+                    max_retries=0,
+                    timeout=5.0
+                )
+        except Exception:
+            pass
+    return _LLM_CLIENT
+
 def fetch_from_llm(word: str) -> dict[str, str]:
     """Fetch translation, phonetics, part of speech, and English gloss from LLM as a final fallback."""
+    client = get_llm_client()
+    if not client:
+        return {"phonetic": "", "zh": "", "en": "", "pos": ""}
     try:
         from .config import load_config
         config = load_config()
-        if not config.llm.api_key:
-            return {"phonetic": "", "zh": "", "en": "", "pos": ""}
-            
-        from openai import OpenAI
-        client = OpenAI(
-            api_key=config.llm.api_key,
-            base_url=config.llm.base_url or None,
-            max_retries=0,
-            timeout=5.0
-        )
-        
         prompt = (
             "You are a lexicographer helping Chinese postgraduate students prepare for English exams.\n"
             f"Provide details for the English word: '{word}'.\n"
@@ -388,9 +400,12 @@ def query_word(word: str) -> dict[str, str]:
     if word_key in cache:
         return cache[word_key]
         
+    print(f"[Dict] Querying '{word_key}'...", end="", flush=True)
+    
     # 1. Attempt local MDX queries first
     local_res = query_word_local(word_key)
     if local_res:
+        print(" [Local MDX]", flush=True)
         entry_data = {
             "phonetic": local_res.get("phonetic", ""),
             "zh": local_res.get("zh", ""),
@@ -404,6 +419,7 @@ def query_word(word: str) -> dict[str, str]:
     # 2. Attempt dictionary APIs
     if not _CIRCUIT_BROKEN:
         try:
+            print(" [API...]", end="", flush=True)
             youdao_zh = fetch_from_youdao(word_key)
             dict_api = fetch_from_dictionary_api(word_key)
             entry_data = {
@@ -413,6 +429,7 @@ def query_word(word: str) -> dict[str, str]:
                 "pos": ""  # Dictionary API usually doesn't have clean general POS
             }
             if entry_data["zh"] or entry_data["en"]:
+                print(" [API Found]", flush=True)
                 cache[word_key] = entry_data
                 save_cache(cache)
                 return entry_data
@@ -420,10 +437,13 @@ def query_word(word: str) -> dict[str, str]:
             pass
             
     # 3. Final fallback: LLM
+    print(" [LLM fallback...]", end="", flush=True)
     llm_res = fetch_from_llm(word_key)
     if llm_res and (llm_res["zh"] or llm_res["en"]):
+        print(" [LLM Found]", flush=True)
         cache[word_key] = llm_res
         save_cache(cache)
         return llm_res
         
+    print(" [Not Found]", flush=True)
     return {"phonetic": "", "zh": "", "en": "", "pos": ""}

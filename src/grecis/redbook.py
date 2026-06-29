@@ -66,7 +66,10 @@ def write_redbook(
     corpus_vocab = rank_vocabulary_for_redbook(corpus["vocabulary"], seed_words)
     
     grouped_corpus: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for item in corpus_vocab:
+    print(f"[Export] Categorizing and querying {len(corpus_vocab)} corpus vocabulary items...", flush=True)
+    for idx, item in enumerate(corpus_vocab):
+        if idx % 50 == 0 or idx == len(corpus_vocab) - 1:
+            print(f"[Export] Processing corpus vocab: {idx + 1}/{len(corpus_vocab)} ({item['word']})", flush=True)
         domain_key = map_field_to_domain_key(item.get("field", ""), item["word"])
         grouped_corpus[domain_key].append(item)
         
