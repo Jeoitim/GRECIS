@@ -9,6 +9,8 @@ from typing import Any
 
 from .models import Article
 
+LLM_PROMPT_VERSION = "combined_rhetoric_v2"
+
 VOCABULARY_PROMPT = """You are an expert in Chinese postgraduate entrance examination English.
 
 Analyze the following article. For difficult vocabulary items, classify them into:
@@ -32,15 +34,23 @@ Return compact JSON with exactly:
 "vocabulary":[{"lemma":"","meaning_in_context":"","common_meaning":"",
 "why_chinese_students_misunderstand_it":"","estimated_level":"",
 "exam_importance":"","domain":""}],
-"rhetoric":[{"original_sentence":"","type":"","explanation":"",
-"importance_for_chinese_postgraduate_reading":""}],
+"rhetoric":[{"original_sentence":"","canonical_type":"","type":"","template":"",
+"cue_words":[],"explanation_zh":"","reading_tip_zh":"","confidence":0.0}],
 "exam_value":{"vocabulary_difficulty":1,"sentence_complexity":1,
 "logical_structure":1,"domain_knowledge_density":1,
 "similarity_to_previous_exam_passages":1,"primary_domain":"",
 "domain_probabilities":{}}
 }
-Limits: vocabulary <= 12 high-value items, rhetoric <= 6 items.
-Prefer polysemy, exam phrases, domain terms. Raw JSON only.
+canonical_type must be one of:
+concession, contrast, causality, condition, stance, hedging, emphasis,
+comparison, inversion, cleft, relative_clause, participial_clause,
+nominal_clause, argument_development.
+For rhetoric, select structurally reusable sentences rather than merely sentences
+containing a connector. template should abstract the reusable English structure.
+explanation_zh and reading_tip_zh must be concise Chinese.
+Limits: vocabulary <= 12 high-value items, rhetoric <= 10 diverse items.
+Prefer polysemy, exam phrases, domain terms, long-sentence parsing, and argument logic.
+Raw JSON only.
 """
 
 RHETORIC_PROMPT = """Analyze the rhetorical structure of this article.
@@ -115,11 +125,17 @@ class LLMAnalyzer:
                 {"role": "user", "content": json.dumps(article_payload, ensure_ascii=False)},
             ],
             "temperature": 0.1,
-            "max_tokens": 1800,
+            "max_tokens": 2600,
         }
         content = self._chat_completion_content(request_payload)
         parsed = parse_jsonish(content)
-        return parsed if isinstance(parsed, dict) else {"raw": content}
+        if not isinstance(parsed, dict):
+            return {"raw": content}
+        parsed["_meta"] = {
+            "model": self.model,
+            "prompt_version": LLM_PROMPT_VERSION,
+        }
+        return parsed
 
     def _analyze_legacy(self, payload: dict[str, Any]) -> dict[str, Any]:
         tasks = {

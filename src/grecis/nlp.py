@@ -173,15 +173,91 @@ POLYSEMY_LEXICON: dict[str, dict[str, str]] = {
 }
 
 SENTENCE_PATTERNS: list[tuple[str, str, str]] = [
-    ("concession", "让步", r"\b(although|though|even though|while|whereas)\b"),
-    ("contrast", "转折/对比", r"\b(however|nevertheless|nonetheless|rather than|instead|but)\b"),
+    (
+        "concession",
+        "让步",
+        r"\b(although|though|even though|despite|in spite of|admittedly|granted)\b",
+    ),
+    (
+        "contrast",
+        "转折/对比",
+        r"\b(however|nevertheless|nonetheless|whereas|while|rather than|instead|"
+        r"by contrast|on the other hand|but)\b",
+    ),
     (
         "causality",
         "因果",
-        r"\b(because|since|therefore|thus|lead to|result in|account for|due to)\b",
+        r"\b(because|since|therefore|thus|hence|consequently|lead to|led to|result in|"
+        r"account for|because of|due to|owing to)\b",
     ),
-    ("stance", "作者态度", r"\b(suggest|argue|claim|appear|likely|may|seem|should)\b"),
-    ("emphasis", "强调", r"\b(not so much\b.+\bas|not only\b.+\bbut also|what matters is)\b"),
+    (
+        "condition",
+        "条件/限定",
+        r"\b(if|unless|provided that|providing that|only if|as long as|whether)\b",
+    ),
+    (
+        "stance",
+        "作者态度",
+        r"\b(suggest|suggests|suggested|argue|argues|argued|claim|claims|claimed|"
+        r"maintain|maintains|believe|believes|according to)\b",
+    ),
+    (
+        "hedging",
+        "模糊限制",
+        r"\b(may|might|could|appear|appears|seem|seems|likely|unlikely|tend to|"
+        r"tends to|typically|often)\b",
+    ),
+    (
+        "emphasis",
+        "强调",
+        r"\b(not so much\b.+\bas|not only\b.+\bbut also|what matters is|"
+        r"what is important is|the point is that|the fact is that)\b",
+    ),
+    (
+        "comparison",
+        "比较/取舍",
+        r"\b(rather than|more\b.+\bthan|less\b.+\bthan|as\b.+\bas|"
+        r"the more\b.+\bthe more|the less\b.+\bthe less)\b",
+    ),
+    (
+        "inversion",
+        "倒装",
+        r"^(not only|never|rarely|seldom|little|hardly)\s+"
+        r"(do|does|did|is|are|was|were|has|have|had|can|could|will|would)\b",
+    ),
+    (
+        "cleft",
+        "强调句/分裂句",
+        r"\bit (is|was)\s+(only |not |precisely |exactly )?"
+        r"(the |a |an |in |on |at |by |because |when |after |before |through |from )"
+        r".{1,100}\b(that|who)\b"
+        r"|^what\s+(?:[a-z'-]+\s+){0,5}(is|was)\b",
+    ),
+    (
+        "relative_clause",
+        "定语从句",
+        r",\s*(which|who|whose)\b|\b(which|who|whose)\b.+\b(is|are|was|were|has|have|had)\b",
+    ),
+    (
+        "participial_clause",
+        "分词/非谓语",
+        r"^(having|being|given|considering|compared|based|faced|assuming)\b.+,"
+        r"|,\s*(using|making|leading|reflecting|resulting|allowing|requiring|creating|"
+        r"providing|leaving|suggesting|indicating|raising|reducing|increasing|including|"
+        r"based|compared|given|faced|driven|combined|viewed|considered|known)\b",
+    ),
+    (
+        "nominal_clause",
+        "名词性从句",
+        r"^what\s+(?:[a-z'-]+\s+){0,5}(is|was|matters|counts|causes|drives|makes|"
+        r"remains|seems)\b|\bthe (fact|idea|claim|assumption|evidence) that\b",
+    ),
+    (
+        "argument_development",
+        "论证推进",
+        r"\b(for example|for instance|evidence shows|data show|findings suggest|"
+        r"critics argue|opponents claim)\b",
+    ),
 ]
 
 EXAM_PHRASES: list[dict[str, str]] = [
@@ -244,37 +320,77 @@ IRREGULAR_LEMMAS = {
     "argued": "argue",
     "studies": "study",
     # Common verb mappings to correct lemmatization errors
-    "making": "make", "made": "make",
-    "using": "use", "used": "use",
-    "taking": "take", "took": "take", "taken": "take",
-    "ruling": "rule", "ruled": "rule",
-    "giving": "give", "gave": "give", "given": "give",
-    "writing": "write", "wrote": "write", "written": "write",
-    "creating": "create", "created": "create",
-    "sharing": "share", "shared": "share",
-    "reducing": "reduce", "reduced": "reduce",
-    "providing": "provide", "provided": "provide",
-    "requiring": "require", "required": "require",
-    "producing": "produce", "produced": "produce",
-    "deciding": "decide", "decided": "decide",
-    "judging": "judge", "judged": "judge",
-    "stating": "state", "stated": "state",
-    "acquiring": "acquire", "acquired": "acquire",
-    "improving": "improve", "improved": "improve",
-    "increasing": "increase", "increased": "increase",
-    "decreasing": "decrease", "decreased": "decrease",
-    "declining": "decline", "declined": "decline",
-    "rising": "rise", "rose": "rise", "risen": "rise",
-    "falling": "fall", "fell": "fall", "fallen": "fall",
-    "choosing": "choose", "chose": "choose", "chosen": "choose",
-    "coming": "come", "came": "come",
-    "having": "have", "had": "have",
-    "going": "go", "went": "go", "gone": "go",
-    "being": "be", "was": "be", "were": "be", "been": "be",
-    "challenging": "challenge", "challenged": "challenge",
-    "consolidating": "consolidate", "consolidated": "consolidate",
-    "solving": "solve", "solved": "solve",
-    "evaluating": "evaluate", "evaluated": "evaluate",
+    "making": "make",
+    "made": "make",
+    "using": "use",
+    "used": "use",
+    "taking": "take",
+    "took": "take",
+    "taken": "take",
+    "ruling": "rule",
+    "ruled": "rule",
+    "giving": "give",
+    "gave": "give",
+    "given": "give",
+    "writing": "write",
+    "wrote": "write",
+    "written": "write",
+    "creating": "create",
+    "created": "create",
+    "sharing": "share",
+    "shared": "share",
+    "reducing": "reduce",
+    "reduced": "reduce",
+    "providing": "provide",
+    "provided": "provide",
+    "requiring": "require",
+    "required": "require",
+    "producing": "produce",
+    "produced": "produce",
+    "deciding": "decide",
+    "decided": "decide",
+    "judging": "judge",
+    "judged": "judge",
+    "stating": "state",
+    "stated": "state",
+    "acquiring": "acquire",
+    "acquired": "acquire",
+    "improving": "improve",
+    "improved": "improve",
+    "increasing": "increase",
+    "increased": "increase",
+    "decreasing": "decrease",
+    "decreased": "decrease",
+    "declining": "decline",
+    "declined": "decline",
+    "rising": "rise",
+    "rose": "rise",
+    "risen": "rise",
+    "falling": "fall",
+    "fell": "fall",
+    "fallen": "fall",
+    "choosing": "choose",
+    "chose": "choose",
+    "chosen": "choose",
+    "coming": "come",
+    "came": "come",
+    "having": "have",
+    "had": "have",
+    "going": "go",
+    "went": "go",
+    "gone": "go",
+    "being": "be",
+    "was": "be",
+    "were": "be",
+    "been": "be",
+    "challenging": "challenge",
+    "challenged": "challenge",
+    "consolidating": "consolidate",
+    "consolidated": "consolidate",
+    "solving": "solve",
+    "solved": "solve",
+    "evaluating": "evaluate",
+    "evaluated": "evaluate",
 }
 
 HIGH_SCHOOL_WORD_ZIPF_THRESHOLD = 5.5
@@ -293,16 +409,31 @@ HIGH_VALUE_PHRASES = {
 def split_sentences(text: str) -> list[str]:
     protected = text
     abbreviations = [
-        "U.S.", "U.K.", "e.g.", "i.e.", "Dr.", "Mr.", "Mrs.", "Ms.", "Co.", "Ltd.", "vs.", 
-        "A.I.", "F.D.A.", "G.D.P.", "Ph.D.", "B.C.", "A.D."
+        "U.S.",
+        "U.K.",
+        "e.g.",
+        "i.e.",
+        "Dr.",
+        "Mr.",
+        "Mrs.",
+        "Ms.",
+        "Co.",
+        "Ltd.",
+        "vs.",
+        "A.I.",
+        "F.D.A.",
+        "G.D.P.",
+        "Ph.D.",
+        "B.C.",
+        "A.D.",
     ]
     for abbr in abbreviations:
         pattern = re.compile(re.escape(abbr), re.IGNORECASE)
         protected = pattern.sub(abbr.replace(".", "___DOT___"), protected)
-        
+
     protected = re.sub(r"\b([A-Za-z])\.", r"\1___DOT___", protected)
     raw_sentences = SENTENCE_RE.split(protected.strip())
-    
+
     sentences = []
     for s in raw_sentences:
         s_clean = s.replace("___DOT___", ".").strip()
@@ -364,12 +495,12 @@ def score_sentence_quality(sentence: str, word: str) -> float:
     s = sentence.strip()
     if not s:
         return 0.0
-        
+
     words = s.split()
     length = len(words)
     if length < 6 or length > 45:
         return 1.0
-        
+
     score = 10.0
     if 12 <= length <= 28:
         score += 3.0
@@ -377,18 +508,18 @@ def score_sentence_quality(sentence: str, word: str) -> float:
         score += 2.0
     if s[-1] in {".", "?", "!"}:
         score += 2.0
-        
+
     if "{" in s or "}" in s or "|" in s or "[]" in s or "<" in s or ">" in s:
         score -= 5.0
-        
-    if not s[0].isalnum() and s[0] not in {'"', "'", '“', '‘'}:
+
+    if not s[0].isalnum() and s[0] not in {'"', "'", "“", "‘"}:
         score -= 4.0
-        
+
     lowercased_s = s.lower()
     pattern = r"\b" + re.escape(word.lower()) + r"(?:s|es|ed|ing|d)?\b"
     if re.search(pattern, lowercased_s):
         score += 5.0
-        
+
     return score
 
 
@@ -396,16 +527,16 @@ def find_example_sentence(word: str, sentences: list[str]) -> str:
     candidates = []
     word_lower = word.lower()
     pattern = re.compile(r"\b" + re.escape(word_lower) + r"(?:s|es|ed|ing|d)?\b", re.IGNORECASE)
-    
+
     for sentence in sentences:
         if pattern.search(sentence):
             score = score_sentence_quality(sentence, word_lower)
             candidates.append((score, sentence))
-            
+
     if candidates:
         candidates.sort(key=lambda x: x[0], reverse=True)
         return candidates[0][1]
-        
+
     for sentence in sentences:
         if word_lower in set(content_tokens(sentence)):
             return sentence
@@ -521,21 +652,37 @@ def extract_polysemy(text: str) -> list[dict[str, Any]]:
 
 
 def extract_sentence_patterns(text: str) -> list[dict[str, Any]]:
+    from .patterns import infer_sentence_pattern_template
+
     rows = []
     for sentence in split_sentences(text):
         lowered = sentence.lower()
+        sentence_types: set[str] = set()
         for code, label, pattern in SENTENCE_PATTERNS:
-            if re.search(pattern, lowered):
+            if code not in sentence_types and re.search(pattern, lowered):
+                sentence_types.add(code)
                 rows.append(
                     {
                         "type": code,
                         "function": label,
                         "sentence": sentence,
-                        "importance": 4 if code in {"concession", "contrast", "causality"} else 3,
+                        "pattern": infer_sentence_pattern_template(sentence, code),
+                        "importance": (
+                            4
+                            if code
+                            in {
+                                "concession",
+                                "contrast",
+                                "causality",
+                                "condition",
+                                "stance",
+                                "hedging",
+                            }
+                            else 3
+                        ),
                     }
                 )
-                break
-    return rows[:30]
+    return rows[:60]
 
 
 def estimate_exam_value(

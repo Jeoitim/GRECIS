@@ -10,7 +10,7 @@ from .ingest import fetch_url, iter_fetch_source_articles, load_exam_corpus, loa
 from .llm import LLMAnalyzer
 from .nlp import analyze_article
 from .pastpapers import import_pastpapers, summarize_import
-from .redbook import write_redbook
+from .redbook import write_redbook, write_sentence_patterns_guide
 from .topics import exam_topic_queries
 
 DEFAULT_DB = "data/grecis.sqlite"
@@ -70,6 +70,13 @@ def build_parser() -> argparse.ArgumentParser:
     redbook = subparsers.add_parser("export-redbook", help="Export a red-book style review guide.")
     redbook.add_argument("--out", default=None)
     redbook.add_argument("--seed", default="data/redbook_seed.yaml")
+
+    patterns = subparsers.add_parser(
+        "export-patterns",
+        help="Export only the sentence-pattern review guide.",
+    )
+    patterns.add_argument("--out", default=None)
+    patterns.add_argument("--seed", default="data/redbook_seed.yaml")
 
     update = subparsers.add_parser("update-corpus", help="Fetch, analyze, and export in one run.")
     update.add_argument("--source", default="all")
@@ -173,6 +180,12 @@ def main(argv: list[str] | None = None) -> int:
         out = args.out or config.output.redbook_dir
         path = write_redbook(db, out, seed_path=args.seed)
         print(f"Exported redbook to {path}")
+        return 0
+
+    if args.command == "export-patterns":
+        out = args.out or config.output.redbook_dir
+        path = write_sentence_patterns_guide(db, out, seed_path=args.seed)
+        print(f"Exported sentence patterns to {path}")
         return 0
 
     if args.command == "update-corpus":

@@ -66,6 +66,7 @@ uv run grecis ingest-exam data/my_kaoyan_passages.jsonl
 uv run grecis build-corpus --second-tier-limit 100 --third-tier-limit 20
 uv run grecis analyze
 uv run grecis export-redbook
+uv run grecis export-patterns
 ```
 
 如果你只想更新某个来源：
@@ -151,6 +152,16 @@ data/grecis.sqlite
 - 生僻专业词、噪音词、专名和异常缩写剔除
 - 未知领域不再默认归入“学术科技”，而是进入泛学术核心词或待复核附录
 - 每个章节有容量上限，避免单章膨胀
+- 句型先归一为稳定分类，再按结构模板聚合和跨类别多样化选样
+- 句型例句优先选择真题、长度适中且正文污染较少的完整句子
+
+只更新句型复习资料时，可使用：
+
+```powershell
+uv run grecis export-patterns
+```
+
+普通本地重分析会保留数据库中已有的 LLM 结果；只有新的非空 LLM 结果才会替换旧结果。
 
 ### 词典与缓存
 

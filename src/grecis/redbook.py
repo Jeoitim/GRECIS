@@ -9,6 +9,13 @@ from typing import Any
 from .db import CorpusDB
 from .dictionary import query_word
 from .export import is_exportable_expression, is_exportable_vocabulary, stars, table, truncate
+from .patterns import (
+    infer_sentence_pattern_template,
+    normalize_sentence_pattern_type,
+    pattern_metadata,
+    pattern_priority,
+    sentence_example_quality,
+)
 
 try:
     from wordfreq import zipf_frequency
@@ -538,17 +545,12 @@ def write_redbook(
         domain_file_path = output / f"GRECIS-考研外刊词汇红宝书-{title}.md"
         domain_file_path.write_text("\n".join(domain_lines), encoding="utf-8")
 
-    sp_lines = [
-        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 常见句型与表达",
-        "",
-        "外刊中常见且在考研中极其重要的长难句及特殊句型结构分析。",
-        "",
-        "---",
-        "",
-    ]
-    sp_lines.extend(render_sentence_patterns(seed.get("sentence_patterns", []), corpus))
-    sp_file_path = output / "GRECIS-考研外刊词汇红宝书-常见句型与表达.md"
-    sp_file_path.write_text("\n".join(sp_lines), encoding="utf-8")
+    _write_sentence_patterns_file(
+        output,
+        metadata,
+        seed.get("sentence_patterns", []),
+        corpus,
+    )
 
     app_lines = [
         f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 未归类学术词汇附录",
@@ -613,6 +615,43 @@ def write_redbook(
     main_index_path.write_text("\n".join(index_lines), encoding="utf-8")
 
     return main_index_path
+
+
+def write_sentence_patterns_guide(
+    db: CorpusDB,
+    output_dir: str | Path,
+    seed_path: str | Path = DEFAULT_REDBOOK_SEED,
+) -> Path:
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    seed = load_seed(seed_path)
+    corpus = build_corpus_index(db)
+    return _write_sentence_patterns_file(
+        output,
+        seed.get("metadata", {}),
+        seed.get("sentence_patterns", []),
+        corpus,
+    )
+
+
+def _write_sentence_patterns_file(
+    output: Path,
+    metadata: dict[str, Any],
+    seed_patterns: list[dict[str, Any]],
+    corpus: dict[str, Any],
+) -> Path:
+    lines = [
+        f"# {metadata.get('title', 'GRECIS 考研外刊词汇红宝书')} - 常见句型与表达",
+        "",
+        "外刊中常见且在考研中极其重要的长难句及特殊句型结构分析。",
+        "",
+        "---",
+        "",
+    ]
+    lines.extend(render_sentence_patterns(seed_patterns, corpus))
+    path = output / "GRECIS-考研外刊词汇红宝书-常见句型与表达.md"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
 
 
 def load_seed(path: str | Path) -> dict[str, Any]:
@@ -1249,23 +1288,55 @@ def render_sentence_patterns(
             ]
         )
 
-    if corpus["sentence_patterns"]:
-        lines.extend(["### 本地语料中识别到的高频句式", ""])
-        lines.append(
-            table(
-                ["类型", "功能", "频次", "例句"],
-                [
-                    [
-                        item["type"],
-                        item["function"],
-                        item["frequency"],
-                        summarize_sentence(item["example_sentence"]),
-                    ]
-                    for item in select_sentence_patterns(corpus["sentence_patterns"])
-                ],
-            )
+    selected = select_sentence_patterns(corpus.get("sentence_patterns", []))
+    if selected:
+        lines.extend(
+            [
+                "## 语料驱动句型库",
+                "",
+                "以下结构由本地规则与 LLM 结果统一归类，并优先选取真题或高质量外刊例句。",
+                "频次用于判断常见程度，阅读提示用于快速定位作者真正的论证落点。",
+                "",
+            ]
         )
-        lines.append("")
+        grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for item in selected:
+            grouped[item["type"]].append(item)
+
+        for pattern_type in sorted(grouped, key=pattern_priority, reverse=True):
+            metadata = pattern_metadata(pattern_type)
+            lines.extend(
+                [
+                    f"### {metadata['label']}",
+                    "",
+                    f"- 核心功能：{metadata['function']}",
+                    f"- 阅读提示：{metadata['reading_tip']}",
+                    "",
+                ]
+            )
+            for item in grouped[pattern_type]:
+                coverage = (
+                    f"{int(item.get('frequency') or 0)} 次，"
+                    f"覆盖 {int(item.get('article_count') or 0)} 篇文章"
+                )
+                source = str(item.get("example_source") or "").strip()
+                lines.extend(
+                    [
+                        f"#### {item['pattern']}",
+                        "",
+                        f"- 语料覆盖：{coverage}",
+                        f"- 重要度：{stars(int(item.get('importance') or 3))}",
+                    ]
+                )
+                if source:
+                    lines.append(f"- 例句来源：{source}")
+                lines.extend(
+                    [
+                        "",
+                        f"> {summarize_sentence(item.get('example_sentence', ''), limit=240)}",
+                        "",
+                    ]
+                )
     return lines
 
 
@@ -1523,25 +1594,97 @@ def summarize_sentence(sentence: str, limit: int = 110) -> str:
     return text[: limit - 3] + "..."
 
 
-def select_sentence_patterns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    priority = {"concession": 5, "contrast": 5, "causality": 5, "stance": 4, "emphasis": 3}
-    selected: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    for item in sorted(
-        rows,
-        key=lambda row: (
-            priority.get(str(row.get("type", "")).lower(), 1),
-            row.get("frequency", 0),
+def select_sentence_patterns(
+    rows: list[dict[str, Any]],
+    *,
+    per_type: int = 4,
+    limit: int = 40,
+) -> list[dict[str, Any]]:
+    buckets: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    seen_patterns: set[tuple[str, str]] = set()
+
+    for raw_item in rows:
+        item = dict(raw_item)
+        canonical = normalize_sentence_pattern_type(
+            str(item.get("type", "")),
+            str(item.get("function", "")),
+        )
+        template = infer_sentence_pattern_template(
+            str(item.get("example_sentence", "")),
+            canonical,
+            provided_template=str(item.get("pattern", "")),
+        )
+        key = (canonical, template.lower())
+        if key in seen_patterns:
+            continue
+        seen_patterns.add(key)
+        metadata = pattern_metadata(canonical)
+        item.update(
+            {
+                "type": canonical,
+                "label": item.get("label") or metadata["label"],
+                "function": item.get("function") or metadata["function"],
+                "reading_tip": item.get("reading_tip") or metadata["reading_tip"],
+                "pattern": template,
+                "example_quality": item.get("example_quality")
+                or sentence_example_quality(
+                    str(item.get("example_sentence", "")),
+                    template=template,
+                    source=str(item.get("example_source", "")),
+                ),
+            }
+        )
+        buckets[canonical].append(item)
+
+    for pattern_type, items in buckets.items():
+        items.sort(
+            key=lambda item: (
+                1 if item["pattern"] != pattern_metadata(pattern_type)["label"] else 0,
+                int(item.get("article_count") or 0),
+                int(item.get("frequency") or 0),
+                float(item.get("example_quality") or 0.0),
+                int(item.get("importance") or 0),
+            ),
+            reverse=True,
+        )
+
+    type_order = sorted(
+        (pattern_type for pattern_type in buckets if pattern_type != "other"),
+        key=lambda pattern_type: (
+            pattern_priority(pattern_type),
+            len(buckets[pattern_type]),
         ),
         reverse=True,
-    ):
-        key = str(item.get("type", "")).lower()
-        if key in seen:
-            continue
-        seen.add(key)
-        selected.append(item)
-        if len(selected) >= 5:
-            break
+    )
+    if "other" in buckets:
+        type_order.append("other")
+
+    selected: list[dict[str, Any]] = []
+    next_index = {pattern_type: 0 for pattern_type in type_order}
+    selected_per_type = {pattern_type: 0 for pattern_type in type_order}
+    seen_examples: set[str] = set()
+    for _round in range(max(per_type, 1)):
+        for pattern_type in type_order:
+            allowed = 2 if pattern_type == "other" else per_type
+            if selected_per_type[pattern_type] >= allowed:
+                continue
+            candidate = None
+            while next_index[pattern_type] < len(buckets[pattern_type]):
+                item = buckets[pattern_type][next_index[pattern_type]]
+                next_index[pattern_type] += 1
+                example_key = " ".join(str(item.get("example_sentence", "")).lower().split())
+                if example_key and example_key in seen_examples:
+                    continue
+                candidate = item
+                if example_key:
+                    seen_examples.add(example_key)
+                break
+            if candidate is None:
+                continue
+            selected.append(candidate)
+            selected_per_type[pattern_type] += 1
+            if len(selected) >= limit:
+                return selected
     return selected
 
 

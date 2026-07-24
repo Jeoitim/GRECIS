@@ -65,7 +65,10 @@ def score_article_quality(article: Article, source: SourceConfig | None = None) 
     sentence_count = len(sentences)
     avg_sentence_len = token_count / max(sentence_count, 1)
     polysemy_count = len(extract_polysemy(text))
-    pattern_count = len(extract_sentence_patterns(text))
+    patterns = extract_sentence_patterns(text)
+    pattern_count = len(patterns)
+    pattern_diversity = len({item["type"] for item in patterns})
+    boilerplate_hits = boilerplate_markers(text)
     if article.metadata.get("corpus_type") == "kaoyan_exam":
         return {
             "quality_score": 10.0,
@@ -76,6 +79,7 @@ def score_article_quality(article: Article, source: SourceConfig | None = None) 
             "avg_sentence_len": round(token_count / max(sentence_count, 1), 2),
             "polysemy_count": polysemy_count,
             "pattern_count": pattern_count,
+            "pattern_diversity": pattern_diversity,
         }
 
     source_name = (source.name if source else article.source).lower()
@@ -136,9 +140,13 @@ def score_article_quality(article: Article, source: SourceConfig | None = None) 
         score += min(1.2, 0.25 * polysemy_count)
         reasons.append(f"polysemy={polysemy_count}")
 
-    if pattern_count:
-        score += min(1.0, 0.18 * pattern_count)
-        reasons.append(f"rhetorical_patterns={pattern_count}")
+    if pattern_diversity:
+        score += min(1.0, 0.16 * pattern_diversity)
+        reasons.append(f"rhetorical_diversity={pattern_diversity};patterns={pattern_count}")
+
+    if boilerplate_hits:
+        score -= min(2.0, 0.5 * len(boilerplate_hits))
+        reasons.append(f"boilerplate={','.join(boilerplate_hits)}")
 
     if looks_like_wire_brief(text):
         score -= 1.0
@@ -156,6 +164,8 @@ def score_article_quality(article: Article, source: SourceConfig | None = None) 
         "avg_sentence_len": round(avg_sentence_len, 2),
         "polysemy_count": polysemy_count,
         "pattern_count": pattern_count,
+        "pattern_diversity": pattern_diversity,
+        "boilerplate_hits": boilerplate_hits,
     }
 
 
@@ -176,3 +186,20 @@ def looks_like_wire_brief(text: str) -> bool:
         return True
     first = text[:400].lower()
     return "reuters" in first or "associated press" in first
+
+
+def boilerplate_markers(text: str) -> list[str]:
+    lowered = text.lower()
+    markers = {
+        "subscription": (
+            "subscribe to our newsletter",
+            "subscribe for unlimited access",
+            "already a subscriber",
+        ),
+        "cookie_notice": ("accept all cookies", "manage cookie preferences"),
+        "navigation": ("skip to main content", "all rights reserved"),
+        "account_prompt": ("sign in to continue", "create a free account"),
+    }
+    return [
+        name for name, phrases in markers.items() if any(phrase in lowered for phrase in phrases)
+    ]
