@@ -335,3 +335,9 @@ uv run ruff check .
 - 不建议公开分发全文语料库
 - 红宝书中尽量保存短摘录、URL 和 citation
 - 付费墙内容只保存你有权访问和保存的材料
+
+## 参考与致谢
+
+管理面板基于 [Cloudflare vinext](https://github.com/cloudflare/vinext) 的
+App Router starter 搭建，并在其上实现了 GRECIS 的本地 SQLite 语料服务、
+精读工作台、词汇标记与 LLM 分析流程。
