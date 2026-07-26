@@ -52,8 +52,11 @@ button { cursor: pointer; }
 .nav-count { margin-left: auto; font-size: 11px; opacity: .65; }
 .library-heading { display: flex; align-items: center; justify-content: space-between; margin: 31px 10px 12px; color: var(--muted); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
 .library-heading button { border: 0; background: none; color: inherit; font-size: 20px; line-height: 1; }
-.article-list { display: grid; gap: 6px; min-width: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; touch-action: pan-y; }
-.article-list::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
+.article-list { display: grid; flex: 1; align-content: start; gap: 6px; min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: color-mix(in srgb, var(--ink) 14%, transparent) transparent; scrollbar-width: thin; touch-action: pan-y; }
+.article-list::-webkit-scrollbar { width: 5px; height: 0; background: transparent; }
+.article-list::-webkit-scrollbar-track { background: transparent; }
+.article-list::-webkit-scrollbar-thumb { border-radius: 5px; background: color-mix(in srgb, var(--ink) 14%, transparent); }
+.article-list:hover::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink) 26%, transparent); }
 .article-item { position: relative; display: block; width: 100%; min-width: 0; padding: 13px 13px 12px; border: 1px solid transparent; border-radius: 7px; background: transparent; text-align: left; }
 .article-item:hover { background: color-mix(in srgb, var(--sheet) 55%, transparent); }
 .article-item.active { background: var(--sheet); border-color: var(--line); box-shadow: 0 5px 20px rgba(58, 48, 31, .05); }

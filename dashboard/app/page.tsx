@@ -277,6 +277,10 @@ export default function Home() {
     try {
       const data = await request<ArticleDetail>(`/articles/${encodeURIComponent(id)}`);
       setDetail(data);
+      setRecent((items) => [
+        { ...data, progress: Math.max(data.progress, 1), last_read_at: new Date().toISOString() },
+        ...items.filter((item) => item.id !== data.id),
+      ].slice(0, 12));
       const nextLevels: Record<string, Level> = {};
       for (const item of data.vocabulary) {
         if (item.mastery) nextLevels[item.lemma.toLowerCase()] = item.mastery;

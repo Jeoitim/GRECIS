@@ -1,6 +1,7 @@
 @echo off
 setlocal
 set "GRECIS_ROOT=%~dp0"
+set "GRECIS_RUNTIME=%~dp0output\dashboard"
 
 where uv >nul 2>&1
 if errorlevel 1 (
@@ -16,15 +17,41 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [GRECIS] Starting the Python corpus API...
-start "GRECIS Python Corpus API" cmd /k "cd /d ""%GRECIS_ROOT%"" && uv run grecis-web"
+if not exist "%GRECIS_ROOT%dashboard\node_modules" (
+  echo [GRECIS] Installing frontend dependencies...
+  pushd "%GRECIS_ROOT%dashboard"
+  call npm ci
+  if errorlevel 1 (
+    popd
+    echo [GRECIS] Frontend dependency installation failed.
+    pause
+    exit /b 1
+  )
+  popd
+)
 
-echo [GRECIS] Starting the reading dashboard...
-start "GRECIS Reading Dashboard" cmd /k "cd /d ""%GRECIS_ROOT%dashboard"" && if not exist node_modules npm ci && npm run dev"
+call "%GRECIS_ROOT%stop-dashboard.bat" --quiet >nul 2>&1
+if not exist "%GRECIS_RUNTIME%" mkdir "%GRECIS_RUNTIME%"
 
-echo [GRECIS] Waiting for both local services...
+echo [GRECIS] Starting both services quietly...
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$deadline = (Get-Date).AddSeconds(90);" ^
+  "$ErrorActionPreference = 'Stop';" ^
+  "$root = '%GRECIS_ROOT%';" ^
+  "$runtime = '%GRECIS_RUNTIME%';" ^
+  "$backend = Start-Process -FilePath 'uv' -ArgumentList @('run','grecis-web') -WorkingDirectory $root -WindowStyle Hidden -RedirectStandardOutput ($runtime + '\backend.out.log') -RedirectStandardError ($runtime + '\backend.err.log') -PassThru;" ^
+  "$backend.Id | Set-Content -Encoding ascii ($runtime + '\backend.pid');" ^
+  "$frontend = Start-Process -FilePath 'npm.cmd' -ArgumentList @('run','dev') -WorkingDirectory ($root + 'dashboard') -WindowStyle Hidden -RedirectStandardOutput ($runtime + '\frontend.out.log') -RedirectStandardError ($runtime + '\frontend.err.log') -PassThru;" ^
+  "$frontend.Id | Set-Content -Encoding ascii ($runtime + '\frontend.pid')"
+
+if errorlevel 1 (
+  echo [GRECIS] A service could not be started.
+  pause
+  exit /b 1
+)
+
+echo [GRECIS] Waiting for the corpus API and reading dashboard...
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "$deadline = (Get-Date).AddSeconds(120);" ^
   "$ready = $false;" ^
   "do {" ^
   "  try {" ^
@@ -36,11 +63,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "if (-not $ready) { exit 1 }"
 
 if errorlevel 1 (
-  echo [GRECIS] Startup timed out. Check the two service terminals for details.
+  call "%GRECIS_ROOT%stop-dashboard.bat" --quiet >nul 2>&1
+  echo [GRECIS] Startup timed out. Logs are in output\dashboard.
   pause
   exit /b 1
 )
 
+if /i "%~1"=="--no-browser" (
+  echo [GRECIS] Test mode ready.
+  exit /b 0
+)
 echo [GRECIS] Ready. Opening http://localhost:3000/
 start "" "http://localhost:3000/"
 exit /b 0
