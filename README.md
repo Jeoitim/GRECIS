@@ -2,13 +2,13 @@
 
 GRECIS = Graduate Reading Corpus Intelligence System.
 
-GRECIS 是一个面向考研英语阅读的语料库分析与复习资料生成项目。它把考研真题、外刊文章和本地授权语料统一入库到 SQLite，再做文章质量筛选、领域识别、词频统计、熟词生义识别、固定表达抽取和句式分析，最后生成 Markdown 知识库、Anki 卡片和红宝书式复习资料。
+GRECIS 是一个面向考研英语阅读的本地语料分析与精读系统。它把考研真题、外刊文章和本地授权语料统一存入 SQLite，完成文章质量筛选、领域识别、词汇分级、熟词生义识别、固定表达抽取和句式分析，并提供网页精读台以及 Markdown、Anki 和红宝书式复习资料导出。
 
 ## 项目介绍
 
 这个项目的目标很明确：把“能读”的文章，变成“能背、能复习、能继续扩展”的语料系统。
 
-它不追求把所有词都塞进词表，而是优先保留高频表达、真题常见搭配、熟词生义和能迁移到考研阅读中的核心内容，同时剔除生僻词、专名、噪音词和低价值文本。
+它不追求把所有词都塞进词表，而是优先保留考研大纲词、美国英语常用进阶词、GRE 拓展词、专业术语、熟词生义和真题常见搭配，同时剔除专名、异常拼写、噪音词和低价值文本。
 
 当前版本已经把核心成品纳入仓库，便于共享和迭代：
 
@@ -38,6 +38,130 @@ GRECIS 是一个面向考研英语阅读的语料库分析与复习资料生成�
 
 主要存储位于 `data/grecis.sqlite`，文章导出位于 `output/markdown/articles/`，红宝书位于 `output/redbook/`。
 
+## 本地打开管理面板
+
+管理面板位于 `dashboard/`，提供阅读台、暗色模式、悬停查词、分级词汇高亮、个人词汇标记、阅读进度、手动或自动扩充语料、模型设置和重新分析等功能。
+
+### 环境要求
+
+- Python 3.11–3.13
+- uv
+- Node.js 22.13.0 或更高版本
+- npm
+
+先确认本机版本：
+
+```powershell
+uv --version
+python --version
+node --version
+npm --version
+```
+
+### 首次安装与开发预览
+
+管理面板由本地 Python 语料服务和网页界面组成。
+
+Windows 用户可以直接双击项目根目录的：
+
+```text
+start-dashboard.bat
+```
+
+脚本会在后台静默运行 Python 语料服务和网页开发服务；等待两者就绪后，自动在默认浏览器中打开 `http://localhost:3000/`，不会留下多个终端窗口。如果前端依赖尚未安装，脚本会先自动执行 `npm ci`。
+
+后台服务的日志保存在 `output/dashboard/`。关闭面板时，双击根目录的 `stop-dashboard.bat`；它只会结束由一键启动脚本记录的前后端进程。手动启动时，请在两个服务终端中分别按 `Ctrl+C`。
+
+也可以按下面的步骤手动启动。
+
+终端一，在项目根目录安装 Python 依赖并启动语料服务：
+
+```powershell
+uv sync
+uv run grecis-web
+```
+
+服务默认监听 `http://127.0.0.1:8765`，并从 `data/grecis.sqlite` 动态查询文章、词汇、分析记录、阅读进度和掌握度。
+
+终端二，在项目根目录安装并启动网页：
+
+```powershell
+cd dashboard
+npm ci
+npm run dev
+```
+
+启动成功后，终端会显示本地地址，默认是：
+
+```text
+http://localhost:3000/
+```
+
+在浏览器中打开该地址即可使用。开发模式支持热更新，修改 `dashboard/app/` 下的页面或样式后无需重新启动。
+
+结束使用时，分别在两个运行服务的终端按 `Ctrl+C`。
+
+### 生产构建后打开
+
+如果只想在本地稳定使用，不需要热更新，先在终端一启动 Python 语料服务：
+
+```powershell
+uv run grecis-web
+```
+
+再在终端二构建并启动网页：
+
+```powershell
+cd dashboard
+npm ci
+npm run build
+npm run start
+```
+
+构建完成后，根据终端显示的地址在浏览器中打开；默认仍为 `http://localhost:3000/`。
+
+以后代码和依赖没有变化时，可以直接运行：
+
+```powershell
+cd dashboard
+npm run start
+```
+
+如果更新了 `package-lock.json`，建议重新执行 `npm ci` 和 `npm run build`。
+
+### 面板使用提示
+
+- 鼠标在英文单词上停留 0.5 秒，可以查看本地词典链路返回的释义。
+- 正文中的分析候选词带有灰色下划线；考研核心、常用进阶、GRE 拓展、专业术语和熟词生义使用不同的荧光底色。
+- 点击词汇分级图例，可以单独开启或关闭各级荧光底色；选择会保存在当前设备。
+- 点击正文单词会打开标记面板，可选择“待掌握”“似曾相识”“已掌握”对应的下划线颜色，也可以取消个人下划线。
+- 个人标记会加入词汇簿，并按掌握程度在其他文章中沿用。
+- 阅读进度随正文滚动位置单向增长，并自动写回本地数据库。
+- 右上角可以切换悬停查词、专注模式和暗色模式。
+- 语料库支持对当前数据库中的全部文章进行分页、全文搜索和领域筛选。
+- “加入文章”支持粘贴正文、提取网页正文，也支持按本地来源配置自动发现、筛选和分析文章。
+- 词汇簿同时展示 NLP/LLM 候选词和个人词汇，支持分页、搜索和掌握度筛选。
+- 左下角“模型与 API”可以修改模型、API Key 和接口地址；保存后由 Python 写入 `config/local.yaml`。
+- “测试真实连接”会实际请求所选模型，连接失败时会显示具体错误，不再固定返回成功。
+- 右侧“重新进行 LLM + NLP 分析”会调用项目现有的 Python 分析链路，并将结果写回 SQLite。
+
+文章、词汇和分析记录均来自 `data/grecis.sqlite`，没有硬编码在网页中。分析候选词保存在 `vocabulary` 表，个人词汇和掌握度分别保存在 `personal_vocabulary` 与 `word_mastery` 表，阅读进度保存在 `reading_progress` 表。网页只读取“是否已配置 API Key”，不会读取或回显密钥正文。
+
+### Windows 安装失败排查
+
+执行 `npm ci` 前，应先在运行开发服务的终端按 `Ctrl+C`，确认旧的 `npm run dev` 已经退出。否则 `node.exe` 或 `workerd.exe` 可能占用 `lightningcss.win32-x64-msvc.node`，导致 `EPERM: operation not permitted, unlink`。
+
+如果安装已经失败，并且随后出现“`vinext` 不是内部或外部命令”，说明 `node_modules` 可能只清理了一部分。先关闭仍在运行的 Dashboard 开发服务，在任务管理器中结束命令行指向本项目 `dashboard` 目录的 `node.exe` 和 `workerd.exe`，然后在项目根目录执行：
+
+```powershell
+Remove-Item -LiteralPath .\dashboard\node_modules -Recurse -Force
+cd dashboard
+npm ci
+npm run dev
+```
+
+不要在开发服务运行期间重复执行 `npm ci`。
+
 ## 语料的获取与使用方式
 
 语料获取顺序是：
@@ -66,6 +190,7 @@ uv run grecis ingest-exam data/my_kaoyan_passages.jsonl
 uv run grecis build-corpus --second-tier-limit 100 --third-tier-limit 20
 uv run grecis analyze
 uv run grecis export-redbook
+uv run grecis export-patterns
 ```
 
 如果你只想更新某个来源：
@@ -119,8 +244,9 @@ src/grecis/
 ├── nlp.py          # 本地词频、领域、熟词生义、句式识别
 ├── pastpapers.py   # pastpapers.cn PDF 真题导入
 ├── quality.py      # 文章质量评分
+├── redbook.py      # 高质量红宝书生成
 ├── topics.py       # 从真题反向抽取外刊搜索主题
-└── redbook.py      # 高质量红宝书生成
+└── wordlists.py    # 高考、考研、SUBTLEX-US 与 GRE 本地词表分级
 ```
 
 ### 数据库
@@ -139,6 +265,9 @@ data/grecis.sqlite
 - `collocations`
 - `polysemy`
 - `sentence_patterns`
+- `word_mastery`
+- `personal_vocabulary`
+- `reading_progress`
 
 文章元数据放在 `metadata_json`，包括来源、citation、PDF URL、质量分和质量原因等。
 
@@ -151,6 +280,16 @@ data/grecis.sqlite
 - 生僻专业词、噪音词、专名和异常缩写剔除
 - 未知领域不再默认归入“学术科技”，而是进入泛学术核心词或待复核附录
 - 每个章节有容量上限，避免单章膨胀
+- 句型先归一为稳定分类，再按结构模板聚合和跨类别多样化选样
+- 句型例句优先选择真题、长度适中且正文污染较少的完整句子
+
+只更新句型复习资料时，可使用：
+
+```powershell
+uv run grecis export-patterns
+```
+
+普通本地重分析会保留数据库中已有的 LLM 结果；只有新的非空 LLM 结果才会替换旧结果。
 
 ### 词典与缓存
 
@@ -205,3 +344,12 @@ uv run ruff check .
 - 不建议公开分发全文语料库
 - 红宝书中尽量保存短摘录、URL 和 citation
 - 付费墙内容只保存你有权访问和保存的材料
+
+## 参考与致谢
+
+- 管理面板基于 [Cloudflare vinext](https://github.com/cloudflare/vinext) 的 App Router starter 搭建。
+- 考研大纲词表改编自 [exam-data/NETEMVocabulary](https://github.com/exam-data/NETEMVocabulary)，原始数据采用 CC BY-NC-SA 4.0。
+- 美国英语常用 20K 词表改编自 [words/subtlex-word-frequencies](https://github.com/words/subtlex-word-frequencies)，该项目基于 SUBTLEX-US 频率数据并采用 ISC 许可证。
+- GRE 拓展词表改编自 [0xDkXy/GRE_vocabulary_3000](https://github.com/0xDkXy/GRE_vocabulary_3000)，采用 MIT 许可证；只有不在本地美国英语常用 20K 中的词才归入 GRE 拓展级。
+
+派生词表的处理方式和许可说明见 `data/WORDLISTS.md`。

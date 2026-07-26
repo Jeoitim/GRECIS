@@ -45,3 +45,17 @@ def test_quality_prioritizes_guardian_over_other_non_exam_sources() -> None:
     guardian_score = score_article_quality(Article(title="Policy analysis", text=text), guardian)
     other_score = score_article_quality(Article(title="Policy analysis", text=text), other)
     assert guardian_score["quality_score"] > other_score["quality_score"]
+
+
+def test_quality_reports_rhetorical_diversity_and_boilerplate() -> None:
+    text = " ".join(
+        [
+            "Although the evidence may be limited, researchers argue that the policy "
+            "could work because it changes incentives."
+        ]
+        * 80
+    )
+    text += " Subscribe to our newsletter. Sign in to continue."
+    result = score_article_quality(Article(title="Policy analysis", text=text))
+    assert result["pattern_diversity"] >= 4
+    assert set(result["boilerplate_hits"]) == {"subscription", "account_prompt"}

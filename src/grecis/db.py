@@ -2,11 +2,20 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections import Counter
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
 from .models import AnalysisResult, Article
+from .patterns import (
+    infer_sentence_pattern_template,
+    normalize_sentence_pattern_type,
+    pattern_metadata,
+    pattern_priority,
+    sentence_example_quality,
+)
+from .wordlists import tier_importance, vocabulary_tier
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS articles (
@@ -69,7 +78,28 @@ CREATE TABLE IF NOT EXISTS sentence_patterns (
     type TEXT NOT NULL,
     function TEXT NOT NULL,
     sentence TEXT NOT NULL,
+    pattern TEXT NOT NULL DEFAULT '',
     importance INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS word_mastery (
+    lemma TEXT PRIMARY KEY,
+    level TEXT NOT NULL CHECK(level IN ('learning', 'familiar', 'mastered')),
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS personal_vocabulary (
+    lemma TEXT PRIMARY KEY,
+    word TEXT NOT NULL,
+    article_id TEXT REFERENCES articles(id) ON DELETE SET NULL,
+    example_sentence TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS reading_progress (
+    article_id TEXT PRIMARY KEY REFERENCES articles(id) ON DELETE CASCADE,
+    progress INTEGER NOT NULL DEFAULT 0 CHECK(progress BETWEEN 0 AND 100),
+    last_read_at TEXT NOT NULL
 );
 """
 
@@ -93,6 +123,7 @@ class CorpusDB:
             self._ensure_column(
                 conn, "collocations", "example_sentence", "TEXT NOT NULL DEFAULT ''"
             )
+            self._ensure_column(conn, "sentence_patterns", "pattern", "TEXT NOT NULL DEFAULT ''")
 
     def upsert_article(self, article: Article) -> str:
         article_id = article.normalized_id()
@@ -156,6 +187,20 @@ class CorpusDB:
 
     def save_analysis(self, result: AnalysisResult) -> None:
         with self.connect() as conn:
+            existing_row = conn.execute(
+                "SELECT llm_json FROM analyses WHERE article_id = ?",
+                (result.article_id,),
+            ).fetchone()
+            existing_llm: dict[str, Any] = {}
+            if existing_row and existing_row["llm_json"]:
+                try:
+                    loaded = json.loads(existing_row["llm_json"])
+                    if isinstance(loaded, dict):
+                        existing_llm = loaded
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            effective_llm = result.llm or existing_llm
+
             conn.execute("DELETE FROM analyses WHERE article_id = ?", (result.article_id,))
             conn.execute("DELETE FROM vocabulary WHERE article_id = ?", (result.article_id,))
             conn.execute("DELETE FROM collocations WHERE article_id = ?", (result.article_id,))
@@ -176,7 +221,7 @@ class CorpusDB:
                     json.dumps(result.field_scores, ensure_ascii=False),
                     result.difficulty,
                     result.exam_value,
-                    json.dumps(result.llm, ensure_ascii=False),
+                    json.dumps(effective_llm, ensure_ascii=False),
                     result.created_at,
                 ),
             )
@@ -188,7 +233,7 @@ class CorpusDB:
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                _unique_vocabulary_rows(result.article_id, result.word_frequencies, result.llm),
+                _unique_vocabulary_rows(result.article_id, result.word_frequencies, effective_llm),
             )
             conn.executemany(
                 """
@@ -198,15 +243,17 @@ class CorpusDB:
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                _unique_collocation_rows(result.article_id, result.collocations, result.llm),
+                _unique_collocation_rows(result.article_id, result.collocations, effective_llm),
             )
             conn.executemany(
                 """
-                INSERT INTO sentence_patterns (article_id, type, function, sentence, importance)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO sentence_patterns (
+                    article_id, type, function, sentence, pattern, importance
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 _unique_sentence_pattern_rows(
-                    result.article_id, result.sentence_patterns, result.llm
+                    result.article_id, result.sentence_patterns, effective_llm
                 ),
             )
             conn.executemany(
@@ -349,16 +396,109 @@ class CorpusDB:
         with self.connect() as conn:
             rows = conn.execute(
                 """
-                SELECT type, function,
-                       COUNT(*) AS frequency,
-                       MAX(importance) AS importance,
-                       MIN(sentence) AS example_sentence
-                FROM sentence_patterns
-                GROUP BY type, function
-                ORDER BY frequency DESC, type
+                SELECT sp.article_id, sp.type, sp.function, sp.sentence,
+                       sp.pattern, sp.importance, a.source
+                FROM sentence_patterns sp
+                JOIN articles a ON a.id = sp.article_id
                 """
             ).fetchall()
-        return [dict(row) for row in rows]
+
+        grouped: dict[tuple[str, str], dict[str, Any]] = {}
+        seen_occurrences: set[tuple[str, str, str]] = set()
+        for raw_row in rows:
+            row = dict(raw_row)
+            canonical = normalize_sentence_pattern_type(row["type"], row["function"])
+            template = infer_sentence_pattern_template(
+                row["sentence"],
+                canonical,
+                provided_template=row.get("pattern", ""),
+            )
+            occurrence_key = (row["article_id"], canonical, row["sentence"])
+            if occurrence_key in seen_occurrences:
+                continue
+            seen_occurrences.add(occurrence_key)
+
+            key = (canonical, template.lower())
+            if key not in grouped:
+                metadata = pattern_metadata(canonical)
+                grouped[key] = {
+                    "type": canonical,
+                    "label": metadata["label"],
+                    "function": metadata["function"],
+                    "reading_tip": metadata["reading_tip"],
+                    "pattern": template,
+                    "frequency": 0,
+                    "importance": 0,
+                    "article_ids": set(),
+                    "source_names": set(),
+                    "raw_type_counts": Counter(),
+                    "candidate_examples": [],
+                }
+            item = grouped[key]
+            item["frequency"] += 1
+            item["importance"] = max(item["importance"], int(row["importance"]))
+            item["article_ids"].add(row["article_id"])
+            item["source_names"].add(row["source"])
+            item["raw_type_counts"][row["type"]] += 1
+            item["candidate_examples"].append(
+                {
+                    "sentence": row["sentence"],
+                    "source": row["source"],
+                    "explanation": row["function"],
+                    "quality": sentence_example_quality(
+                        row["sentence"], template=template, source=row["source"]
+                    ),
+                }
+            )
+
+        results: list[dict[str, Any]] = []
+        for item in grouped.values():
+            examples = sorted(
+                item.pop("candidate_examples"),
+                key=lambda example: example["quality"],
+                reverse=True,
+            )
+            diverse_examples: list[dict[str, Any]] = []
+            seen_sentences: set[str] = set()
+            for example in examples:
+                normalized_sentence = " ".join(example["sentence"].lower().split())
+                if normalized_sentence in seen_sentences:
+                    continue
+                seen_sentences.add(normalized_sentence)
+                diverse_examples.append(example)
+                if len(diverse_examples) >= 4:
+                    break
+
+            article_ids = item.pop("article_ids")
+            source_names = item.pop("source_names")
+            raw_type_counts = item.pop("raw_type_counts")
+            item.update(
+                {
+                    "article_count": len(article_ids),
+                    "sources": ", ".join(sorted(source_names)),
+                    "raw_types": ", ".join(name for name, _count in raw_type_counts.most_common(5)),
+                    "example_sentence": (
+                        diverse_examples[0]["sentence"] if diverse_examples else ""
+                    ),
+                    "example_source": (diverse_examples[0]["source"] if diverse_examples else ""),
+                    "example_quality": (
+                        diverse_examples[0]["quality"] if diverse_examples else -100.0
+                    ),
+                    "examples": diverse_examples,
+                }
+            )
+            results.append(item)
+
+        results.sort(
+            key=lambda item: (
+                pattern_priority(item["type"]),
+                item["article_count"],
+                item["frequency"],
+                item["example_quality"],
+            ),
+            reverse=True,
+        )
+        return results
 
     def delete_articles(self, article_ids: list[str]) -> int:
         if not article_ids:
@@ -426,10 +566,14 @@ class CorpusDB:
             lemma = str(item.get("lemma", "")).strip().lower()
             if not lemma:
                 continue
-            importance = _llm_importance(item.get("exam_importance"))
+            tier = vocabulary_tier(lemma)
+            importance = tier_importance(tier)
             category = _llm_category(item.get("exam_importance"), lemma)
-            if importance < 3 and category != "polysemy":
+            if tier == "high_school" and category != "polysemy":
                 continue
+            if tier == "rare" and category not in {"polysemy", "domain terminology"}:
+                continue
+            importance = importance or 1
             rows.append(
                 {
                     "word": lemma,
@@ -476,14 +620,28 @@ class CorpusDB:
             if not isinstance(item, dict):
                 continue
             sentence = str(item.get("original_sentence", "")).strip()
-            explanation = str(item.get("explanation", "")).strip()
+            explanation = str(
+                item.get("explanation_zh")
+                or item.get("explanation")
+                or item.get("reading_tip_zh")
+                or ""
+            ).strip()
             if not sentence or not explanation:
                 continue
+            raw_type = str(
+                item.get("canonical_type") or item.get("type") or "llm rhetorical pattern"
+            )
+            canonical = normalize_sentence_pattern_type(raw_type, explanation)
             rows.append(
                 {
-                    "type": str(item.get("type", "llm rhetorical pattern")),
+                    "type": canonical,
                     "function": explanation,
                     "sentence": sentence,
+                    "pattern": infer_sentence_pattern_template(
+                        sentence,
+                        canonical,
+                        provided_template=str(item.get("template", "")),
+                    ),
                     "importance": 4,
                 }
             )
@@ -634,17 +792,25 @@ def _unique_collocation_rows(
 def _unique_sentence_pattern_rows(
     article_id: str, base_rows: list[dict[str, Any]], llm: dict[str, Any]
 ) -> list[tuple[Any, ...]]:
-    merged: dict[tuple[str, str, str], dict[str, Any]] = {}
-    for item in base_rows:
-        merged[(item["type"], item["function"], item["sentence"])] = item
-    for item in CorpusDB._extract_llm_sentence_patterns(llm):
-        merged.setdefault((item["type"], item["function"], item["sentence"]), item)
+    merged: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    candidates = [*base_rows, *CorpusDB._extract_llm_sentence_patterns(llm)]
+    for candidate in candidates:
+        item = dict(candidate)
+        item["type"] = normalize_sentence_pattern_type(item["type"], item["function"])
+        item["pattern"] = infer_sentence_pattern_template(
+            item["sentence"],
+            item["type"],
+            provided_template=str(item.get("pattern", "")),
+        )
+        key = (item["type"], item["function"], item["sentence"], item["pattern"])
+        merged.setdefault(key, item)
     return [
         (
             article_id,
             item["type"],
             item["function"],
             item["sentence"],
+            item["pattern"],
             item["importance"],
         )
         for item in merged.values()

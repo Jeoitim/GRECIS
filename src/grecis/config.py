@@ -71,7 +71,11 @@ class SourceConfig:
 
 @dataclass(slots=True)
 class MDictConfig:
-    oxford_path: str = r"C:\baidunetdiskdownload\mdict\牛津高阶（第10版 英汉双解）V5.0（含机翻）\牛津高阶（第10版 英汉双解） V5_0.mdx"
+    oxford_path: str = (
+        r"C:\baidunetdiskdownload\mdict"
+        r"\牛津高阶（第10版 英汉双解）V5.0（含机翻）"
+        r"\牛津高阶（第10版 英汉双解） V5_0.mdx"
+    )
     collins_path: str = r"C:\baidunetdiskdownload\mdict\柯林斯\Collins COBUILD (CN - HD).mdx"
 
 
@@ -113,7 +117,9 @@ def app_config_from_mapping(payload: dict[str, Any]) -> AppConfig:
     crawler = CrawlerConfig(**payload.get("crawler", {}))
     mdict = MDictConfig(**payload.get("mdict", {}))
     sources = [SourceConfig(**source) for source in payload.get("sources", [])]
-    return AppConfig(database=database, output=output, llm=llm, crawler=crawler, sources=sources, mdict=mdict)
+    return AppConfig(
+        database=database, output=output, llm=llm, crawler=crawler, sources=sources, mdict=mdict
+    )
 
 
 def apply_env_overrides(config: AppConfig) -> None:
