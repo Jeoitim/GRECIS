@@ -298,8 +298,32 @@ button { cursor: pointer; }
 .underline-options .mastered > i { background: var(--green); }
 .remove-underline { width: 100%; margin-top: 15px; padding: 11px; border: 0; background: transparent; color: var(--muted); font-size: 9px; }
 .remove-underline:hover { color: var(--rose); }
+.task-notice { position: fixed; right: 28px; bottom: 28px; z-index: 80; width: min(348px, calc(100vw - 36px)); padding: 18px 19px 16px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: color-mix(in srgb, var(--sheet) 96%, transparent); box-shadow: var(--shadow); backdrop-filter: blur(12px); animation: task-in .24s ease-out; }
+.task-notice::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--green); }
+.task-notice.task-error::before { background: var(--rose); }
+.task-notice-top, .task-meta { display: flex; align-items: center; justify-content: space-between; }
+.task-state { display: flex; align-items: center; gap: 8px; color: var(--green); font-size: 8px; letter-spacing: .16em; text-transform: uppercase; }
+.task-error .task-state { color: var(--rose); }
+.task-state > i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 14%, transparent); }
+.task-running .task-state > i { animation: task-pulse 1.6s ease-out infinite; }
+.task-notice-top button { padding: 0 2px; border: 0; background: transparent; color: var(--muted); font: 20px/1 var(--serif); }
+.task-notice > strong { display: block; margin-top: 14px; font: 500 18px var(--serif); }
+.task-notice > p { min-height: 17px; margin: 7px 0 0; color: var(--ink); font-size: 10px; line-height: 1.7; }
+.task-notice > small { display: block; margin-top: 3px; color: var(--muted); font-size: 8px; }
+.task-progress { height: 3px; margin-top: 16px; overflow: hidden; border-radius: 4px; background: var(--line); }
+.task-progress > i { display: block; height: 100%; border-radius: inherit; background: var(--green); transition: width .7s ease; }
+.task-error .task-progress > i { background: var(--rose); }
+.task-meta { margin-top: 7px; color: var(--muted); font-size: 8px; }
+.task-meta span:first-child { color: var(--green); }
+.task-error .task-meta span:first-child { color: var(--rose); }
+.task-steps { display: flex; gap: 5px; margin-top: 12px; }
+.task-steps i { flex: 1; height: 2px; border-radius: 2px; background: var(--line); transition: background .3s ease; }
+.task-steps i.active { background: color-mix(in srgb, var(--green) 72%, transparent); }
 .toast { position: fixed; right: 28px; bottom: 28px; z-index: 80; display: flex; align-items: center; gap: 10px; padding: 13px 17px; border: 1px solid var(--line); border-radius: 4px; background: var(--ink); color: var(--paper); box-shadow: var(--shadow); font-size: 11px; animation: pop .2s ease-out; }
 .toast span { color: var(--green-soft); }
+.toast.toast-raised { bottom: 235px; }
+@keyframes task-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+@keyframes task-pulse { 50% { box-shadow: 0 0 0 8px transparent; } }
 
 .focus-mode .sidebar { transform: translateX(-100%); }
 .focus-mode { grid-template-columns: 1fr; }
@@ -339,4 +363,7 @@ button { cursor: pointer; }
   .library-row .topic-pill, .row-score, .row-progress { display: none; }
   .timeline-item { grid-template-columns: 10px 1fr; }
   .timeline-time { display: none; }
+  .task-notice { right: 18px; bottom: 18px; }
+  .toast { right: 18px; bottom: 18px; }
+  .toast.toast-raised { bottom: 225px; }
 }

@@ -17,7 +17,13 @@ from .config import AppConfig, load_config
 from .db import CorpusDB, ensure_db
 from .dictionary import query_word
 from .ingest import fetch_url, iter_fetch_source_articles
-from .llm import LLMAnalyzer, post_chat_completion_raw
+from .llm import (
+    ANALYSIS_TIMEOUT_SECONDS,
+    LLMAnalyzer,
+    is_complete_analysis,
+    message_text,
+    post_chat_completion_raw,
+)
 from .models import Article
 from .nlp import analyze_article
 from .wordlists import tier_importance, vocabulary_tier
@@ -82,6 +88,8 @@ def article_summary(row: Any) -> dict[str, Any]:
 
 
 def analysis_digest(llm: dict[str, Any], analysis: dict[str, Any]) -> dict[str, Any]:
+    valid = is_complete_analysis(llm)
+    invalid = bool(llm) and not valid
     rhetoric = llm.get("rhetoric") if isinstance(llm.get("rhetoric"), list) else []
     exam_value = llm.get("exam_value") if isinstance(llm.get("exam_value"), dict) else {}
     types = []
@@ -103,12 +111,21 @@ def analysis_digest(llm: dict[str, Any], analysis: dict[str, Any]) -> dict[str, 
         "insight": (
             f"模型识别出 {len(rhetoric)} 个可迁移的论证与句式节点。"
             if rhetoric
-            else "当前文章已有本地 NLP 分析，尚无可展示的 LLM 修辞摘要。"
+            else (
+                "LLM 分析已完成，未识别到可展示的修辞节点。"
+                if valid
+                else (
+                    "此前的 LLM 返回不完整或无法解析；当前仅展示本地 NLP 结果。"
+                    if invalid
+                    else "当前文章已有本地 NLP 分析，尚未进行有效的 LLM 分析。"
+                )
+            )
         ),
         "structure": " → ".join(types[:3]) or "本地结构识别",
         "domain": exam_value.get("primary_domain") or analysis.get("field") or "unknown",
         "note": note or "结合正文中的转折、限定和因果线索进行精读。",
         "model": (llm.get("_meta") or {}).get("model", ""),
+        "status": "valid" if valid else ("invalid" if invalid else "local"),
         "rhetoric_count": len(rhetoric),
     }
 
@@ -510,7 +527,13 @@ def reanalyze_article(article_id: str, use_llm: bool = True) -> dict[str, Any]:
             llm_payload = analyzer.analyze(article)
         db.save_analysis(analyze_article(article, llm_payload=llm_payload))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"分析失败：{exc}") from exc
+        error_text = str(exc)
+        if "timeout" in error_text.lower() or "timed out" in error_text.lower():
+            error_text = (
+                f"LLM 在 {int(ANALYSIS_TIMEOUT_SECONDS)} 秒内未完成生成；"
+                "请稍后重试，或改用响应更快的模型"
+            )
+        raise HTTPException(status_code=502, detail=f"分析失败：{error_text}") from exc
     return get_article(article_id)
 
 
@@ -659,7 +682,11 @@ def analysis_history(
     for row in rows:
         item = dict(row)
         llm = read_json(item.pop("llm_json"), {})
-        item["mode"] = "LLM + NLP" if llm else "LOCAL NLP"
+        item["mode"] = (
+            "LLM + NLP"
+            if is_complete_analysis(llm)
+            else ("LLM 未解析 · NLP" if llm else "LOCAL NLP")
+        )
         item["model"] = (llm.get("_meta") or {}).get("model", "")
         items.append(item)
     return {"items": items, "total": total, "limit": limit, "offset": offset}
@@ -716,9 +743,9 @@ def test_settings(payload: SettingsUpdate) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail="请先填写 API Key 或本地模型地址")
     request = {
         "model": analyzer.model,
-        "messages": [{"role": "user", "content": "Reply with OK only."}],
+        "messages": [{"role": "user", "content": 'Return {"ok":true} only.'}],
         "temperature": 0,
-        "max_tokens": 4,
+        "max_tokens": 128,
     }
     try:
         if (analyzer.base_url or "").strip().endswith("/chat/completions"):
@@ -727,7 +754,8 @@ def test_settings(payload: SettingsUpdate) -> dict[str, Any]:
             )
         else:
             response = analyzer.client.chat.completions.create(**request)
-            content = response.choices[0].message.content or ""
+            choices = getattr(response, "choices", None) or []
+            content = message_text(choices[0].message) if choices else ""
         if not content.strip():
             raise RuntimeError("模型返回了空响应")
     except Exception as exc:

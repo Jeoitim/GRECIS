@@ -54,6 +54,7 @@ type ArticleDetail = ArticleSummary & {
     domain: string;
     note: string;
     model: string;
+    status: "valid" | "invalid" | "local";
     rhetoric_count: number;
   };
   vocabulary: VocabularyItem[];
@@ -94,6 +95,16 @@ type Tooltip = {
   en: string;
   loading?: boolean;
 };
+type TaskNotice = {
+  id: number;
+  title: string;
+  steps: string[];
+  expectedSeconds: number;
+  elapsedSeconds: number;
+  progress: number;
+  status: "running" | "success" | "error";
+  result: string;
+};
 
 const PAGE_SIZE = 24;
 const WORD_PAGE_SIZE = 40;
@@ -120,6 +131,11 @@ function formatDate(value: string) {
 
 function readingMinutes(words: number) {
   return Math.max(1, Math.round(words / 180));
+}
+
+function formatElapsed(seconds: number) {
+  if (seconds < 60) return `${seconds} 秒`;
+  return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`;
 }
 
 function paragraphsFrom(text: string) {
@@ -185,12 +201,15 @@ export default function Home() {
   const [fontSize, setFontSize] = useState(19);
   const [busy, setBusy] = useState("");
   const [toast, setToast] = useState("");
+  const [taskNotice, setTaskNotice] = useState<TaskNotice | null>(null);
   const [error, setError] = useState("");
   const hoverTimer = useRef<number | null>(null);
   const closeTimer = useRef<number | null>(null);
   const lookupRequest = useRef<AbortController | null>(null);
   const readerRef = useRef<HTMLElement | null>(null);
   const displayedProgress = useRef(0);
+  const activeTaskId = useRef(0);
+  const taskDismissTimer = useRef<number | null>(null);
 
   const viewLabels: Record<View, string> = {
     reader: "阅读台",
@@ -371,6 +390,40 @@ export default function Home() {
     window.setTimeout(() => setToast(""), 3200);
   }
 
+  function startTask(
+    title: string,
+    steps: string[],
+    expectedSeconds: number,
+  ) {
+    if (taskDismissTimer.current) window.clearTimeout(taskDismissTimer.current);
+    const id = activeTaskId.current + 1;
+    activeTaskId.current = id;
+    setToast("");
+    setTaskNotice({
+      id,
+      title,
+      steps,
+      expectedSeconds,
+      elapsedSeconds: 0,
+      progress: 4,
+      status: "running",
+      result: "",
+    });
+  }
+
+  function finishTask(result: string, failed = false) {
+    const id = activeTaskId.current;
+    setTaskNotice((current) => current?.id === id ? {
+      ...current,
+      progress: failed ? current.progress : 100,
+      status: failed ? "error" : "success",
+      result,
+    } : current);
+    taskDismissTimer.current = window.setTimeout(() => {
+      setTaskNotice((current) => current?.id === id ? null : current);
+    }, failed ? 8000 : 5200);
+  }
+
   function clearPendingLookup() {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
     hoverTimer.current = null;
@@ -519,16 +572,21 @@ export default function Home() {
   async function analyzeCurrent() {
     if (!detail) return;
     setBusy("analyze");
+    startTask(
+      "文章重新分析",
+      ["整理正文与提示词", "等待 LLM 推理", "解析修辞与词汇结果", "写入本地数据库"],
+      90,
+    );
     try {
       const data = await request<ArticleDetail>(
         `/articles/${encodeURIComponent(detail.id)}/analyze?use_llm=true`,
         { method: "POST" },
       );
       setDetail(data);
-      showToast("Python NLP + LLM 分析已完成并写入数据库");
+      finishTask("Python NLP + LLM 分析已完成并写入数据库");
       void loadHistory();
     } catch (reason) {
-      showToast(reason instanceof Error ? reason.message : "分析失败", true);
+      finishTask(reason instanceof Error ? reason.message : "分析失败", true);
     } finally {
       setBusy("");
     }
@@ -537,7 +595,19 @@ export default function Home() {
   async function addArticle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const useLlm = form.get("use_llm") === "on";
+    const hasText = Boolean(String(form.get("text") || "").trim());
     setBusy("add");
+    startTask(
+      "添加文章",
+      [
+        hasText ? "整理手动输入的正文" : "获取并抽取网页正文",
+        "运行本地 NLP 分析",
+        ...(useLlm ? ["等待 LLM 深度分析"] : []),
+        "写入本地语料库",
+      ],
+      useLlm ? 85 : 12,
+    );
     try {
       const data = await request<ArticleDetail>("/articles", {
         method: "POST",
@@ -546,7 +616,7 @@ export default function Home() {
           source: String(form.get("source") || "manual"),
           url: String(form.get("url") || ""),
           text: String(form.get("text") || ""),
-          use_llm: form.get("use_llm") === "on",
+          use_llm: useLlm,
         }),
       });
       setAddOpen(false);
@@ -558,9 +628,9 @@ export default function Home() {
       } : current);
       setDetail(data);
       setView("reader");
-      showToast("文章已由 Python 语料链路导入并分析");
+      finishTask("文章已由 Python 语料链路导入并分析");
     } catch (reason) {
-      showToast(reason instanceof Error ? reason.message : "文章导入失败", true);
+      finishTask(reason instanceof Error ? reason.message : "文章导入失败", true);
     } finally {
       setBusy("");
     }
@@ -569,7 +639,20 @@ export default function Home() {
   async function crawlArticles(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const limit = Number(form.get("limit") || 3);
+    const useLlm = form.get("crawler_use_llm") === "on";
     setBusy("crawl");
+    startTask(
+      "扩充语料库",
+      [
+        "检索来源与候选文章",
+        "抽取并筛选正文",
+        "逐篇运行本地 NLP",
+        ...(useLlm ? ["逐篇等待 LLM 深度分析"] : []),
+        "写入本地语料库",
+      ],
+      Math.max(18, limit * (useLlm ? 75 : 8)),
+    );
     try {
       const result = await request<{
         imported: number;
@@ -579,28 +662,44 @@ export default function Home() {
         method: "POST",
         body: JSON.stringify({
           source: String(form.get("crawler_source") || ""),
-          limit: Number(form.get("limit") || 3),
+          limit,
           topic_query: String(form.get("topic_query") || ""),
           request_timeout_seconds: Number(form.get("request_timeout_seconds") || 20),
           delay_seconds: Number(form.get("delay_seconds") || 1),
           min_text_chars: Number(form.get("min_text_chars") || 800),
           min_quality_score: Number(form.get("min_quality_score") || 6),
-          use_llm: form.get("crawler_use_llm") === "on",
+          use_llm: useLlm,
         }),
       });
       setAddOpen(false);
       setHealth(await request<Health>("/health"));
       if (view === "library") void loadArticles();
       const suffix = result.errors.length ? `；${result.errors.length} 篇 LLM 分析失败，已保留 NLP 结果` : "";
-      showToast(result.imported
+      finishTask(result.imported
         ? `自动抓取并分析了 ${result.analyzed} 篇文章${suffix}`
         : "没有发现符合条件的新文章");
     } catch (reason) {
-      showToast(reason instanceof Error ? reason.message : "自动抓取失败", true);
+      finishTask(reason instanceof Error ? reason.message : "自动抓取失败", true);
     } finally {
       setBusy("");
     }
   }
+
+  const runningTaskId = taskNotice?.status === "running" ? taskNotice.id : null;
+
+  useEffect(() => {
+    if (!runningTaskId) return;
+    const timer = window.setInterval(() => {
+      setTaskNotice((current) => {
+        if (!current || current.id !== runningTaskId || current.status !== "running") return current;
+        const elapsedSeconds = current.elapsedSeconds + 1;
+        const ratio = elapsedSeconds / current.expectedSeconds;
+        const progress = Math.min(94, Math.round(4 + 90 * (1 - Math.exp(-ratio * 1.7))));
+        return { ...current, elapsedSeconds, progress };
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [runningTaskId]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -821,7 +920,9 @@ export default function Home() {
 
             <aside className="margin-panel">
               <div className="analysis-card">
-                <div className="card-heading"><span>本篇洞察</span><small>{detail.digest.model ? "LLM" : "NLP"}</small></div>
+                <div className="card-heading"><span>本篇洞察</span><small>{
+                  detail.digest.status === "valid" ? "LLM" : detail.digest.status === "invalid" ? "LLM 异常" : "NLP"
+                }</small></div>
                 <p>{detail.digest.insight}</p>
                 <div className="score-ring"><b>{Math.round((detail.analysis.exam_value || 0) * 10)}</b><span>阅读价值</span></div>
                 <dl>
@@ -1043,7 +1144,50 @@ export default function Home() {
       )}
 
       {busy === "article" && <div className="loading-line" />}
-      {toast && <div className={`toast ${toast.startsWith("!") ? "toast-error" : ""}`}><span>{toast.split("|")[0]}</span>{toast.split("|").slice(1).join("|")}</div>}
+      {taskNotice && (() => {
+        const stepIndex = Math.min(
+          taskNotice.steps.length - 1,
+          Math.floor((taskNotice.progress / 96) * taskNotice.steps.length),
+        );
+        const running = taskNotice.status === "running";
+        return (
+          <aside
+            className={`task-notice task-${taskNotice.status}`}
+            role={taskNotice.status === "error" ? "alert" : "status"}
+            aria-live="polite"
+          >
+            <div className="task-notice-top">
+              <span className="task-state"><i />{
+                running ? "任务进行中" : taskNotice.status === "success" ? "任务已完成" : "任务未完成"
+              }</span>
+              {!running && <button type="button" aria-label="关闭任务提示" onClick={() => setTaskNotice(null)}>×</button>}
+            </div>
+            <strong>{taskNotice.title}</strong>
+            <p>{running ? taskNotice.steps[stepIndex] : taskNotice.result}</p>
+            {running && stepIndex + 1 < taskNotice.steps.length && (
+              <small>下一步 · {taskNotice.steps[stepIndex + 1]}</small>
+            )}
+            <div
+              className="task-progress"
+              role="progressbar"
+              aria-label={`${taskNotice.title}估算进度`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={taskNotice.progress}
+            ><i style={{ width: `${taskNotice.progress}%` }} /></div>
+            <div className="task-meta">
+              <span>{running ? `估算 ${taskNotice.progress}%` : taskNotice.status === "success" ? "100%" : "已停止"}</span>
+              <span>已用 {formatElapsed(taskNotice.elapsedSeconds)}</span>
+            </div>
+            {running && (
+              <div className="task-steps" aria-hidden="true">
+                {taskNotice.steps.map((step, index) => <i key={step} className={index <= stepIndex ? "active" : ""} />)}
+              </div>
+            )}
+          </aside>
+        );
+      })()}
+      {toast && <div className={`toast ${toast.startsWith("!") ? "toast-error" : ""} ${taskNotice ? "toast-raised" : ""}`}><span>{toast.split("|")[0]}</span>{toast.split("|").slice(1).join("|")}</div>}
     </div>
   );
 }

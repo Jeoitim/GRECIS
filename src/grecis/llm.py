@@ -9,6 +9,7 @@ from typing import Any
 from .models import Article
 
 LLM_PROMPT_VERSION = "combined_rhetoric_v2"
+ANALYSIS_TIMEOUT_SECONDS = 180.0
 
 VOCABULARY_PROMPT = """You are an expert in Chinese postgraduate entrance examination English.
 
@@ -134,12 +135,16 @@ class LLMAnalyzer:
                 {"role": "user", "content": json.dumps(article_payload, ensure_ascii=False)},
             ],
             "temperature": 0.1,
-            "max_tokens": 2600,
+            # Reasoning models count their hidden reasoning against this budget.
+            # A small limit can leave only a truncated JSON object in content.
+            "max_tokens": 8192,
         }
         content = self._chat_completion_content(request_payload)
         parsed = parse_jsonish(content)
-        if not isinstance(parsed, dict):
-            return {"raw": content}
+        if not is_complete_analysis(parsed):
+            if not content.strip():
+                raise ValueError("LLM 返回为空；请检查模型名称、接口地址和输出额度")
+            raise ValueError("LLM 未返回完整的分析 JSON；请重试或提高模型输出额度")
         parsed["_meta"] = {
             "model": self.model,
             "prompt_version": LLM_PROMPT_VERSION,
@@ -167,11 +172,23 @@ class LLMAnalyzer:
             results[name] = parse_jsonish(content)
         return results
 
-    def _chat_completion_content(self, payload: dict[str, Any]) -> str:
+    def _chat_completion_content(
+        self,
+        payload: dict[str, Any],
+        timeout: float = ANALYSIS_TIMEOUT_SECONDS,
+    ) -> str:
         if (self.base_url or "").strip().endswith("/chat/completions"):
-            return post_chat_completion_raw(self.base_url or "", self.api_key or "", payload)
-        response = self.client.chat.completions.create(**payload)
-        return response.choices[0].message.content or ""
+            return post_chat_completion_raw(
+                self.base_url or "",
+                self.api_key or "",
+                payload,
+                timeout=timeout,
+            )
+        response = self.client.chat.completions.create(**payload, timeout=timeout)
+        choices = getattr(response, "choices", None) or []
+        if not choices:
+            return ""
+        return message_text(choices[0].message)
 
 
 def normalize_openai_base_url(base_url: str) -> str:
@@ -206,7 +223,42 @@ def post_chat_completion_raw(
     if not choices:
         return ""
     message = choices[0].get("message") or {}
-    return str(message.get("content") or "")
+    return message_text(message)
+
+
+def message_text(message: Any) -> str:
+    """Read text from normal and reasoning-model chat completion messages."""
+
+    def value(name: str) -> Any:
+        if isinstance(message, dict):
+            return message.get(name)
+        return getattr(message, name, None)
+
+    for name in ("content", "reasoning_content"):
+        content = value(name)
+        if isinstance(content, str) and content.strip():
+            return content
+        if isinstance(content, list):
+            parts = []
+            for part in content:
+                if isinstance(part, dict):
+                    text = part.get("text") or part.get("content")
+                else:
+                    text = getattr(part, "text", None) or getattr(part, "content", None)
+                if text:
+                    parts.append(str(text))
+            if parts:
+                return "\n".join(parts)
+    return ""
+
+
+def is_complete_analysis(value: Any) -> bool:
+    return (
+        isinstance(value, dict)
+        and isinstance(value.get("vocabulary"), list)
+        and isinstance(value.get("rhetoric"), list)
+        and isinstance(value.get("exam_value"), dict)
+    )
 
 
 def compact_article_text(text: str, limit: int = 6500) -> str:
@@ -225,10 +277,28 @@ def parse_jsonish(text: str) -> Any:
     import re
 
     cleaned = re.sub(r"<think>.*?</think>", "", cleaned, flags=re.DOTALL).strip()
-    if cleaned.startswith("```"):
-        cleaned = cleaned.strip("`")
-        cleaned = cleaned.removeprefix("json").strip()
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError:
-        return {"raw": text}
+    candidates = [cleaned]
+    fenced = re.search(r"```(?:json)?\s*(.*?)```", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    if fenced:
+        candidates.insert(0, fenced.group(1).strip())
+    start, end = cleaned.find("{"), cleaned.rfind("}")
+    if 0 <= start < end:
+        candidates.append(cleaned[start : end + 1])
+    decoded_objects = []
+    for candidate in candidates:
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+    decoder = json.JSONDecoder()
+    for match in re.finditer(r"\{", cleaned):
+        try:
+            value, _ = decoder.raw_decode(cleaned[match.start() :])
+        except json.JSONDecodeError:
+            continue
+        if is_complete_analysis(value):
+            return value
+        decoded_objects.append(value)
+    if decoded_objects:
+        return decoded_objects[-1]
+    return {"raw": text}

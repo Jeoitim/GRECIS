@@ -4,7 +4,7 @@ import yaml
 from fastapi.testclient import TestClient
 
 from grecis import web
-from grecis.config import AppConfig, CrawlerConfig, SourceConfig
+from grecis.config import AppConfig, CrawlerConfig, LLMConfig, SourceConfig
 from grecis.db import ensure_db
 from grecis.models import Article
 from grecis.nlp import analyze_article
@@ -86,6 +86,62 @@ def test_settings_save_preserves_existing_key(monkeypatch, tmp_path):
     assert response.json()["api_key_set"] is True
     stored = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     assert stored["llm"]["api_key"] == "existing-secret"
+
+
+def test_connection_test_accepts_reasoning_model_response(monkeypatch):
+    calls = []
+
+    class FakeMessage:
+        content = None
+        reasoning_content = '{"ok":true}'
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            calls.append(kwargs)
+            choice = type("Choice", (), {"message": FakeMessage()})()
+            return type("Response", (), {"choices": [choice]})()
+
+    fake_client = type(
+        "Client",
+        (),
+        {"chat": type("Chat", (), {"completions": FakeCompletions()})()},
+    )()
+    monkeypatch.setattr(web.LLMAnalyzer, "client", fake_client)
+    monkeypatch.setattr(
+        web,
+        "get_config",
+        lambda: AppConfig(llm=LLMConfig(model="m", api_key="key")),
+    )
+    client = TestClient(web.app)
+
+    response = client.post(
+        "/api/settings/test",
+        json={"model": "m", "base_url": "https://api.example.com/v1", "api_key": "key"},
+    )
+
+    assert response.status_code == 200
+    assert calls[0]["max_tokens"] == 128
+
+
+def test_invalid_llm_record_is_not_reported_as_success(monkeypatch, tmp_path):
+    db, article_id = sample_db(tmp_path)
+    article = db.get_article(article_id)
+    assert article is not None
+    db.save_analysis(
+        analyze_article(
+            article,
+            llm_payload={"raw": "truncated", "_meta": {"model": "m"}},
+        )
+    )
+    monkeypatch.setattr(web, "get_db", lambda: db)
+    client = TestClient(web.app)
+
+    detail = client.get(f"/api/articles/{article_id}").json()
+    history = client.get("/api/analysis-history").json()["items"]
+
+    assert detail["digest"]["status"] == "invalid"
+    assert "返回不完整" in detail["digest"]["insight"]
+    assert history[0]["mode"] == "LLM 未解析 · NLP"
 
 
 def test_recent_articles_can_be_cleared_without_deleting_corpus(monkeypatch, tmp_path):
