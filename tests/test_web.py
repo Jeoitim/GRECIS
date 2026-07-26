@@ -84,3 +84,23 @@ def test_settings_save_preserves_existing_key(monkeypatch, tmp_path):
     assert response.json()["api_key_set"] is True
     stored = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     assert stored["llm"]["api_key"] == "existing-secret"
+
+
+def test_recent_articles_can_be_cleared_without_deleting_corpus(monkeypatch, tmp_path):
+    db, article_id = sample_db(tmp_path)
+    monkeypatch.setattr(web, "get_db", lambda: db)
+    client = TestClient(web.app)
+
+    saved = client.put(f"/api/articles/{article_id}/progress", json={"progress": 24})
+    assert saved.status_code == 200
+
+    recent = client.get("/api/recent-articles")
+    assert recent.status_code == 200
+    assert recent.json()["items"][0]["id"] == article_id
+    assert recent.json()["items"][0]["progress"] == 24
+
+    cleared = client.delete("/api/reading-progress")
+    assert cleared.status_code == 200
+    assert cleared.json()["deleted"] == 1
+    assert client.get("/api/recent-articles").json()["items"] == []
+    assert client.get("/api/articles").json()["total"] == 1

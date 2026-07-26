@@ -52,6 +52,10 @@ button { cursor: pointer; }
 .nav-count { margin-left: auto; font-size: 11px; opacity: .65; }
 .library-heading { display: flex; align-items: center; justify-content: space-between; margin: 31px 10px 12px; color: var(--muted); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
 .library-heading button { border: 0; background: none; color: inherit; font-size: 20px; line-height: 1; }
+.library-actions { display: flex; align-items: center; gap: 7px; }
+.library-heading .clear-recent { padding: 1px 2px 0; font-family: "Segoe UI Symbol", sans-serif; font-size: 14px; opacity: .72; }
+.library-heading button:hover:not(:disabled) { color: var(--ink); }
+.library-heading button:disabled { cursor: default; opacity: .25; }
 .article-list { display: grid; flex: 1; align-content: start; gap: 6px; min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: color-mix(in srgb, var(--ink) 14%, transparent) transparent; scrollbar-width: thin; touch-action: pan-y; }
 .article-list::-webkit-scrollbar { width: 5px; height: 0; background: transparent; }
 .article-list::-webkit-scrollbar-track { background: transparent; }
@@ -66,6 +70,7 @@ button { cursor: pointer; }
 .article-item > span:last-of-type { margin-top: 4px; color: var(--muted); font-size: 10px; }
 .article-item i { display: block; height: 2px; margin-top: 10px; background: var(--line); }
 .article-item i b { display: block; height: 100%; background: var(--green); }
+.recent-empty { margin: 18px 10px; color: var(--muted); font-size: 11px; line-height: 1.8; text-align: center; }
 .settings-entry { margin-top: auto; border-top: 1px solid var(--line); border-radius: 0; padding-top: 16px; }
 .settings-entry span { flex: 1; }
 .settings-entry small { max-width: 80px; overflow: hidden; color: var(--green); font-size: 9px; text-overflow: ellipsis; }
@@ -101,9 +106,9 @@ button { cursor: pointer; }
 .legend button { display: flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--muted); font-size: 10px; }
 .legend b { color: var(--ink); font-weight: 500; }
 .dot { width: 7px; height: 7px; border-radius: 50%; }
-.dot.learning { background: var(--rose); }
-.dot.familiar { background: var(--amber); }
-.dot.mastered { background: var(--green); }
+.dot.core { background: var(--rose); }
+.dot.key { background: var(--amber); }
+.dot.extended { background: var(--green); }
 .font-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; }
 .font-control button { border: 0; background: none; color: inherit; font: 11px var(--serif); }
 .font-control span { width: 24px; text-align: center; }
@@ -112,9 +117,12 @@ button { cursor: pointer; }
 .prose p:first-child::first-letter { float: left; margin: .12em .13em 0 0; color: var(--green); font: 500 4.3em/.72 var(--serif); }
 .word { position: relative; border-radius: 2px; cursor: help; transition: background .18s ease, color .18s ease; }
 .word:hover { background: color-mix(in srgb, var(--green-soft) 65%, transparent); }
-.word.level-learning { background: color-mix(in srgb, var(--rose) 28%, transparent); box-shadow: inset 0 -2px 0 var(--rose); }
-.word.level-familiar { background: color-mix(in srgb, var(--amber) 27%, transparent); box-shadow: inset 0 -2px 0 var(--amber); }
-.word.level-mastered { background: color-mix(in srgb, var(--green) 19%, transparent); box-shadow: inset 0 -2px 0 var(--green); }
+.word.importance-core { background: color-mix(in srgb, var(--rose) 29%, transparent); }
+.word.importance-key { background: color-mix(in srgb, var(--amber) 27%, transparent); }
+.word.importance-extended { background: color-mix(in srgb, var(--green) 18%, transparent); }
+.word.level-learning { box-shadow: inset 0 -2px 0 var(--rose); }
+.word.level-familiar { box-shadow: inset 0 -2px 0 var(--amber); }
+.word.level-mastered { box-shadow: inset 0 -2px 0 var(--green); }
 .page-end { display: flex; align-items: center; gap: 11px; margin-top: 42px; color: var(--muted); font: 11px var(--serif); }
 .page-end i { width: 54px; height: 1px; background: var(--line); }
 .page-end button { margin-left: auto; padding: 10px 15px; border: 1px solid var(--line); border-radius: 4px; background: var(--sheet); font-size: 11px; }

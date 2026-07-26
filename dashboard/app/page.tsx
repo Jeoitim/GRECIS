@@ -162,6 +162,8 @@ export default function Home() {
   const hoverTimer = useRef<number | null>(null);
   const closeTimer = useRef<number | null>(null);
   const lookupRequest = useRef<AbortController | null>(null);
+  const readerRef = useRef<HTMLElement | null>(null);
+  const displayedProgress = useRef(0);
 
   const viewLabels: Record<View, string> = {
     reader: "阅读台",
@@ -179,14 +181,23 @@ export default function Home() {
     return map;
   }, [detail]);
 
-  const masteryStats = useMemo(() => {
-    const values = Object.values(levels);
+  const importanceMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const item of detail?.vocabulary || []) {
+      const lemma = item.lemma.toLowerCase();
+      map[lemma] = Math.max(map[lemma] || 0, item.importance);
+    }
+    return map;
+  }, [detail]);
+
+  const importanceStats = useMemo(() => {
+    const values = Object.values(importanceMap);
     return {
-      learning: values.filter((level) => level === "learning").length,
-      familiar: values.filter((level) => level === "familiar").length,
-      mastered: values.filter((level) => level === "mastered").length,
+      core: values.filter((importance) => importance >= 5).length,
+      key: values.filter((importance) => importance >= 3 && importance < 5).length,
+      extended: values.filter((importance) => importance < 3).length,
     };
-  }, [levels]);
+  }, [importanceMap]);
 
   async function loadInitial() {
     setBusy("initial");
@@ -194,7 +205,7 @@ export default function Home() {
     try {
       const [healthData, recentData, settingsData] = await Promise.all([
         request<Health>("/health"),
-        request<{ items: ArticleSummary[]; total: number }>("/articles?limit=12"),
+        request<{ items: ArticleSummary[]; total: number }>("/recent-articles?limit=12"),
         request<Settings>("/settings"),
       ]);
       setHealth(healthData);
@@ -276,9 +287,12 @@ export default function Home() {
     setBusy("article");
     try {
       const data = await request<ArticleDetail>(`/articles/${encodeURIComponent(id)}`);
-      setDetail(data);
+      const initialProgress = Math.max(data.progress, 1);
+      window.scrollTo({ top: 0, behavior: "auto" });
+      displayedProgress.current = initialProgress;
+      setDetail({ ...data, progress: initialProgress });
       setRecent((items) => [
-        { ...data, progress: Math.max(data.progress, 1), last_read_at: new Date().toISOString() },
+        { ...data, progress: initialProgress, last_read_at: new Date().toISOString() },
         ...items.filter((item) => item.id !== data.id),
       ].slice(0, 12));
       const nextLevels: Record<string, Level> = {};
@@ -288,13 +302,23 @@ export default function Home() {
       setLevels(nextLevels);
       void request(`/articles/${encodeURIComponent(id)}/progress`, {
         method: "PUT",
-        body: JSON.stringify({ progress: Math.max(data.progress, 1) }),
+        body: JSON.stringify({ progress: initialProgress }),
       });
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (reason) {
       showToast(reason instanceof Error ? reason.message : "文章加载失败", true);
     } finally {
       setBusy("");
+    }
+  }
+
+  async function clearRecent() {
+    if (!recent.length) return;
+    try {
+      const result = await request<{ deleted: number }>("/reading-progress", { method: "DELETE" });
+      setRecent([]);
+      showToast(`已清除 ${result.deleted} 条最近阅读记录`);
+    } catch (reason) {
+      showToast(reason instanceof Error ? reason.message : "最近记录清除失败", true);
     }
   }
 
@@ -324,7 +348,7 @@ export default function Home() {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
   }
 
-  function scheduleLookup(raw: string, rect: DOMRect, delay = 1250) {
+  function scheduleLookup(raw: string, rect: DOMRect, delay = 500) {
     if (!dictionary) return;
     clearPendingLookup();
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
@@ -383,10 +407,18 @@ export default function Home() {
       if (!/^[A-Za-z]/.test(part)) return part;
       const raw = part.toLowerCase();
       const lemma = lemmaMap[raw] || raw;
+      const importance = importanceMap[lemma] || 0;
+      const importanceClass = importance >= 5
+        ? "importance-core"
+        : importance >= 3
+          ? "importance-key"
+          : importance > 0
+            ? "importance-extended"
+            : "";
       return (
         <span
           key={`${raw}-${index}`}
-          className={`word ${levels[lemma] ? `level-${levels[lemma]}` : ""}`}
+          className={`word ${importanceClass} ${levels[lemma] ? `level-${levels[lemma]}` : ""}`}
           onMouseEnter={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect())}
           onMouseLeave={scheduleClose}
           onFocus={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect(), 0)}
@@ -469,6 +501,7 @@ export default function Home() {
         }),
       });
       setAddOpen(false);
+      displayedProgress.current = data.progress;
       setRecent((items) => [data, ...items.filter((item) => item.id !== data.id)].slice(0, 12));
       setHealth((current) => current ? {
         ...current,
@@ -515,6 +548,57 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, historyPage]);
 
+  useEffect(() => {
+    if (view !== "reader" || !detail?.id) return;
+
+    const articleId = detail.id;
+    let saveTimer: number | null = null;
+    let dirty = false;
+
+    const persistProgress = () => {
+      if (!dirty) return;
+      dirty = false;
+      void request(`/articles/${encodeURIComponent(articleId)}/progress`, {
+        method: "PUT",
+        body: JSON.stringify({ progress: displayedProgress.current }),
+      });
+    };
+
+    const updateProgress = () => {
+      const reader = readerRef.current;
+      if (!reader) return;
+      const rect = reader.getBoundingClientRect();
+      const articleTop = window.scrollY + rect.top;
+      const articleHeight = Math.max(reader.offsetHeight, 1);
+      const readingLine = window.scrollY + window.innerHeight * 0.8;
+      const calculated = Math.min(100, Math.max(1, Math.round(
+        ((readingLine - articleTop) / articleHeight) * 100,
+      )));
+      const next = Math.max(displayedProgress.current, calculated);
+      if (next === displayedProgress.current) return;
+
+      displayedProgress.current = next;
+      dirty = true;
+      setDetail((current) => current?.id === articleId ? { ...current, progress: next } : current);
+      setRecent((items) => items.map((item) => item.id === articleId
+        ? { ...item, progress: next, last_read_at: new Date().toISOString() }
+        : item));
+      if (saveTimer) window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(persistProgress, 650);
+    };
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    const initialFrame = window.requestAnimationFrame(updateProgress);
+    return () => {
+      window.cancelAnimationFrame(initialFrame);
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+      if (saveTimer) window.clearTimeout(saveTimer);
+      persistProgress();
+    };
+  }, [detail?.id, view]);
+
   const author = String(detail?.metadata.author || detail?.metadata.byline || detail?.source || "Corpus");
   const titleParts = detail?.title.split(" ") || [];
   const masteryLabel = (level?: Level | null) =>
@@ -548,7 +632,13 @@ export default function Home() {
           <button className={view === "history" ? "nav-active" : ""} onClick={() => setView("history")}><Icon>≋</Icon> 分析记录 <span className="nav-count">{health?.counts.analyses || "—"}</span></button>
         </nav>
 
-        <div className="library-heading"><span>最近篇目</span><button onClick={() => setAddOpen(true)} aria-label="增加文章">＋</button></div>
+        <div className="library-heading">
+          <span>最近篇目</span>
+          <div className="library-actions">
+            <button className="clear-recent" onClick={() => void clearRecent()} aria-label="清空最近篇目" title="清空最近篇目" disabled={!recent.length}>🗑︎</button>
+            <button onClick={() => setAddOpen(true)} aria-label="增加文章" title="增加文章">＋</button>
+          </div>
+        </div>
         <div className="article-list">
           {recent.map((article) => (
             <button key={article.id} className={`article-item ${detail?.id === article.id && view === "reader" ? "active" : ""}`} onClick={() => void openArticle(article.id)}>
@@ -558,6 +648,7 @@ export default function Home() {
               <i><b style={{ width: `${article.progress}%` }} /></i>
             </button>
           ))}
+          {!recent.length && <p className="recent-empty">尚无最近阅读记录<br />请从语料库选择一篇文章</p>}
         </div>
 
         <button className="settings-entry" onClick={() => setSettingsOpen(true)}>
@@ -569,7 +660,7 @@ export default function Home() {
         <header className="topbar">
           <div className="breadcrumbs"><span>{view === "reader" ? detail?.analysis.field || "语料" : "GRECIS"}</span><b>/</b><span>{viewLabels[view]}</span></div>
           <div className="top-actions">
-            {view === "reader" && <button className={`text-button ${dictionary ? "is-on" : ""}`} onClick={() => { setDictionary(!dictionary); clearPendingLookup(); setTooltip(null); }}><i />悬停查词 · 1.25s</button>}
+            {view === "reader" && <button className={`text-button ${dictionary ? "is-on" : ""}`} onClick={() => { setDictionary(!dictionary); clearPendingLookup(); setTooltip(null); }}><i />悬停查词 · 0.5s</button>}
             <button className="circle-button" onClick={() => setFocus(!focus)} aria-label="切换专注模式">{focus ? "↙" : "↗"}</button>
             <button className="circle-button" onClick={() => setDark(!dark)} aria-label="切换深色模式">{dark ? "☀" : "◐"}</button>
           </div>
@@ -577,7 +668,7 @@ export default function Home() {
 
         {view === "reader" && detail && (
           <div className="reading-layout" key={detail.id}>
-            <article className="reader">
+            <article className="reader" ref={readerRef}>
               <div className="article-kicker"><span>{detail.source} · CORPUS</span><i /></div>
               <h1>{titleParts.slice(0, -1).join(" ")} <em>{titleParts.at(-1)}</em></h1>
               <p className="deck">{detail.snippet}</p>
@@ -591,9 +682,9 @@ export default function Home() {
               <div className="reader-rule" />
               <div className="reader-toolbar">
                 <div className="legend">
-                  <button><i className="dot learning" />待掌握 <b>{masteryStats.learning}</b></button>
-                  <button><i className="dot familiar" />似曾相识 <b>{masteryStats.familiar}</b></button>
-                  <button><i className="dot mastered" />已掌握 <b>{masteryStats.mastered}</b></button>
+                  <button title="重要度 5"><i className="dot core" />核心词 <b>{importanceStats.core}</b></button>
+                  <button title="重要度 3–4"><i className="dot key" />重点词 <b>{importanceStats.key}</b></button>
+                  <button title="重要度 1–2"><i className="dot extended" />延伸词 <b>{importanceStats.extended}</b></button>
                 </div>
                 <div className="font-control">
                   <button onClick={() => setFontSize(Math.max(16, fontSize - 1))}>A−</button><span>{fontSize}</span>

@@ -204,6 +204,37 @@ def list_articles(
     }
 
 
+@app.get("/api/recent-articles")
+def list_recent_articles(
+    limit: int = Query(default=12, ge=1, le=100),
+) -> dict[str, Any]:
+    db = get_db()
+    with db.connect() as conn:
+        rows = conn.execute(
+            """
+            SELECT a.*, an.field AS analysis_field, an.difficulty, an.exam_value,
+                   rp.progress, rp.last_read_at
+            FROM reading_progress rp
+            JOIN articles a ON a.id = rp.article_id
+            LEFT JOIN analyses an ON an.article_id = a.id
+            ORDER BY rp.last_read_at DESC, a.title
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        total = conn.execute("SELECT COUNT(*) FROM reading_progress").fetchone()[0]
+    return {"items": [article_summary(row) for row in rows], "total": total, "limit": limit}
+
+
+@app.delete("/api/reading-progress")
+def clear_reading_progress() -> dict[str, Any]:
+    db = get_db()
+    with db.connect() as conn:
+        deleted = conn.execute("SELECT COUNT(*) FROM reading_progress").fetchone()[0]
+        conn.execute("DELETE FROM reading_progress")
+    return {"ok": True, "deleted": deleted}
+
+
 @app.get("/api/articles/{article_id}")
 def get_article(article_id: str) -> dict[str, Any]:
     db = get_db()

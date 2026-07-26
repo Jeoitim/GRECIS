@@ -9,6 +9,16 @@ def test_llm_base_url_normalization() -> None:
     )
 
 
+def test_llm_client_is_cached_with_slots() -> None:
+    analyzer = LLMAnalyzer(
+        model="m",
+        api_key="k",
+        base_url="https://api.example.com/v1",
+    )
+
+    assert analyzer.client is analyzer.client
+
+
 def test_compact_article_text_keeps_text_short() -> None:
     text = " ".join(f"sentence{i}" for i in range(2000))
     compacted = compact_article_text(text, limit=1000)

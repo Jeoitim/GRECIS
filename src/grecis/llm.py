@@ -3,8 +3,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.request
-from dataclasses import dataclass
-from functools import cached_property
+from dataclasses import dataclass, field
 from typing import Any
 
 from .models import Article
@@ -81,6 +80,7 @@ class LLMAnalyzer:
     model: str = "gpt-4.1-mini"
     api_key: str | None = None
     base_url: str | None = None
+    _client: Any = field(default=None, init=False, repr=False)
 
     @classmethod
     def from_env(cls) -> LLMAnalyzer:
@@ -97,13 +97,22 @@ class LLMAnalyzer:
     def enabled(self) -> bool:
         return bool(self.api_key) or bool(self.base_url)
 
-    @cached_property
+    @property
     def client(self):
+        if self._client is not None:
+            return self._client
+
         from openai import OpenAI
 
         base_url = normalize_openai_base_url(self.base_url or "")
         api_key = self.api_key or "ollama"
-        return OpenAI(api_key=api_key, base_url=base_url or None, max_retries=0, timeout=45.0)
+        self._client = OpenAI(
+            api_key=api_key,
+            base_url=base_url or None,
+            max_retries=0,
+            timeout=45.0,
+        )
+        return self._client
 
     def analyze(self, article: Article) -> dict[str, Any]:
         if not self.enabled():
