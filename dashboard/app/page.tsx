@@ -154,6 +154,13 @@ export default function Home() {
   });
   const [focus, setFocus] = useState(false);
   const [dictionary, setDictionary] = useState(true);
+  const [highlightVisibility, setHighlightVisibility] = useState(() => {
+    if (typeof window === "undefined") return { core: true, key: true };
+    return {
+      core: window.localStorage.getItem("grecis-highlight-core") !== "off",
+      key: window.localStorage.getItem("grecis-highlight-key") !== "off",
+    };
+  });
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   const [fontSize, setFontSize] = useState(19);
   const [busy, setBusy] = useState("");
@@ -530,6 +537,11 @@ export default function Home() {
   }, [dark]);
 
   useEffect(() => {
+    localStorage.setItem("grecis-highlight-core", highlightVisibility.core ? "on" : "off");
+    localStorage.setItem("grecis-highlight-key", highlightVisibility.key ? "on" : "off");
+  }, [highlightVisibility]);
+
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (view === "library") void loadArticles();
     // The query state below is the intentional refresh boundary.
@@ -667,7 +679,10 @@ export default function Home() {
         </header>
 
         {view === "reader" && detail && (
-          <div className="reading-layout" key={detail.id}>
+          <div
+            className={`reading-layout ${highlightVisibility.core ? "" : "hide-core-highlight"} ${highlightVisibility.key ? "" : "hide-key-highlight"}`}
+            key={detail.id}
+          >
             <article className="reader" ref={readerRef}>
               <div className="article-kicker"><span>{detail.source} · CORPUS</span><i /></div>
               <h1>{titleParts.slice(0, -1).join(" ")} <em>{titleParts.at(-1)}</em></h1>
@@ -682,9 +697,19 @@ export default function Home() {
               <div className="reader-rule" />
               <div className="reader-toolbar">
                 <div className="legend">
-                  <button title="重要度 5"><i className="dot core" />核心词 <b>{importanceStats.core}</b></button>
-                  <button title="重要度 3–4"><i className="dot key" />重点词 <b>{importanceStats.key}</b></button>
-                  <button title="重要度 1–2"><i className="dot extended" />延伸词 <b>{importanceStats.extended}</b></button>
+                  <button
+                    className={highlightVisibility.core ? "" : "is-off"}
+                    title={`${highlightVisibility.core ? "关闭" : "开启"}核心词高亮`}
+                    aria-pressed={highlightVisibility.core}
+                    onClick={() => setHighlightVisibility((current) => ({ ...current, core: !current.core }))}
+                  ><i className="dot core" />核心词 <b>{importanceStats.core}</b></button>
+                  <button
+                    className={highlightVisibility.key ? "" : "is-off"}
+                    title={`${highlightVisibility.key ? "关闭" : "开启"}重点词高亮`}
+                    aria-pressed={highlightVisibility.key}
+                    onClick={() => setHighlightVisibility((current) => ({ ...current, key: !current.key }))}
+                  ><i className="dot key" />重点词 <b>{importanceStats.key}</b></button>
+                  <span className="legend-item" title="重要度 1–2"><i className="dot extended" />延伸词 <b>{importanceStats.extended}</b></span>
                 </div>
                 <div className="font-control">
                   <button onClick={() => setFontSize(Math.max(16, fontSize - 1))}>A−</button><span>{fontSize}</span>
