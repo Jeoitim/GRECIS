@@ -15,6 +15,7 @@ from .patterns import (
     pattern_priority,
     sentence_example_quality,
 )
+from .wordlists import tier_importance, vocabulary_tier
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS articles (
@@ -85,6 +86,14 @@ CREATE TABLE IF NOT EXISTS word_mastery (
     lemma TEXT PRIMARY KEY,
     level TEXT NOT NULL CHECK(level IN ('learning', 'familiar', 'mastered')),
     updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS personal_vocabulary (
+    lemma TEXT PRIMARY KEY,
+    word TEXT NOT NULL,
+    article_id TEXT REFERENCES articles(id) ON DELETE SET NULL,
+    example_sentence TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS reading_progress (
@@ -557,10 +566,14 @@ class CorpusDB:
             lemma = str(item.get("lemma", "")).strip().lower()
             if not lemma:
                 continue
-            importance = _llm_importance(item.get("exam_importance"))
+            tier = vocabulary_tier(lemma)
+            importance = tier_importance(tier)
             category = _llm_category(item.get("exam_importance"), lemma)
-            if importance < 3 and category != "polysemy":
+            if tier == "high_school" and category != "polysemy":
                 continue
+            if tier == "rare" and category not in {"polysemy", "domain terminology"}:
+                continue
+            importance = importance or 1
             rows.append(
                 {
                     "word": lemma,

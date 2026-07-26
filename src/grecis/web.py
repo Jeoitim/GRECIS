@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -15,10 +16,11 @@ from pydantic import BaseModel, Field
 from .config import AppConfig, load_config
 from .db import CorpusDB, ensure_db
 from .dictionary import query_word
-from .ingest import fetch_url
+from .ingest import fetch_url, iter_fetch_source_articles
 from .llm import LLMAnalyzer, post_chat_completion_raw
 from .models import Article
 from .nlp import analyze_article
+from .wordlists import tier_importance, vocabulary_tier
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 LOCAL_CONFIG_PATH = PROJECT_ROOT / "config" / "local.yaml"
@@ -51,6 +53,13 @@ def get_db() -> CorpusDB:
 def compact_text(value: str, limit: int = 180) -> str:
     text = " ".join((value or "").split())
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
+
+def word_context(text: str, word: str, limit: int = 240) -> str:
+    pattern = re.compile(rf"\b{re.escape(word)}\b", re.IGNORECASE)
+    sentences = re.split(r"(?<=[.!?])\s+", " ".join((text or "").split()))
+    sentence = next((item for item in sentences if pattern.search(item)), "")
+    return compact_text(sentence, limit)
 
 
 def article_summary(row: Any) -> dict[str, Any]:
@@ -112,6 +121,8 @@ class SettingsUpdate(BaseModel):
 
 class MasteryUpdate(BaseModel):
     level: MasteryLevel | None = None
+    article_id: str = Field(default="", max_length=100)
+    word: str = Field(default="", max_length=100)
 
 
 class ProgressUpdate(BaseModel):
@@ -123,6 +134,17 @@ class ArticleCreate(BaseModel):
     source: str = Field(default="manual", max_length=200)
     url: str = Field(default="", max_length=2000)
     text: str = ""
+    use_llm: bool = False
+
+
+class CrawlerFetchRequest(BaseModel):
+    source: str = Field(min_length=1, max_length=200)
+    limit: int = Field(default=3, ge=1, le=20)
+    topic_query: str = Field(default="", max_length=200)
+    request_timeout_seconds: int = Field(default=20, ge=5, le=120)
+    delay_seconds: float = Field(default=1.0, ge=0, le=10)
+    min_text_chars: int = Field(default=800, ge=200, le=20_000)
+    min_quality_score: float = Field(default=6.0, ge=0, le=10)
     use_llm: bool = False
 
 
@@ -153,6 +175,97 @@ def health() -> dict[str, Any]:
             ).fetchall()
         ]
     return {"ok": True, "counts": counts, "unique_words": unique_words, "fields": fields}
+
+
+@app.get("/api/crawler/options")
+def crawler_options() -> dict[str, Any]:
+    config = get_config()
+    return {
+        "sources": [
+            {
+                "name": source.name,
+                "field": source.field_hint,
+                "category": source.category,
+                "enabled": source.enabled,
+            }
+            for source in config.sources
+            if source.enabled
+        ],
+        "defaults": {
+            "limit": min(config.crawler.max_articles_per_source, 5),
+            "request_timeout_seconds": config.crawler.request_timeout_seconds,
+            "delay_seconds": config.crawler.delay_seconds,
+            "min_text_chars": config.crawler.min_text_chars,
+            "min_quality_score": config.crawler.min_quality_score,
+        },
+    }
+
+
+@app.post("/api/crawler/fetch")
+def fetch_from_crawler(payload: CrawlerFetchRequest) -> dict[str, Any]:
+    config = get_config()
+    db = get_db()
+    sources = [
+        source
+        for source in config.sources
+        if source.enabled
+        and (payload.source == "all" or source.name.lower() == payload.source.lower())
+    ]
+    if not sources:
+        raise HTTPException(status_code=404, detail="没有匹配的已启用文章来源")
+
+    analyzer = None
+    if payload.use_llm:
+        analyzer = LLMAnalyzer.from_config(
+            config.llm.model,
+            config.llm.api_key,
+            config.llm.base_url,
+        )
+        if not analyzer.enabled():
+            raise HTTPException(status_code=400, detail="本地配置中尚未设置可用的 LLM API")
+
+    crawler = replace(
+        config.crawler,
+        max_articles_per_source=payload.limit,
+        request_timeout_seconds=payload.request_timeout_seconds,
+        delay_seconds=payload.delay_seconds,
+        min_text_chars=payload.min_text_chars,
+        min_quality_score=payload.min_quality_score,
+    )
+    existing_urls = {article.url for article in db.list_articles() if article.url}
+    article_ids: list[str] = []
+    errors: list[str] = []
+    for source in sources:
+        runtime_source = source
+        if payload.topic_query.strip() and source.search_url_templates:
+            runtime_source = replace(
+                source,
+                topic_queries=list(
+                    dict.fromkeys([payload.topic_query.strip(), *source.topic_queries])
+                ),
+            )
+        for article in iter_fetch_source_articles(
+            runtime_source,
+            crawler,
+            existing_urls=existing_urls,
+        ):
+            article_id = db.upsert_article(article)
+            llm_payload: dict[str, Any] = {}
+            if analyzer:
+                try:
+                    llm_payload = analyzer.analyze(article)
+                except Exception as exc:
+                    errors.append(f"{article.title}：LLM 分析失败（{exc}）")
+            db.save_analysis(analyze_article(article, llm_payload=llm_payload))
+            article_ids.append(article_id)
+
+    return {
+        "ok": True,
+        "imported": len(article_ids),
+        "analyzed": len(article_ids),
+        "items": [get_article(article_id) for article_id in article_ids],
+        "errors": errors,
+    }
 
 
 @app.get("/api/articles")
@@ -266,6 +379,18 @@ def get_article(article_id: str) -> dict[str, Any]:
                 (article_id,),
             ).fetchall()
         ]
+        vocabulary = [
+            {
+                **item,
+                "tier": vocabulary_tier(item["lemma"]),
+                "importance": tier_importance(vocabulary_tier(item["lemma"])) or 1,
+            }
+            for item in vocabulary
+            if (
+                vocabulary_tier(item["lemma"]) not in {"high_school", "rare"}
+                or item["category"] in {"polysemy", "domain terminology"}
+            )
+        ]
         collocations = [
             dict(item)
             for item in conn.execute(
@@ -290,6 +415,12 @@ def get_article(article_id: str) -> dict[str, Any]:
                 (article_id,),
             ).fetchall()
         ]
+        mastery_words = [
+            dict(item)
+            for item in conn.execute(
+                "SELECT lemma, level FROM word_mastery ORDER BY lemma"
+            ).fetchall()
+        ]
     llm = read_json(row["llm_json"], {})
     analysis = {
         "field": row["analysis_field"] or row["field"],
@@ -309,6 +440,7 @@ def get_article(article_id: str) -> dict[str, Any]:
         "collocations": collocations,
         "polysemy": polysemy,
         "sentence_patterns": patterns,
+        "mastery_words": mastery_words,
     }
 
 
@@ -390,50 +522,67 @@ def list_vocabulary(
     mastery: str = Query(default="", max_length=20),
 ) -> dict[str, Any]:
     db = get_db()
-    conditions: list[str] = []
-    params: list[Any] = []
-    if q:
-        conditions.append("(v.lemma LIKE ? OR v.word LIKE ?)")
-        term = f"%{q}%"
-        params.extend([term, term])
-    if mastery == "unmarked":
-        conditions.append("wm.level IS NULL")
-    elif mastery in {"learning", "familiar", "mastered"}:
-        conditions.append("wm.level = ?")
-        params.append(mastery)
-    where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
     with db.connect() as conn:
-        total = conn.execute(
-            f"""
-            SELECT COUNT(*) FROM (
-                SELECT v.lemma
-                FROM vocabulary v
-                LEFT JOIN word_mastery wm ON wm.lemma = v.lemma
-                {where}
-                GROUP BY v.lemma
-            )
-            """,
-            params,
-        ).fetchone()[0]
         rows = conn.execute(
-            f"""
+            """
             SELECT v.lemma, MIN(v.word) AS word, SUM(v.frequency) AS frequency,
-                   MAX(v.importance) AS importance, COUNT(DISTINCT v.article_id) AS article_count,
+                   MAX(v.importance) AS importance,
+                   COUNT(DISTINCT v.article_id) AS article_count,
                    MIN(NULLIF(v.example_sentence, '')) AS example_sentence,
                    GROUP_CONCAT(DISTINCT v.category) AS categories,
                    GROUP_CONCAT(DISTINCT v.field) AS fields,
                    wm.level AS mastery, wm.updated_at
             FROM vocabulary v
             LEFT JOIN word_mastery wm ON wm.lemma = v.lemma
-            {where}
             GROUP BY v.lemma
-            ORDER BY MAX(v.importance) DESC, COUNT(DISTINCT v.article_id) DESC,
-                     SUM(v.frequency) DESC, v.lemma
-            LIMIT ? OFFSET ?
-            """,
-            [*params, limit, offset],
+            """
         ).fetchall()
-    return {"items": [dict(row) for row in rows], "total": total, "limit": limit, "offset": offset}
+        personal_rows = conn.execute(
+            """
+            SELECT p.lemma, p.word, 0 AS frequency, 1 AS importance,
+                   CASE WHEN p.article_id IS NULL THEN 0 ELSE 1 END AS article_count,
+                   p.example_sentence, '个人标记' AS categories,
+                   'personal' AS fields, wm.level AS mastery, wm.updated_at
+            FROM personal_vocabulary p
+            JOIN word_mastery wm ON wm.lemma = p.lemma
+            """
+        ).fetchall()
+
+    by_lemma = {row["lemma"]: dict(row) for row in rows}
+    for row in personal_rows:
+        by_lemma.setdefault(row["lemma"], dict(row))
+
+    query = q.strip().lower()
+    items: list[dict[str, Any]] = []
+    valid_mastery = {"learning", "familiar", "mastered"}
+    for item in by_lemma.values():
+        tier = vocabulary_tier(item["lemma"])
+        categories = str(item.get("categories") or "")
+        special = "polysemy" in categories or "domain terminology" in categories
+        if tier in {"high_school", "rare"} and not special and not item["mastery"]:
+            continue
+        if query and query not in item["lemma"].lower() and query not in item["word"].lower():
+            continue
+        if mastery == "unmarked" and item["mastery"] is not None:
+            continue
+        if mastery in valid_mastery and item["mastery"] != mastery:
+            continue
+
+        item["tier"] = tier
+        item["importance"] = tier_importance(tier) or item["importance"]
+        items.append(item)
+
+    items.sort(
+        key=lambda item: (
+            -int(item["importance"]),
+            -int(item["article_count"]),
+            -int(item["frequency"]),
+            item["lemma"],
+        )
+    )
+    total = len(items)
+    items = items[offset : offset + limit]
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 
 @app.put("/api/vocabulary/{lemma}/mastery")
@@ -442,9 +591,15 @@ def save_mastery(lemma: str, payload: MasteryUpdate) -> dict[str, Any]:
     if not normalized:
         raise HTTPException(status_code=400, detail="词条格式不正确")
     db = get_db()
+    article = db.get_article(payload.article_id) if payload.article_id else None
+    source_word = (
+        re.sub(r"[^a-zA-Z '-]", "", payload.word).strip().lower() or normalized
+    )
+    example = word_context(article.text, source_word) if article else ""
     with db.connect() as conn:
         if payload.level is None:
             conn.execute("DELETE FROM word_mastery WHERE lemma = ?", (normalized,))
+            conn.execute("DELETE FROM personal_vocabulary WHERE lemma = ?", (normalized,))
         else:
             conn.execute(
                 """
@@ -454,6 +609,29 @@ def save_mastery(lemma: str, payload: MasteryUpdate) -> dict[str, Any]:
                     level=excluded.level, updated_at=excluded.updated_at
                 """,
                 (normalized, payload.level, now_iso()),
+            )
+            conn.execute(
+                """
+                INSERT INTO personal_vocabulary(
+                    lemma, word, article_id, example_sentence, created_at
+                )
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(lemma) DO UPDATE SET
+                    word=excluded.word,
+                    article_id=COALESCE(excluded.article_id, personal_vocabulary.article_id),
+                    example_sentence=CASE
+                        WHEN excluded.example_sentence = ''
+                        THEN personal_vocabulary.example_sentence
+                        ELSE excluded.example_sentence
+                    END
+                """,
+                (
+                    normalized,
+                    source_word,
+                    article.normalized_id() if article else None,
+                    example,
+                    now_iso(),
+                ),
             )
     return {"ok": True, "lemma": normalized, "level": payload.level}
 

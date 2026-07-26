@@ -111,7 +111,8 @@ button { cursor: pointer; }
 .dot { width: 7px; height: 7px; border-radius: 50%; }
 .dot.core { background: var(--rose); }
 .dot.key { background: var(--amber); }
-.dot.extended { background: var(--green); }
+.dot.gre { background: #7e6aa2; }
+.dot.specialized { background: var(--green); }
 .font-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; }
 .font-control button { border: 0; background: none; color: inherit; font: 11px var(--serif); }
 .font-control span { width: 24px; text-align: center; }
@@ -120,11 +121,15 @@ button { cursor: pointer; }
 .prose p:first-child::first-letter { float: left; margin: .12em .13em 0 0; color: var(--green); font: 500 4.3em/.72 var(--serif); }
 .word { position: relative; border-radius: 2px; cursor: help; transition: background .18s ease, color .18s ease; }
 .word:hover { background: color-mix(in srgb, var(--green-soft) 65%, transparent); }
-.word.importance-core { background: color-mix(in srgb, var(--rose) 29%, transparent); }
-.word.importance-key { background: color-mix(in srgb, var(--amber) 27%, transparent); }
-.word.importance-extended { background: color-mix(in srgb, var(--green) 18%, transparent); }
-.reading-layout.hide-core-highlight .word.importance-core,
-.reading-layout.hide-key-highlight .word.importance-key { background: transparent; }
+.word.candidate { box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--muted) 62%, transparent); }
+.word.tier-core { background: color-mix(in srgb, var(--rose) 29%, transparent); }
+.word.tier-key { background: color-mix(in srgb, var(--amber) 27%, transparent); }
+.word.tier-gre { background: color-mix(in srgb, #7e6aa2 23%, transparent); }
+.word.tier-specialized { background: color-mix(in srgb, var(--green) 18%, transparent); }
+.reading-layout.hide-core-highlight .word.tier-core,
+.reading-layout.hide-key-highlight .word.tier-key,
+.reading-layout.hide-gre-highlight .word.tier-gre,
+.reading-layout.hide-specialized-highlight .word.tier-specialized { background: transparent; }
 .word.level-learning { box-shadow: inset 0 -2px 0 var(--rose); }
 .word.level-familiar { box-shadow: inset 0 -2px 0 var(--amber); }
 .word.level-mastered { box-shadow: inset 0 -2px 0 var(--green); }
@@ -262,6 +267,13 @@ button { cursor: pointer; }
 .eyebrow { color: var(--green); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; }
 .modal h2 { margin: 12px 0 8px; font: 400 31px var(--serif); letter-spacing: -.03em; }
 .modal > p { margin: 0 0 24px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.ingest-modal { width: min(620px, 100%); }
+.ingest-tabs { display: grid; grid-template-columns: 1fr 1fr; margin: 22px 0 18px; border-bottom: 1px solid var(--line); }
+.ingest-tabs button { padding: 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font-size: 10px; }
+.ingest-tabs button.active { border-bottom-color: var(--green); color: var(--ink); }
+.ingest-description { margin: 0 0 19px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.parameter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 12px; }
+.crawler-loading { margin: 22px 0; padding: 20px; border: 1px solid var(--line); color: var(--muted); font-size: 10px; text-align: center; }
 .modal label { display: grid; gap: 7px; margin-top: 14px; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .modal input, .modal select, .modal textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 3px; outline: none; background: var(--paper); font-size: 12px; letter-spacing: normal; text-transform: none; }
 .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--green); }
@@ -271,6 +283,21 @@ button { cursor: pointer; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 27px; }
 .modal-actions button { min-width: 104px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 3px; background: transparent; font-size: 10px; }
 .modal-actions button:last-child { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.word-mark-modal { width: min(480px, 100%); }
+.word-mark-modal h2 { font-style: italic; }
+.underline-options { display: grid; gap: 9px; margin-top: 22px; }
+.underline-options button { display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); text-align: left; font-size: 11px; }
+.underline-options button:hover, .underline-options button.selected { border-color: currentColor; }
+.underline-options button > i { width: 12px; height: 3px; border-radius: 2px; }
+.underline-options button > span { color: var(--muted); font-size: 8px; }
+.underline-options .learning { color: var(--rose); }
+.underline-options .familiar { color: var(--amber); }
+.underline-options .mastered { color: var(--green); }
+.underline-options .learning > i { background: var(--rose); }
+.underline-options .familiar > i { background: var(--amber); }
+.underline-options .mastered > i { background: var(--green); }
+.remove-underline { width: 100%; margin-top: 15px; padding: 11px; border: 0; background: transparent; color: var(--muted); font-size: 9px; }
+.remove-underline:hover { color: var(--rose); }
 .toast { position: fixed; right: 28px; bottom: 28px; z-index: 80; display: flex; align-items: center; gap: 10px; padding: 13px 17px; border: 1px solid var(--line); border-radius: 4px; background: var(--ink); color: var(--paper); box-shadow: var(--shadow); font-size: 11px; animation: pop .2s ease-out; }
 .toast span { color: var(--green-soft); }
 

@@ -6,6 +6,7 @@ from collections import Counter
 from typing import Any
 
 from .models import AnalysisResult, Article
+from .wordlists import tier_importance, vocabulary_tier
 
 try:
     from wordfreq import zipf_frequency
@@ -393,7 +394,6 @@ IRREGULAR_LEMMAS = {
     "evaluated": "evaluate",
 }
 
-HIGH_SCHOOL_WORD_ZIPF_THRESHOLD = 5.5
 HIGH_VALUE_PHRASES = {
     "at issue",
     "take issue with",
@@ -550,10 +550,13 @@ def word_frequencies(
     rows = []
     domain_words = DOMAIN_KEYWORDS.get(field, set())
     for word, frequency in counts.most_common(limit):
+        tier = vocabulary_tier(word)
         category = "domain terminology" if word in domain_words else "academic/general"
         if word in POLYSEMY_LEXICON:
             category = "polysemy"
-        if category != "polysemy" and _is_common_high_school_word(word):
+        if category != "polysemy" and tier == "high_school":
+            continue
+        if category not in {"polysemy", "domain terminology"} and tier == "rare":
             continue
         rows.append(
             {
@@ -562,7 +565,7 @@ def word_frequencies(
                 "frequency": frequency,
                 "category": category,
                 "field": field,
-                "importance": min(5, 1 + frequency),
+                "importance": tier_importance(tier) or 1,
                 "example_sentence": find_example_sentence(word, sentences),
             }
         )
@@ -694,14 +697,6 @@ def estimate_exam_value(
     score = 3.0 + min(domain_terms, 10) * 0.25 + min(len(polysemy), 10) * 0.35
     score += min(len(patterns), 10) * 0.2
     return round(min(score, 10.0), 1)
-
-
-def _is_common_high_school_word(word: str) -> bool:
-    if not zipf_frequency:
-        return False
-    if word in POLYSEMY_LEXICON:
-        return False
-    return zipf_frequency(word, "en") >= HIGH_SCHOOL_WORD_ZIPF_THRESHOLD
 
 
 def _is_high_value_expression(

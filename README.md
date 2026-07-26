@@ -2,13 +2,13 @@
 
 GRECIS = Graduate Reading Corpus Intelligence System.
 
-GRECIS 是一个面向考研英语阅读的语料库分析与复习资料生成项目。它把考研真题、外刊文章和本地授权语料统一入库到 SQLite，再做文章质量筛选、领域识别、词频统计、熟词生义识别、固定表达抽取和句式分析，最后生成 Markdown 知识库、Anki 卡片和红宝书式复习资料。
+GRECIS 是一个面向考研英语阅读的本地语料分析与精读系统。它把考研真题、外刊文章和本地授权语料统一存入 SQLite，完成文章质量筛选、领域识别、词汇分级、熟词生义识别、固定表达抽取和句式分析，并提供网页精读台以及 Markdown、Anki 和红宝书式复习资料导出。
 
 ## 项目介绍
 
 这个项目的目标很明确：把“能读”的文章，变成“能背、能复习、能继续扩展”的语料系统。
 
-它不追求把所有词都塞进词表，而是优先保留高频表达、真题常见搭配、熟词生义和能迁移到考研阅读中的核心内容，同时剔除生僻词、专名、噪音词和低价值文本。
+它不追求把所有词都塞进词表，而是优先保留考研大纲词、美国英语常用进阶词、GRE 拓展词、专业术语、熟词生义和真题常见搭配，同时剔除专名、异常拼写、噪音词和低价值文本。
 
 当前版本已经把核心成品纳入仓库，便于共享和迭代：
 
@@ -40,7 +40,7 @@ GRECIS 是一个面向考研英语阅读的语料库分析与复习资料生成�
 
 ## 本地打开管理面板
 
-管理面板位于 `dashboard/`，目前提供阅读台、暗色模式、悬停查词、词汇掌握度标记、文章导入、模型设置和重新分析等交互界面。
+管理面板位于 `dashboard/`，提供阅读台、暗色模式、悬停查词、分级词汇高亮、个人词汇标记、阅读进度、手动或自动扩充语料、模型设置和重新分析等功能。
 
 ### 环境要求
 
@@ -131,16 +131,21 @@ npm run start
 
 ### 面板使用提示
 
-- 鼠标停留在英文单词上可以查看词典释义。
-- 点击正文中的单词，可以在“待掌握”“似曾相识”“已掌握”和无标记之间循环切换。
+- 鼠标在英文单词上停留 0.5 秒，可以查看本地词典链路返回的释义。
+- 正文中的分析候选词带有灰色下划线；考研核心、常用进阶、GRE 拓展、专业术语和熟词生义使用不同的荧光底色。
+- 点击词汇分级图例，可以单独开启或关闭各级荧光底色；选择会保存在当前设备。
+- 点击正文单词会打开标记面板，可选择“待掌握”“似曾相识”“已掌握”对应的下划线颜色，也可以取消个人下划线。
+- 个人标记会加入词汇簿，并按掌握程度在其他文章中沿用。
+- 阅读进度随正文滚动位置单向增长，并自动写回本地数据库。
 - 右上角可以切换悬停查词、专注模式和暗色模式。
-- 语料库提供全部 388 篇文章的分页、全文搜索和领域筛选。
-- 词汇簿提供全部词元的分页、搜索和掌握度筛选。
+- 语料库支持对当前数据库中的全部文章进行分页、全文搜索和领域筛选。
+- “加入文章”支持粘贴正文、提取网页正文，也支持按本地来源配置自动发现、筛选和分析文章。
+- 词汇簿同时展示 NLP/LLM 候选词和个人词汇，支持分页、搜索和掌握度筛选。
 - 左下角“模型与 API”可以修改模型、API Key 和接口地址；保存后由 Python 写入 `config/local.yaml`。
 - “测试真实连接”会实际请求所选模型，连接失败时会显示具体错误，不再固定返回成功。
 - 右侧“重新进行 LLM + NLP 分析”会调用项目现有的 Python 分析链路，并将结果写回 SQLite。
 
-文章、词汇和分析记录均来自 `data/grecis.sqlite`，没有硬编码在网页中。词汇掌握度保存在 SQLite 的 `word_mastery` 表，阅读进度保存在 `reading_progress` 表。网页只会读取“是否已配置 API Key”，不会读取或回显密钥正文。
+文章、词汇和分析记录均来自 `data/grecis.sqlite`，没有硬编码在网页中。分析候选词保存在 `vocabulary` 表，个人词汇和掌握度分别保存在 `personal_vocabulary` 与 `word_mastery` 表，阅读进度保存在 `reading_progress` 表。网页只读取“是否已配置 API Key”，不会读取或回显密钥正文。
 
 ### Windows 安装失败排查
 
@@ -239,8 +244,9 @@ src/grecis/
 ├── nlp.py          # 本地词频、领域、熟词生义、句式识别
 ├── pastpapers.py   # pastpapers.cn PDF 真题导入
 ├── quality.py      # 文章质量评分
+├── redbook.py      # 高质量红宝书生成
 ├── topics.py       # 从真题反向抽取外刊搜索主题
-└── redbook.py      # 高质量红宝书生成
+└── wordlists.py    # 高考、考研、SUBTLEX-US 与 GRE 本地词表分级
 ```
 
 ### 数据库
@@ -259,6 +265,9 @@ data/grecis.sqlite
 - `collocations`
 - `polysemy`
 - `sentence_patterns`
+- `word_mastery`
+- `personal_vocabulary`
+- `reading_progress`
 
 文章元数据放在 `metadata_json`，包括来源、citation、PDF URL、质量分和质量原因等。
 
@@ -338,6 +347,9 @@ uv run ruff check .
 
 ## 参考与致谢
 
-管理面板基于 [Cloudflare vinext](https://github.com/cloudflare/vinext) 的
-App Router starter 搭建，并在其上实现了 GRECIS 的本地 SQLite 语料服务、
-精读工作台、词汇标记与 LLM 分析流程。
+- 管理面板基于 [Cloudflare vinext](https://github.com/cloudflare/vinext) 的 App Router starter 搭建。
+- 考研大纲词表改编自 [exam-data/NETEMVocabulary](https://github.com/exam-data/NETEMVocabulary)，原始数据采用 CC BY-NC-SA 4.0。
+- 美国英语常用 20K 词表改编自 [words/subtlex-word-frequencies](https://github.com/words/subtlex-word-frequencies)，该项目基于 SUBTLEX-US 频率数据并采用 ISC 许可证。
+- GRE 拓展词表改编自 [0xDkXy/GRE_vocabulary_3000](https://github.com/0xDkXy/GRE_vocabulary_3000)，采用 MIT 许可证；只有不在本地美国英语常用 20K 中的词才归入 GRE 拓展级。
+
+派生词表的处理方式和许可说明见 `data/WORDLISTS.md`。

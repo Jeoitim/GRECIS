@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type View = "reader" | "library" | "vocabulary" | "history";
 type Level = "learning" | "familiar" | "mastered";
+type VocabularyTier = "high_school" | "core" | "key" | "gre" | "rare";
 type Health = {
   counts: { articles: number; analyses: number; vocabulary: number; collocations: number };
   unique_words: number;
@@ -36,6 +37,7 @@ type VocabularyItem = {
   article_count?: number;
   example_sentence?: string;
   mastery?: Level | null;
+  tier?: VocabularyTier;
 };
 type ArticleDetail = ArticleSummary & {
   text: string;
@@ -58,6 +60,7 @@ type ArticleDetail = ArticleSummary & {
   collocations: Array<{ expression: string; meaning: string; importance: number }>;
   polysemy: Array<{ word: string; contextual_meaning: string }>;
   sentence_patterns: Array<{ type: string; function: string; sentence: string }>;
+  mastery_words: Array<{ lemma: string; level: Level }>;
 };
 type HistoryItem = {
   article_id: string;
@@ -71,6 +74,16 @@ type HistoryItem = {
   model: string;
 };
 type Settings = { model: string; base_url: string; api_key_set: boolean };
+type CrawlerOptions = {
+  sources: Array<{ name: string; field: string; category: string; enabled: boolean }>;
+  defaults: {
+    limit: number;
+    request_timeout_seconds: number;
+    delay_seconds: number;
+    min_text_chars: number;
+    min_quality_score: number;
+  };
+};
 type Tooltip = {
   word: string;
   x: number;
@@ -146,6 +159,8 @@ export default function Home() {
   const [settings, setSettings] = useState<Settings>({ model: "", base_url: "", api_key_set: false });
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [addMode, setAddMode] = useState<"manual" | "crawler">("manual");
+  const [crawlerOptions, setCrawlerOptions] = useState<CrawlerOptions | null>(null);
   const [apiKey, setApiKey] = useState("");
   const [dark, setDark] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -155,12 +170,17 @@ export default function Home() {
   const [focus, setFocus] = useState(false);
   const [dictionary, setDictionary] = useState(true);
   const [highlightVisibility, setHighlightVisibility] = useState(() => {
-    if (typeof window === "undefined") return { core: true, key: true };
+    if (typeof window === "undefined") {
+      return { core: true, key: true, gre: true, specialized: true };
+    }
     return {
       core: window.localStorage.getItem("grecis-highlight-core") !== "off",
       key: window.localStorage.getItem("grecis-highlight-key") !== "off",
+      gre: window.localStorage.getItem("grecis-highlight-gre") !== "off",
+      specialized: window.localStorage.getItem("grecis-highlight-specialized") !== "off",
     };
   });
+  const [markingWord, setMarkingWord] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   const [fontSize, setFontSize] = useState(19);
   const [busy, setBusy] = useState("");
@@ -188,23 +208,30 @@ export default function Home() {
     return map;
   }, [detail]);
 
-  const importanceMap = useMemo(() => {
-    const map: Record<string, number> = {};
+  const vocabularyTierMap = useMemo(() => {
+    const map: Record<string, "core" | "key" | "gre" | "specialized"> = {};
     for (const item of detail?.vocabulary || []) {
       const lemma = item.lemma.toLowerCase();
-      map[lemma] = Math.max(map[lemma] || 0, item.importance);
+      map[lemma] = item.tier === "core"
+        ? "core"
+        : item.tier === "key"
+          ? "key"
+          : item.tier === "gre"
+            ? "gre"
+            : "specialized";
     }
     return map;
   }, [detail]);
 
-  const importanceStats = useMemo(() => {
-    const values = Object.values(importanceMap);
+  const vocabularyTierStats = useMemo(() => {
+    const values = Object.values(vocabularyTierMap);
     return {
-      core: values.filter((importance) => importance >= 5).length,
-      key: values.filter((importance) => importance >= 3 && importance < 5).length,
-      extended: values.filter((importance) => importance < 3).length,
+      core: values.filter((tier) => tier === "core").length,
+      key: values.filter((tier) => tier === "key").length,
+      gre: values.filter((tier) => tier === "gre").length,
+      specialized: values.filter((tier) => tier === "specialized").length,
     };
-  }, [importanceMap]);
+  }, [vocabularyTierMap]);
 
   async function loadInitial() {
     setBusy("initial");
@@ -303,8 +330,8 @@ export default function Home() {
         ...items.filter((item) => item.id !== data.id),
       ].slice(0, 12));
       const nextLevels: Record<string, Level> = {};
-      for (const item of data.vocabulary) {
-        if (item.mastery) nextLevels[item.lemma.toLowerCase()] = item.mastery;
+      for (const item of data.mastery_words) {
+        nextLevels[item.lemma.toLowerCase()] = item.level;
       }
       setLevels(nextLevels);
       void request(`/articles/${encodeURIComponent(id)}/progress`, {
@@ -326,6 +353,16 @@ export default function Home() {
       showToast(`已清除 ${result.deleted} 条最近阅读记录`);
     } catch (reason) {
       showToast(reason instanceof Error ? reason.message : "最近记录清除失败", true);
+    }
+  }
+
+  async function showAddDialog() {
+    setAddOpen(true);
+    if (crawlerOptions) return;
+    try {
+      setCrawlerOptions(await request<CrawlerOptions>("/crawler/options"));
+    } catch (reason) {
+      showToast(reason instanceof Error ? reason.message : "爬虫参数加载失败", true);
     }
   }
 
@@ -387,10 +424,16 @@ export default function Home() {
     }
   }
 
-  async function cycleLevel(raw: string) {
+  function openWordMark(raw: string) {
     const lemma = (lemmaMap[raw.toLowerCase()] || raw).toLowerCase();
-    const order: Array<Level | undefined> = [undefined, "learning", "familiar", "mastered"];
-    const next = order[(order.indexOf(levels[lemma]) + 1) % order.length];
+    clearPendingLookup();
+    setTooltip(null);
+    setMarkingWord(lemma);
+  }
+
+  async function applyWordMark(next: Level | null) {
+    if (!markingWord) return;
+    const lemma = markingWord;
     setLevels((current) => {
       const copy = { ...current };
       if (next) copy[lemma] = next;
@@ -398,12 +441,18 @@ export default function Home() {
       return copy;
     });
     setWords((items) => items.map((item) => item.lemma === lemma ? { ...item, mastery: next || null } : item));
+    setMarkingWord(null);
     setTooltip(null);
     try {
       await request(`/vocabulary/${encodeURIComponent(lemma)}/mastery`, {
         method: "PUT",
-        body: JSON.stringify({ level: next || null }),
+        body: JSON.stringify({
+          level: next,
+          article_id: detail?.id || "",
+          word: lemma,
+        }),
       });
+      if (next) showToast(`${lemma} 已加入词汇簿`);
     } catch (reason) {
       showToast(reason instanceof Error ? reason.message : "掌握度保存失败", true);
     }
@@ -414,25 +463,18 @@ export default function Home() {
       if (!/^[A-Za-z]/.test(part)) return part;
       const raw = part.toLowerCase();
       const lemma = lemmaMap[raw] || raw;
-      const importance = importanceMap[lemma] || 0;
-      const importanceClass = importance >= 5
-        ? "importance-core"
-        : importance >= 3
-          ? "importance-key"
-          : importance > 0
-            ? "importance-extended"
-            : "";
+      const tier = vocabularyTierMap[lemma];
       return (
         <span
           key={`${raw}-${index}`}
-          className={`word ${importanceClass} ${levels[lemma] ? `level-${levels[lemma]}` : ""}`}
+          className={`word ${tier ? `candidate tier-${tier}` : ""} ${levels[lemma] ? `level-${levels[lemma]}` : ""}`}
           onMouseEnter={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect())}
           onMouseLeave={scheduleClose}
           onFocus={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect(), 0)}
           onBlur={scheduleClose}
-          onClick={() => void cycleLevel(lemma)}
+          onClick={() => openWordMark(lemma)}
           onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") void cycleLevel(lemma);
+            if (event.key === "Enter" || event.key === " ") openWordMark(lemma);
           }}
           tabIndex={0}
         >{part}</span>
@@ -524,6 +566,42 @@ export default function Home() {
     }
   }
 
+  async function crawlArticles(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setBusy("crawl");
+    try {
+      const result = await request<{
+        imported: number;
+        analyzed: number;
+        errors: string[];
+      }>("/crawler/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          source: String(form.get("crawler_source") || ""),
+          limit: Number(form.get("limit") || 3),
+          topic_query: String(form.get("topic_query") || ""),
+          request_timeout_seconds: Number(form.get("request_timeout_seconds") || 20),
+          delay_seconds: Number(form.get("delay_seconds") || 1),
+          min_text_chars: Number(form.get("min_text_chars") || 800),
+          min_quality_score: Number(form.get("min_quality_score") || 6),
+          use_llm: form.get("crawler_use_llm") === "on",
+        }),
+      });
+      setAddOpen(false);
+      setHealth(await request<Health>("/health"));
+      if (view === "library") void loadArticles();
+      const suffix = result.errors.length ? `；${result.errors.length} 篇 LLM 分析失败，已保留 NLP 结果` : "";
+      showToast(result.imported
+        ? `自动抓取并分析了 ${result.analyzed} 篇文章${suffix}`
+        : "没有发现符合条件的新文章");
+    } catch (reason) {
+      showToast(reason instanceof Error ? reason.message : "自动抓取失败", true);
+    } finally {
+      setBusy("");
+    }
+  }
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadInitial();
@@ -539,6 +617,8 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem("grecis-highlight-core", highlightVisibility.core ? "on" : "off");
     localStorage.setItem("grecis-highlight-key", highlightVisibility.key ? "on" : "off");
+    localStorage.setItem("grecis-highlight-gre", highlightVisibility.gre ? "on" : "off");
+    localStorage.setItem("grecis-highlight-specialized", highlightVisibility.specialized ? "on" : "off");
   }, [highlightVisibility]);
 
   useEffect(() => {
@@ -648,7 +728,7 @@ export default function Home() {
           <span>最近篇目</span>
           <div className="library-actions">
             <button className="clear-recent" onClick={() => void clearRecent()} aria-label="清空最近篇目" title="清空最近篇目" disabled={!recent.length}>🗑︎</button>
-            <button onClick={() => setAddOpen(true)} aria-label="增加文章" title="增加文章">＋</button>
+            <button onClick={() => void showAddDialog()} aria-label="增加文章" title="增加文章">＋</button>
           </div>
         </div>
         <div className="article-list">
@@ -680,7 +760,7 @@ export default function Home() {
 
         {view === "reader" && detail && (
           <div
-            className={`reading-layout ${highlightVisibility.core ? "" : "hide-core-highlight"} ${highlightVisibility.key ? "" : "hide-key-highlight"}`}
+            className={`reading-layout ${highlightVisibility.core ? "" : "hide-core-highlight"} ${highlightVisibility.key ? "" : "hide-key-highlight"} ${highlightVisibility.gre ? "" : "hide-gre-highlight"} ${highlightVisibility.specialized ? "" : "hide-specialized-highlight"}`}
             key={detail.id}
           >
             <article className="reader" ref={readerRef}>
@@ -702,14 +782,25 @@ export default function Home() {
                     title={`${highlightVisibility.core ? "关闭" : "开启"}核心词高亮`}
                     aria-pressed={highlightVisibility.core}
                     onClick={() => setHighlightVisibility((current) => ({ ...current, core: !current.core }))}
-                  ><i className="dot core" />核心词 <b>{importanceStats.core}</b></button>
+                  ><i className="dot core" />考研核心 <b>{vocabularyTierStats.core}</b></button>
                   <button
                     className={highlightVisibility.key ? "" : "is-off"}
                     title={`${highlightVisibility.key ? "关闭" : "开启"}重点词高亮`}
                     aria-pressed={highlightVisibility.key}
                     onClick={() => setHighlightVisibility((current) => ({ ...current, key: !current.key }))}
-                  ><i className="dot key" />重点词 <b>{importanceStats.key}</b></button>
-                  <span className="legend-item" title="重要度 1–2"><i className="dot extended" />延伸词 <b>{importanceStats.extended}</b></span>
+                  ><i className="dot key" />常用进阶 <b>{vocabularyTierStats.key}</b></button>
+                  <button
+                    className={highlightVisibility.gre ? "" : "is-off"}
+                    title={`${highlightVisibility.gre ? "关闭" : "开启"} GRE 拓展词高亮`}
+                    aria-pressed={highlightVisibility.gre}
+                    onClick={() => setHighlightVisibility((current) => ({ ...current, gre: !current.gre }))}
+                  ><i className="dot gre" />GRE 拓展 <b>{vocabularyTierStats.gre}</b></button>
+                  <button
+                    className={highlightVisibility.specialized ? "" : "is-off"}
+                    title={`${highlightVisibility.specialized ? "关闭" : "开启"}专业与熟词生义高亮`}
+                    aria-pressed={highlightVisibility.specialized}
+                    onClick={() => setHighlightVisibility((current) => ({ ...current, specialized: !current.specialized }))}
+                  ><i className="dot specialized" />专业／生义 <b>{vocabularyTierStats.specialized}</b></button>
                 </div>
                 <div className="font-control">
                   <button onClick={() => setFontSize(Math.max(16, fontSize - 1))}>A−</button><span>{fontSize}</span>
@@ -755,7 +846,7 @@ export default function Home() {
           <section className="workspace-page">
             <div className="workspace-title">
               <div><span className="eyebrow">CORPUS · SQLITE</span><h1>语料库</h1><p>全部内容动态读取自 data/grecis.sqlite。</p></div>
-              <button className="solid-action" onClick={() => setAddOpen(true)}>＋ 加入文章</button>
+              <button className="solid-action" onClick={() => void showAddDialog()}>＋ 加入文章</button>
             </div>
             <div className="summary-grid">
               <div><span>全部语料</span><b>{health?.counts.articles || 0}</b><small>篇文章</small></div>
@@ -802,7 +893,7 @@ export default function Home() {
             </div>
             <div className="word-grid">
               {words.map((item, index) => (
-                <button className="word-card" key={item.lemma} onClick={() => void cycleLevel(item.lemma)}>
+                <button className="word-card" key={item.lemma} onClick={() => openWordMark(item.lemma)}>
                   <span className="word-number">{String(wordPage * WORD_PAGE_SIZE + index + 1).padStart(4, "0")}</span>
                   <div><strong>{item.lemma}</strong><small>{item.categories || item.category} · 出现于 {item.article_count} 篇</small><p>{item.example_sentence || item.fields || item.field}</p></div>
                   <span className={`mastery-label ${levels[item.lemma] || "unmarked"}`}>{masteryLabel(levels[item.lemma])}</span>
@@ -851,7 +942,24 @@ export default function Home() {
           <div className="phonetic">{tooltip.phonetic} <i>{tooltip.pos}</i></div>
           <p className={tooltip.loading ? "loading" : ""}>{tooltip.zh || "暂无中文释义"}</p>
           {tooltip.en && <small>{tooltip.en}</small>}
-          <div className="popover-actions"><span>释义由 Python 本地词典链路返回</span><button onClick={() => void cycleLevel(tooltip.word)}>标记 ＋</button></div>
+          <div className="popover-actions"><span>释义由 Python 本地词典链路返回</span><button onClick={() => openWordMark(tooltip.word)}>标记 ＋</button></div>
+        </div>
+      )}
+
+      {markingWord && (
+        <div className="modal-backdrop" onMouseDown={() => setMarkingWord(null)}>
+          <div className="modal word-mark-modal" role="dialog" aria-modal="true" aria-labelledby="word-mark-title" onMouseDown={(event) => event.stopPropagation()}>
+            <button type="button" className="modal-close" onClick={() => setMarkingWord(null)}>×</button>
+            <span className="eyebrow">PERSONAL VOCABULARY MARK</span>
+            <h2 id="word-mark-title">{markingWord}</h2>
+            <p>选择掌握程度与下划线颜色。标记后会加入词汇簿，并在其他文章中沿用。</p>
+            <div className="underline-options">
+              <button type="button" className={`learning ${levels[markingWord] === "learning" ? "selected" : ""}`} onClick={() => void applyWordMark("learning")}><i />待掌握<span>玫瑰红下划线</span></button>
+              <button type="button" className={`familiar ${levels[markingWord] === "familiar" ? "selected" : ""}`} onClick={() => void applyWordMark("familiar")}><i />似曾相识<span>琥珀色下划线</span></button>
+              <button type="button" className={`mastered ${levels[markingWord] === "mastered" ? "selected" : ""}`} onClick={() => void applyWordMark("mastered")}><i />已掌握<span>墨绿色下划线</span></button>
+            </div>
+            <button type="button" className="remove-underline" onClick={() => void applyWordMark(null)}>取消下划线并移出个人词汇标记</button>
+          </div>
         </div>
       )}
 
@@ -875,17 +983,61 @@ export default function Home() {
 
       {addOpen && (
         <div className="modal-backdrop" onMouseDown={() => setAddOpen(false)}>
-          <form className="modal" onSubmit={addArticle} onMouseDown={(event) => event.stopPropagation()}>
+          <form
+            className="modal ingest-modal"
+            onSubmit={addMode === "manual" ? addArticle : crawlArticles}
+            onMouseDown={(event) => event.stopPropagation()}
+          >
             <button type="button" className="modal-close" onClick={() => setAddOpen(false)}>×</button>
             <span className="eyebrow">PYTHON CORPUS INGEST</span>
-            <h2>加入一篇新文章</h2>
-            <p>链接会交给 Python 正文提取器；粘贴正文则直接写入 SQLite 并运行分析。</p>
-            <label>文章标题<input name="title" required placeholder="文章标题" /></label>
-            <label>来源<input name="source" placeholder="The Guardian / local" /></label>
-            <label>文章链接<input name="url" type="url" placeholder="https://…" /></label>
-            <label>正文（与链接至少填写一项）<textarea name="text" rows={6} placeholder="粘贴有权保存和学习的正文…" /></label>
-            <label className="check-label"><input name="use_llm" type="checkbox" /> 导入后使用本地配置的 LLM 深度分析</label>
-            <div className="modal-actions"><button type="button" onClick={() => setAddOpen(false)}>取消</button><button type="submit" disabled={busy === "add"}>{busy === "add" ? "Python 正在导入…" : "导入语料库"}</button></div>
+            <h2>扩充阅读语料</h2>
+            <div className="ingest-tabs" role="tablist" aria-label="文章导入方式">
+              <button type="button" role="tab" aria-selected={addMode === "manual"} className={addMode === "manual" ? "active" : ""} onClick={() => setAddMode("manual")}>手动导入</button>
+              <button type="button" role="tab" aria-selected={addMode === "crawler"} className={addMode === "crawler" ? "active" : ""} onClick={() => setAddMode("crawler")}>自动抓取</button>
+            </div>
+
+            {addMode === "manual" ? (
+              <>
+                <p className="ingest-description">链接会交给 Python 正文提取器；粘贴正文则直接写入 SQLite 并运行分析。</p>
+                <label>文章标题<input name="title" required placeholder="文章标题" /></label>
+                <label>来源<input name="source" placeholder="The Guardian / local" /></label>
+                <label>文章链接<input name="url" type="url" placeholder="https://…" /></label>
+                <label>正文（与链接至少填写一项）<textarea name="text" rows={6} placeholder="粘贴有权保存和学习的正文…" /></label>
+                <label className="check-label"><input name="use_llm" type="checkbox" /> 导入后使用本地配置的 LLM 深度分析</label>
+              </>
+            ) : (
+              <>
+                <p className="ingest-description">由 Python 从来源配置的 RSS、栏目页与搜索页发现正文，质量筛选后写入 SQLite。</p>
+                {!crawlerOptions ? <div className="crawler-loading">正在读取 Python 来源配置…</div> : (
+                  <>
+                    <label>文章来源
+                      <select name="crawler_source" required defaultValue={crawlerOptions.sources[0]?.name || ""}>
+                        <option value="all">全部已启用来源（数量按每个来源计算）</option>
+                        {crawlerOptions.sources.map((source) => (
+                          <option key={source.name} value={source.name}>{source.name} · {source.field}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>检索主题（可选）<input name="topic_query" placeholder="climate policy / education reform" /></label>
+                    <div className="parameter-grid">
+                      <label>每个来源篇数<input name="limit" type="number" min="1" max="20" defaultValue={crawlerOptions.defaults.limit} /></label>
+                      <label>请求超时（秒）<input name="request_timeout_seconds" type="number" min="5" max="120" defaultValue={crawlerOptions.defaults.request_timeout_seconds} /></label>
+                      <label>请求间隔（秒）<input name="delay_seconds" type="number" min="0" max="10" step="0.1" defaultValue={crawlerOptions.defaults.delay_seconds} /></label>
+                      <label>正文最少字符<input name="min_text_chars" type="number" min="200" max="20000" step="100" defaultValue={crawlerOptions.defaults.min_text_chars} /></label>
+                      <label>最低质量分<input name="min_quality_score" type="number" min="0" max="10" step="0.1" defaultValue={crawlerOptions.defaults.min_quality_score} /></label>
+                    </div>
+                    <label className="check-label"><input name="crawler_use_llm" type="checkbox" /> 抓取后同时进行 LLM 深度分析（始终运行本地 NLP）</label>
+                  </>
+                )}
+              </>
+            )}
+
+            <div className="modal-actions">
+              <button type="button" onClick={() => setAddOpen(false)}>取消</button>
+              <button type="submit" disabled={busy === "add" || busy === "crawl" || (addMode === "crawler" && !crawlerOptions)}>
+                {busy === "add" ? "Python 正在导入…" : busy === "crawl" ? "Python 正在抓取…" : addMode === "manual" ? "导入语料库" : "开始自动抓取"}
+              </button>
+            </div>
           </form>
         </div>
       )}

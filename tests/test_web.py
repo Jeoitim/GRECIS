@@ -4,6 +4,7 @@ import yaml
 from fastapi.testclient import TestClient
 
 from grecis import web
+from grecis.config import AppConfig, CrawlerConfig, SourceConfig
 from grecis.db import ensure_db
 from grecis.models import Article
 from grecis.nlp import analyze_article
@@ -16,7 +17,8 @@ def sample_db(tmp_path):
         source="test",
         text=(
             "Reliable reading requires sustained attention. "
-            "A careful reader compares evidence and revises judgment."
+            "A careful reader compares evidence and revises judgment. "
+            "Metacognition can improve comprehension."
         ),
     )
     article_id = db.upsert_article(article)
@@ -42,7 +44,7 @@ def test_corpus_api_reads_sqlite_and_persists_mastery(monkeypatch, tmp_path):
     assert detail.status_code == 200
     assert detail.json()["text"].startswith("Reliable reading")
 
-    saved = client.put("/api/vocabulary/attention/mastery", json={"level": "learning"})
+    saved = client.put("/api/vocabulary/sustain/mastery", json={"level": "learning"})
     assert saved.status_code == 200
     assert saved.json()["level"] == "learning"
 
@@ -104,3 +106,83 @@ def test_recent_articles_can_be_cleared_without_deleting_corpus(monkeypatch, tmp
     assert cleared.json()["deleted"] == 1
     assert client.get("/api/recent-articles").json()["items"] == []
     assert client.get("/api/articles").json()["total"] == 1
+
+
+def test_personal_word_mark_is_listed_and_shared_with_article(monkeypatch, tmp_path):
+    db, article_id = sample_db(tmp_path)
+    monkeypatch.setattr(web, "get_db", lambda: db)
+    client = TestClient(web.app)
+
+    marked = client.put(
+        "/api/vocabulary/metacognition/mastery",
+        json={"level": "learning", "article_id": article_id, "word": "metacognition"},
+    )
+    assert marked.status_code == 200
+
+    vocabulary = client.get("/api/vocabulary?q=metacognition")
+    assert vocabulary.status_code == 200
+    assert vocabulary.json()["items"][0]["lemma"] == "metacognition"
+    assert vocabulary.json()["items"][0]["mastery"] == "learning"
+
+    detail = client.get(f"/api/articles/{article_id}")
+    assert {"lemma": "metacognition", "level": "learning"} in detail.json()["mastery_words"]
+
+    removed = client.put("/api/vocabulary/metacognition/mastery", json={"level": None})
+    assert removed.status_code == 200
+    assert client.get("/api/vocabulary?q=metacognition").json()["items"] == []
+
+
+def test_crawler_api_exposes_options_and_imports_analyzed_articles(monkeypatch, tmp_path):
+    db, _ = sample_db(tmp_path)
+    config = AppConfig(
+        crawler=CrawlerConfig(delay_seconds=0, min_text_chars=200),
+        sources=[
+            SourceConfig(
+                name="Example News",
+                enabled=True,
+                field_hint="science",
+                category="science",
+                feed_urls=["https://example.com/rss"],
+            )
+        ],
+    )
+
+    def fake_articles(source, crawler, *, existing_urls):
+        assert source.name == "Example News"
+        assert crawler.max_articles_per_source == 2
+        assert crawler.delay_seconds == 0
+        yield Article(
+            title="Automatically fetched",
+            source=source.name,
+            url="https://example.com/automatic",
+            text=" ".join(
+                ["Researchers examine institutions and environmental regulation."] * 80
+            ),
+        )
+
+    monkeypatch.setattr(web, "get_db", lambda: db)
+    monkeypatch.setattr(web, "get_config", lambda: config)
+    monkeypatch.setattr(web, "iter_fetch_source_articles", fake_articles)
+    client = TestClient(web.app)
+
+    options = client.get("/api/crawler/options")
+    assert options.status_code == 200
+    assert options.json()["sources"][0]["name"] == "Example News"
+
+    response = client.post(
+        "/api/crawler/fetch",
+        json={
+            "source": "Example News",
+            "limit": 2,
+            "delay_seconds": 0,
+            "request_timeout_seconds": 10,
+            "min_text_chars": 200,
+            "min_quality_score": 0,
+            "use_llm": False,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["imported"] == 1
+    assert response.json()["items"][0]["title"] == "Automatically fetched"
+    assert client.get("/api/articles").json()["total"] == 2
