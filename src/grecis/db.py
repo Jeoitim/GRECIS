@@ -80,6 +80,18 @@ CREATE TABLE IF NOT EXISTS sentence_patterns (
     pattern TEXT NOT NULL DEFAULT '',
     importance INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS word_mastery (
+    lemma TEXT PRIMARY KEY,
+    level TEXT NOT NULL CHECK(level IN ('learning', 'familiar', 'mastered')),
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS reading_progress (
+    article_id TEXT PRIMARY KEY REFERENCES articles(id) ON DELETE CASCADE,
+    progress INTEGER NOT NULL DEFAULT 0 CHECK(progress BETWEEN 0 AND 100),
+    last_read_at TEXT NOT NULL
+);
 """
 
 

@@ -38,6 +38,125 @@ GRECIS 是一个面向考研英语阅读的语料库分析与复习资料生成�
 
 主要存储位于 `data/grecis.sqlite`，文章导出位于 `output/markdown/articles/`，红宝书位于 `output/redbook/`。
 
+## 本地打开管理面板
+
+管理面板位于 `dashboard/`，目前提供阅读台、暗色模式、悬停查词、词汇掌握度标记、文章导入、模型设置和重新分析等交互界面。
+
+### 环境要求
+
+- Python 3.11–3.13
+- uv
+- Node.js 22.13.0 或更高版本
+- npm
+
+先确认本机版本：
+
+```powershell
+uv --version
+python --version
+node --version
+npm --version
+```
+
+### 首次安装与开发预览
+
+管理面板由本地 Python 语料服务和网页界面组成，需要打开两个终端。
+
+Windows 用户可以直接双击项目根目录的：
+
+```text
+start-dashboard.bat
+```
+
+脚本会分别打开 Python 语料服务和网页开发服务终端，等待两者就绪，然后自动在默认浏览器中打开 `http://localhost:3000/`。如果前端依赖尚未安装，脚本会先自动执行 `npm ci`。
+
+关闭面板时，请在脚本打开的两个服务终端中分别按 `Ctrl+C`，然后关闭终端窗口。
+
+也可以按下面的步骤手动启动。
+
+终端一，在项目根目录安装 Python 依赖并启动语料服务：
+
+```powershell
+uv sync
+uv run grecis-web
+```
+
+服务默认监听 `http://127.0.0.1:8765`，并从 `data/grecis.sqlite` 动态查询文章、词汇、分析记录、阅读进度和掌握度。
+
+终端二，在项目根目录安装并启动网页：
+
+```powershell
+cd dashboard
+npm ci
+npm run dev
+```
+
+启动成功后，终端会显示本地地址，默认是：
+
+```text
+http://localhost:3000/
+```
+
+在浏览器中打开该地址即可使用。开发模式支持热更新，修改 `dashboard/app/` 下的页面或样式后无需重新启动。
+
+结束使用时，分别在两个运行服务的终端按 `Ctrl+C`。
+
+### 生产构建后打开
+
+如果只想在本地稳定使用，不需要热更新，先在终端一启动 Python 语料服务：
+
+```powershell
+uv run grecis-web
+```
+
+再在终端二构建并启动网页：
+
+```powershell
+cd dashboard
+npm ci
+npm run build
+npm run start
+```
+
+构建完成后，根据终端显示的地址在浏览器中打开；默认仍为 `http://localhost:3000/`。
+
+以后代码和依赖没有变化时，可以直接运行：
+
+```powershell
+cd dashboard
+npm run start
+```
+
+如果更新了 `package-lock.json`，建议重新执行 `npm ci` 和 `npm run build`。
+
+### 面板使用提示
+
+- 鼠标停留在英文单词上可以查看词典释义。
+- 点击正文中的单词，可以在“待掌握”“似曾相识”“已掌握”和无标记之间循环切换。
+- 右上角可以切换悬停查词、专注模式和暗色模式。
+- 语料库提供全部 388 篇文章的分页、全文搜索和领域筛选。
+- 词汇簿提供全部词元的分页、搜索和掌握度筛选。
+- 左下角“模型与 API”可以修改模型、API Key 和接口地址；保存后由 Python 写入 `config/local.yaml`。
+- “测试真实连接”会实际请求所选模型，连接失败时会显示具体错误，不再固定返回成功。
+- 右侧“重新进行 LLM + NLP 分析”会调用项目现有的 Python 分析链路，并将结果写回 SQLite。
+
+文章、词汇和分析记录均来自 `data/grecis.sqlite`，没有硬编码在网页中。词汇掌握度保存在 SQLite 的 `word_mastery` 表，阅读进度保存在 `reading_progress` 表。网页只会读取“是否已配置 API Key”，不会读取或回显密钥正文。
+
+### Windows 安装失败排查
+
+执行 `npm ci` 前，应先在运行开发服务的终端按 `Ctrl+C`，确认旧的 `npm run dev` 已经退出。否则 `node.exe` 或 `workerd.exe` 可能占用 `lightningcss.win32-x64-msvc.node`，导致 `EPERM: operation not permitted, unlink`。
+
+如果安装已经失败，并且随后出现“`vinext` 不是内部或外部命令”，说明 `node_modules` 可能只清理了一部分。先关闭仍在运行的 Dashboard 开发服务，在任务管理器中结束命令行指向本项目 `dashboard` 目录的 `node.exe` 和 `workerd.exe`，然后在项目根目录执行：
+
+```powershell
+Remove-Item -LiteralPath .\dashboard\node_modules -Recurse -Force
+cd dashboard
+npm ci
+npm run dev
+```
+
+不要在开发服务运行期间重复执行 `npm ci`。
+
 ## 语料的获取与使用方式
 
 语料获取顺序是：
