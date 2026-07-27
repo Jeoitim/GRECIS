@@ -13,7 +13,7 @@ try:
 except Exception:  # pragma: no cover - optional fallback
     zipf_frequency = None
 
-TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z'-]*")
+TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z'’‘-]*")
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 
 STOPWORDS = {
@@ -153,24 +153,111 @@ DOMAIN_KEYWORDS: dict[str, set[str]] = {
 }
 
 POLYSEMY_LEXICON: dict[str, dict[str, str]] = {
-    "address": {"ordinary": "地址；发表演说", "context": "处理；探讨"},
-    "case": {"ordinary": "情况；盒子", "context": "案件；论证依据"},
-    "charge": {"ordinary": "收费；充电", "context": "指控；职责"},
-    "concern": {"ordinary": "担心", "context": "涉及；企业"},
-    "discipline": {"ordinary": "纪律", "context": "学科；训练体系"},
-    "drive": {"ordinary": "驾驶", "context": "驱动因素；推动"},
-    "find": {"ordinary": "找到", "context": "裁定；研究发现"},
-    "hold": {"ordinary": "持有", "context": "裁定；认为"},
-    "issue": {"ordinary": "问题", "context": "争议焦点；发布；发行"},
-    "margin": {"ordinary": "边缘", "context": "优势；利润空间"},
-    "move": {"ordinary": "移动", "context": "举措"},
-    "novel": {"ordinary": "小说", "context": "新颖的"},
-    "position": {"ordinary": "位置", "context": "立场；观点"},
-    "robust": {"ordinary": "强壮的", "context": "稳健可靠的"},
-    "school": {"ordinary": "学校", "context": "学派"},
-    "significant": {"ordinary": "重要的", "context": "统计显著的"},
-    "subject": {"ordinary": "主题；科目", "context": "使遭受；受制于"},
-    "yield": {"ordinary": "产出；让步", "context": "收益率；产生结果"},
+    "address": {
+        "ordinary": "地址；发表演说",
+        "context": "处理；探讨",
+        "pattern": r"\baddress(?:es|ed|ing)?\s+(?:the\s+)?(?:issue|problem|question|"
+        r"challenge|concern|risk|gap|need)s?\b",
+    },
+    "case": {
+        "ordinary": "情况；盒子",
+        "context": "案件；论证依据",
+        "pattern": r"\b(?:court|legal|criminal|civil)\s+case\b|\bcourt\b.+\bcase\b|"
+        r"\bcase\s+(?:against|for)\b|\bcase\b.+\b(?:held|at issue)\b",
+    },
+    "charge": {
+        "ordinary": "收费；充电",
+        "context": "指控；职责",
+        "pattern": r"\bcharg(?:e[sd]?|ed|ing)\s+(?:with|that)\b|\bin charge of\b|"
+        r"\bcriminal charges?\b",
+    },
+    "concern": {
+        "ordinary": "担心",
+        "context": "涉及；企业",
+        "pattern": r"\bas far as .+ is concerned\b|\bthe concern (?:is|was)\b|"
+        r"\bgoing concern\b",
+    },
+    "discipline": {
+        "ordinary": "纪律",
+        "context": "学科；训练体系",
+        "pattern": r"\b(?:academic|scientific|scholarly)\s+discipline\b|"
+        r"\bdiscipline of\b",
+    },
+    "drive": {
+        "ordinary": "驾驶",
+        "context": "驱动因素；推动",
+        "pattern": r"\bdriv(?:e[sd]?|en|ing)\s+(?:growth|change|demand|innovation|"
+        r"inflation|reform|investment)\b|\bdriving force\b",
+    },
+    "find": {
+        "ordinary": "找到",
+        "context": "裁定；研究发现",
+        "pattern": r"\b(?:court|judge|jury|study|researchers?)\s+"
+        r"(?:finds?|found)\s+(?:that|the)\b",
+    },
+    "hold": {
+        "ordinary": "持有",
+        "context": "裁定；认为",
+        "pattern": r"\b(?:court|judge|study|researchers?)\s+(?:holds?|held)\s+that\b",
+    },
+    "issue": {
+        "ordinary": "问题",
+        "context": "争议焦点；发布；发行",
+        "pattern": r"\bat issue\b|\bissu(?:e[sd]?|ed|ing)\s+(?:shares?|bonds?|"
+        r"stock|debt|a statement|an order)\b",
+    },
+    "margin": {
+        "ordinary": "边缘",
+        "context": "优势；利润空间",
+        "pattern": r"\b(?:profit|operating|gross|net|victory)\s+margins?\b|"
+        r"\bmargin of (?:error|victory|safety)\b",
+    },
+    "move": {
+        "ordinary": "移动",
+        "context": "举措",
+        "pattern": r"\b(?:policy|strategic|political|regulatory|latest)\s+move\b|"
+        r"\ba move to\b",
+    },
+    "novel": {
+        "ordinary": "小说",
+        "context": "新颖的",
+        "pattern": r"\bnovel\s+(?:approach|method|technique|mechanism|finding|"
+        r"therapy|treatment|technology)\b",
+    },
+    "position": {
+        "ordinary": "位置",
+        "context": "立场；观点",
+        "pattern": r"\b(?:take|adopt|defend|maintain)\s+(?:a|the|its|their)\s+position\b|"
+        r"\bpolicy position\b",
+    },
+    "robust": {
+        "ordinary": "强壮的",
+        "context": "稳健可靠的",
+        "pattern": r"\brobust\s+(?:evidence|results?|findings?|method|model|estimate|"
+        r"growth|system)\b",
+    },
+    "school": {
+        "ordinary": "学校",
+        "context": "学派",
+        "pattern": r"\bschool of thought\b|\b(?:economic|philosophical|literary)\s+school\b",
+    },
+    "significant": {
+        "ordinary": "重要的",
+        "context": "统计显著的",
+        "pattern": r"\bstatistically significant\b|\bsignificant at the\b|"
+        r"\bsignificant (?:difference|association|correlation|effect)\b",
+    },
+    "subject": {
+        "ordinary": "主题；科目",
+        "context": "使遭受；受制于",
+        "pattern": r"\bsubject to\b|\bsubject(?:ed|ing)?\s+.+\s+to\b",
+    },
+    "yield": {
+        "ordinary": "产出；让步",
+        "context": "收益率；产生结果",
+        "pattern": r"\b(?:bond|treasury|dividend)\s+yields?\b|\byield(?:s|ed|ing)?\s+"
+        r"(?:results?|evidence|returns?|insights?)\b",
+    },
 }
 
 SENTENCE_PATTERNS: list[tuple[str, str, str]] = [
@@ -443,7 +530,10 @@ def split_sentences(text: str) -> list[str]:
 
 
 def tokenize(text: str) -> list[str]:
-    return [match.group(0).lower().strip("'") for match in TOKEN_RE.finditer(text)]
+    return [
+        match.group(0).lower().replace("’", "'").replace("‘", "'").strip("'")
+        for match in TOKEN_RE.finditer(text)
+    ]
 
 
 def simple_lemma(token: str) -> str:
@@ -549,12 +639,12 @@ def word_frequencies(
     counts = Counter(tokens)
     rows = []
     domain_words = DOMAIN_KEYWORDS.get(field, set())
-    for word, frequency in counts.most_common(limit):
+    for word, frequency in counts.most_common():
         tier = vocabulary_tier(word)
         category = "domain terminology" if word in domain_words else "academic/general"
-        if word in POLYSEMY_LEXICON:
+        if contextual_polysemy_sentence(word, sentences):
             category = "polysemy"
-        if category != "polysemy" and tier == "high_school":
+        if tier == "high_school" and category != "polysemy":
             continue
         if category not in {"polysemy", "domain terminology"} and tier == "rare":
             continue
@@ -569,6 +659,8 @@ def word_frequencies(
                 "example_sentence": find_example_sentence(word, sentences),
             }
         )
+        if len(rows) >= limit:
+            break
     return rows
 
 
@@ -643,7 +735,11 @@ def extract_polysemy(text: str) -> list[dict[str, Any]]:
     for sentence in sentences:
         sentence_tokens = set(content_tokens(sentence))
         for word, meanings in POLYSEMY_LEXICON.items():
-            if word in sentence_tokens and word not in hits:
+            if (
+                word in sentence_tokens
+                and word not in hits
+                and re.search(meanings["pattern"], sentence, re.IGNORECASE)
+            ):
                 hits[word] = {
                     "word": word,
                     "ordinary_meaning": meanings["ordinary"],
@@ -652,6 +748,20 @@ def extract_polysemy(text: str) -> list[dict[str, Any]]:
                     "exam_risk": "high",
                 }
     return list(hits.values())
+
+
+def contextual_polysemy_sentence(word: str, sentences: list[str]) -> str:
+    meanings = POLYSEMY_LEXICON.get(word)
+    if not meanings:
+        return ""
+    return next(
+        (
+            sentence
+            for sentence in sentences
+            if re.search(meanings["pattern"], sentence, re.IGNORECASE)
+        ),
+        "",
+    )
 
 
 def extract_sentence_patterns(text: str) -> list[dict[str, Any]]:

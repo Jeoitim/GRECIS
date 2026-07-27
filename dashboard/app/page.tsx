@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type View = "reader" | "library" | "vocabulary" | "history";
 type Level = "learning" | "familiar" | "mastered";
+type HighlightScope = "review" | "all";
 type VocabularyTier = "high_school" | "core" | "key" | "gre" | "rare";
 type Health = {
   counts: { articles: number; analyses: number; vocabulary: number; collocations: number };
@@ -39,6 +40,11 @@ type VocabularyItem = {
   mastery?: Level | null;
   tier?: VocabularyTier;
 };
+type VocabularyHighlight = {
+  word: string;
+  lemma: string;
+  tier: "core" | "key" | "gre" | "specialized";
+};
 type ArticleDetail = ArticleSummary & {
   text: string;
   metadata: Record<string, unknown>;
@@ -58,6 +64,7 @@ type ArticleDetail = ArticleSummary & {
     rhetoric_count: number;
   };
   vocabulary: VocabularyItem[];
+  vocabulary_highlights: VocabularyHighlight[];
   collocations: Array<{ expression: string; meaning: string; importance: number }>;
   polysemy: Array<{ word: string; contextual_meaning: string }>;
   sentence_patterns: Array<{ type: string; function: string; sentence: string }>;
@@ -185,6 +192,10 @@ export default function Home() {
   });
   const [focus, setFocus] = useState(false);
   const [dictionary, setDictionary] = useState(true);
+  const [highlightScope, setHighlightScope] = useState<HighlightScope>(() => {
+    if (typeof window === "undefined") return "review";
+    return window.localStorage.getItem("grecis-highlight-scope") === "all" ? "all" : "review";
+  });
   const [highlightVisibility, setHighlightVisibility] = useState(() => {
     if (typeof window === "undefined") {
       return { core: true, key: true, gre: true, specialized: true };
@@ -224,33 +235,46 @@ export default function Home() {
       map[item.word.toLowerCase()] = item.lemma.toLowerCase();
       map[item.lemma.toLowerCase()] = item.lemma.toLowerCase();
     }
-    return map;
-  }, [detail]);
-
-  const vocabularyTierMap = useMemo(() => {
-    const map: Record<string, "core" | "key" | "gre" | "specialized"> = {};
-    for (const item of detail?.vocabulary || []) {
-      const lemma = item.lemma.toLowerCase();
-      map[lemma] = item.tier === "core"
-        ? "core"
-        : item.tier === "key"
-          ? "key"
-          : item.tier === "gre"
-            ? "gre"
-            : "specialized";
+    for (const item of detail?.vocabulary_highlights || []) {
+      map[item.word.toLowerCase()] = item.lemma.toLowerCase();
     }
     return map;
   }, [detail]);
 
+  const activeVocabularyHighlights = useMemo(() => {
+    const highlights = detail?.vocabulary_highlights || [];
+    if (highlightScope === "all") return highlights;
+    const reviewLemmas = new Set<string>();
+    for (const item of detail?.vocabulary || []) {
+      reviewLemmas.add(item.lemma.toLowerCase());
+      reviewLemmas.add(item.word.toLowerCase());
+    }
+    return highlights.filter((item) =>
+      reviewLemmas.has(item.lemma.toLowerCase()) || reviewLemmas.has(item.word.toLowerCase()));
+  }, [detail, highlightScope]);
+
+  const vocabularyTierMap = useMemo(() => {
+    const map: Record<string, "core" | "key" | "gre" | "specialized"> = {};
+    for (const item of activeVocabularyHighlights) {
+      map[item.word.toLowerCase()] = item.tier;
+      map[item.lemma.toLowerCase()] = item.tier;
+    }
+    return map;
+  }, [activeVocabularyHighlights]);
+
   const vocabularyTierStats = useMemo(() => {
-    const values = Object.values(vocabularyTierMap);
+    const tiersByLemma = new Map<string, VocabularyHighlight["tier"]>();
+    for (const item of activeVocabularyHighlights) {
+      tiersByLemma.set(item.lemma.toLowerCase(), item.tier);
+    }
+    const values = Array.from(tiersByLemma.values());
     return {
       core: values.filter((tier) => tier === "core").length,
       key: values.filter((tier) => tier === "key").length,
       gre: values.filter((tier) => tier === "gre").length,
       specialized: values.filter((tier) => tier === "specialized").length,
     };
-  }, [vocabularyTierMap]);
+  }, [activeVocabularyHighlights]);
 
   async function loadInitial() {
     setBusy("initial");
@@ -512,9 +536,9 @@ export default function Home() {
   }
 
   function renderParagraph(text: string) {
-    return text.split(/(\b[A-Za-z][A-Za-z'-]*\b)/g).map((part, index) => {
+    return text.split(/(\b[A-Za-z][A-Za-z'’‘-]*\b)/g).map((part, index) => {
       if (!/^[A-Za-z]/.test(part)) return part;
-      const raw = part.toLowerCase();
+      const raw = part.toLowerCase().replace(/[’‘]/g, "'");
       const lemma = lemmaMap[raw] || raw;
       const tier = vocabularyTierMap[lemma];
       return (
@@ -714,6 +738,10 @@ export default function Home() {
   }, [dark]);
 
   useEffect(() => {
+    localStorage.setItem("grecis-highlight-scope", highlightScope);
+  }, [highlightScope]);
+
+  useEffect(() => {
     localStorage.setItem("grecis-highlight-core", highlightVisibility.core ? "on" : "off");
     localStorage.setItem("grecis-highlight-key", highlightVisibility.key ? "on" : "off");
     localStorage.setItem("grecis-highlight-gre", highlightVisibility.gre ? "on" : "off");
@@ -901,9 +929,15 @@ export default function Home() {
                     onClick={() => setHighlightVisibility((current) => ({ ...current, specialized: !current.specialized }))}
                   ><i className="dot specialized" />专业／生义 <b>{vocabularyTierStats.specialized}</b></button>
                 </div>
-                <div className="font-control">
-                  <button onClick={() => setFontSize(Math.max(16, fontSize - 1))}>A−</button><span>{fontSize}</span>
-                  <button onClick={() => setFontSize(Math.min(24, fontSize + 1))}>A＋</button>
+                <div className="reader-tools">
+                  <div className="highlight-scope" aria-label="荧光标记范围">
+                    <button className={highlightScope === "review" ? "active" : ""} aria-pressed={highlightScope === "review"} onClick={() => setHighlightScope("review")}>重点词</button>
+                    <button className={highlightScope === "all" ? "active" : ""} aria-pressed={highlightScope === "all"} onClick={() => setHighlightScope("all")}>全文词库</button>
+                  </div>
+                  <div className="font-control">
+                    <button onClick={() => setFontSize(Math.max(16, fontSize - 1))}>A−</button><span>{fontSize}</span>
+                    <button onClick={() => setFontSize(Math.min(24, fontSize + 1))}>A＋</button>
+                  </div>
                 </div>
               </div>
               <div className="prose" style={{ fontSize }}>

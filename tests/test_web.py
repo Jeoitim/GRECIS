@@ -5,9 +5,16 @@ from fastapi.testclient import TestClient
 
 from grecis import web
 from grecis.config import AppConfig, CrawlerConfig, LLMConfig, SourceConfig
-from grecis.db import ensure_db
+from grecis.db import SCHEMA, CorpusDB, ensure_db
 from grecis.models import Article
 from grecis.nlp import analyze_article
+from grecis.wordlists import (
+    common_american_20k,
+    gaokao_words,
+    gre_words,
+    kaoyan_words,
+    vocabulary_tier,
+)
 
 
 def sample_db(tmp_path):
@@ -52,6 +59,132 @@ def test_corpus_api_reads_sqlite_and_persists_mastery(monkeypatch, tmp_path):
     assert vocabulary.status_code == 200
     assert vocabulary.json()["items"]
     assert all(item["mastery"] == "learning" for item in vocabulary.json()["items"])
+
+
+def test_article_highlights_use_all_text_tokens_and_disjoint_tiers() -> None:
+    high_school = next(iter(gaokao_words()))
+    core = next(word for word in kaoyan_words() if vocabulary_tier(word) == "core")
+    key = next(word for word in common_american_20k() if vocabulary_tier(word) == "key")
+    gre = next(word for word in gre_words() if vocabulary_tier(word) == "gre")
+    rare = "paleobiogeographically"
+    text = f"{high_school} {core} {key} {gre} {rare}"
+
+    highlights = web.article_vocabulary_highlights(
+        text,
+        [
+            {
+                "word": rare,
+                "lemma": rare,
+                "category": "domain terminology",
+            }
+        ],
+    )
+    tiers = {item["word"]: item["tier"] for item in highlights}
+
+    assert high_school not in tiers
+    assert tiers[core] == "core"
+    assert tiers[key] == "key"
+    assert tiers[gre] == "gre"
+    assert tiers[rare] == "specialized"
+
+
+def test_high_school_polysemy_is_highlighted_only_for_that_article() -> None:
+    ordinary = web.article_vocabulary_highlights("The school opens early.", [])
+    contextual = web.article_vocabulary_highlights(
+        "This school of thought influenced the debate.",
+        [
+            {
+                "word": "school",
+                "lemma": "school",
+                "category": "polysemy",
+            }
+        ],
+    )
+
+    assert "school" not in {item["word"] for item in ordinary}
+    assert {
+        "word": "school",
+        "lemma": "school",
+        "tier": "specialized",
+    } in contextual
+
+
+def test_llm_cannot_add_high_school_words_to_review_vocabulary() -> None:
+    rejected = CorpusDB._extract_llm_vocabulary(
+        {
+            "vocabulary": [
+                {
+                    "lemma": "school",
+                    "exam_importance": "high",
+                    "category": "academic vocabulary",
+                    "meaning_in_context": "学校",
+                    "source_sentence": "The school opens early.",
+                }
+            ]
+        }
+    )
+    accepted = CorpusDB._extract_llm_vocabulary(
+        {
+            "vocabulary": [
+                {
+                    "lemma": "school",
+                    "exam_importance": "high",
+                    "category": "polysemy",
+                    "meaning_in_context": "学派",
+                    "source_sentence": "This school of thought influenced the debate.",
+                }
+            ]
+        }
+    )
+
+    assert rejected == []
+    assert accepted[0]["category"] == "polysemy"
+
+
+def test_existing_database_migration_removes_high_school_and_caps_articles(tmp_path) -> None:
+    path = tmp_path / "legacy.sqlite"
+    db = CorpusDB(path)
+    with db.connect() as conn:
+        conn.executescript(SCHEMA)
+        conn.execute(
+            """
+            INSERT INTO articles(
+                id, title, source, url, published_at, field, text, metadata_json, created_at
+            ) VALUES ('legacy', 'Legacy', 'test', '', '', 'unknown', 'text', '{}', '')
+            """
+        )
+        high_school = [word for word in gaokao_words() if word != "school"][:4]
+        eligible = [word for word in kaoyan_words() if word not in gaokao_words()][:45]
+        conn.executemany(
+            """
+            INSERT INTO vocabulary(
+                article_id, word, lemma, field, category, frequency, importance
+            ) VALUES ('legacy', ?, ?, 'unknown', 'academic/general', 1, 5)
+            """,
+            [(word, word) for word in high_school + eligible],
+        )
+        conn.execute(
+            """
+            INSERT INTO vocabulary(
+                article_id, word, lemma, field, category, frequency, importance,
+                example_sentence
+            ) VALUES (
+                'legacy', 'school', 'school', 'unknown', 'polysemy', 1, 1,
+                'This school of thought influenced the debate.'
+            )
+            """
+        )
+        conn.execute("DELETE FROM app_metadata WHERE key = 'vocabulary_selection_v3'")
+
+    db.init()
+    with db.connect() as conn:
+        rows = conn.execute("SELECT lemma FROM vocabulary WHERE article_id = 'legacy'").fetchall()
+
+    assert len(rows) == 40
+    assert "school" in {row["lemma"] for row in rows}
+    assert all(
+        vocabulary_tier(row["lemma"]) != "high_school" or row["lemma"] == "school" for row in rows
+    )
 
 
 def test_settings_save_preserves_existing_key(monkeypatch, tmp_path):
@@ -211,9 +344,7 @@ def test_crawler_api_exposes_options_and_imports_analyzed_articles(monkeypatch, 
             title="Automatically fetched",
             source=source.name,
             url="https://example.com/automatic",
-            text=" ".join(
-                ["Researchers examine institutions and environmental regulation."] * 80
-            ),
+            text=" ".join(["Researchers examine institutions and environmental regulation."] * 80),
         )
 
     monkeypatch.setattr(web, "get_db", lambda: db)

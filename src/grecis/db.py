@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import AnalysisResult, Article
+from .nlp import contextual_polysemy_sentence
 from .patterns import (
     infer_sentence_pattern_template,
     normalize_sentence_pattern_type,
@@ -101,7 +102,14 @@ CREATE TABLE IF NOT EXISTS reading_progress (
     progress INTEGER NOT NULL DEFAULT 0 CHECK(progress BETWEEN 0 AND 100),
     last_read_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS app_metadata (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
 """
+
+VOCABULARY_SELECTION_MIGRATION = "vocabulary_selection_v3"
 
 
 class CorpusDB:
@@ -124,6 +132,7 @@ class CorpusDB:
                 conn, "collocations", "example_sentence", "TEXT NOT NULL DEFAULT ''"
             )
             self._ensure_column(conn, "sentence_patterns", "pattern", "TEXT NOT NULL DEFAULT ''")
+            self._migrate_vocabulary_selection(conn)
 
     def upsert_article(self, article: Article) -> str:
         article_id = article.normalized_id()
@@ -557,6 +566,40 @@ class CorpusDB:
         )
 
     @staticmethod
+    def _migrate_vocabulary_selection(conn: sqlite3.Connection) -> None:
+        migrated = conn.execute(
+            "SELECT 1 FROM app_metadata WHERE key = ?",
+            (VOCABULARY_SELECTION_MIGRATION,),
+        ).fetchone()
+        if migrated:
+            return
+
+        rows = [
+            dict(row)
+            for row in conn.execute(
+                "SELECT rowid AS vocabulary_rowid, * FROM vocabulary"
+            ).fetchall()
+        ]
+        by_article: dict[str, list[dict[str, Any]]] = {}
+        for item in rows:
+            by_article.setdefault(item["article_id"], []).append(item)
+        kept_rowids = {
+            int(item["vocabulary_rowid"])
+            for items in by_article.values()
+            for item in _select_review_vocabulary(items)
+        }
+        stale_rowids = [
+            (int(item["vocabulary_rowid"]),)
+            for item in rows
+            if int(item["vocabulary_rowid"]) not in kept_rowids
+        ]
+        conn.executemany("DELETE FROM vocabulary WHERE rowid = ?", stale_rowids)
+        conn.execute(
+            "INSERT INTO app_metadata(key, value) VALUES (?, ?)",
+            (VOCABULARY_SELECTION_MIGRATION, str(len(stale_rowids))),
+        )
+
+    @staticmethod
     def _extract_llm_vocabulary(llm: dict[str, Any]) -> list[dict[str, Any]]:
         payload = _normalize_llm_payload(llm)
         rows: list[dict[str, Any]] = []
@@ -568,8 +611,11 @@ class CorpusDB:
                 continue
             tier = vocabulary_tier(lemma)
             importance = tier_importance(tier)
-            category = _llm_category(item.get("exam_importance"), lemma)
+            category = _llm_category(item)
             if tier == "high_school" and category != "polysemy":
+                continue
+            source_sentence = str(item.get("source_sentence", "")).strip()
+            if tier == "high_school" and not contextual_polysemy_sentence(lemma, [source_sentence]):
                 continue
             if tier == "rare" and category not in {"polysemy", "domain terminology"}:
                 continue
@@ -582,7 +628,7 @@ class CorpusDB:
                     "category": category,
                     "frequency": _llm_frequency(item.get("exam_importance")),
                     "importance": importance,
-                    "example_sentence": str(item.get("meaning_in_context", "")),
+                    "example_sentence": source_sentence or str(item.get("meaning_in_context", "")),
                 }
             )
         return rows
@@ -671,8 +717,14 @@ def _llm_importance(value: Any) -> int:
     return 0
 
 
-def _llm_category(value: Any, lemma: str) -> str:
-    text = str(value or "").lower()
+def _llm_category(item: dict[str, Any]) -> str:
+    text = str(
+        item.get("category")
+        or item.get("classification")
+        or item.get("type")
+        or item.get("exam_importance")
+        or ""
+    ).lower()
     if "polysemy" in text:
         return "polysemy"
     if "idiom" in text or "expression" in text:
@@ -752,6 +804,7 @@ def _unique_vocabulary_rows(
         merged[(item["lemma"], item["category"])] = item
     for item in CorpusDB._extract_llm_vocabulary(llm):
         merged.setdefault((item["lemma"], item["category"]), item)
+    selected = _select_review_vocabulary(merged.values())
     return [
         (
             article_id,
@@ -763,8 +816,33 @@ def _unique_vocabulary_rows(
             item["importance"],
             item.get("example_sentence", ""),
         )
-        for item in merged.values()
+        for item in selected
     ]
+
+
+def _select_review_vocabulary(
+    items: Iterable[dict[str, Any]], limit: int = 40
+) -> list[dict[str, Any]]:
+    eligible = []
+    for item in items:
+        tier = vocabulary_tier(item["lemma"])
+        if tier != "high_school":
+            eligible.append(item)
+            continue
+        if item["category"] not in {"polysemy", "熟词生义"}:
+            continue
+        if contextual_polysemy_sentence(item["lemma"], [str(item.get("example_sentence", ""))]):
+            eligible.append(item)
+    return sorted(
+        eligible,
+        key=lambda item: (
+            item["category"] in {"polysemy", "熟词生义"},
+            item["category"] == "domain terminology",
+            item["importance"],
+            item["frequency"],
+        ),
+        reverse=True,
+    )[:limit]
 
 
 def _unique_collocation_rows(

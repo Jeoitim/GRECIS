@@ -22,7 +22,7 @@ Analyze the following article. For difficult vocabulary items, classify them int
 6. legal or political vocabulary
 
 For each item provide:
-lemma, meaning_in_context, common_meaning,
+lemma, category, meaning_in_context, common_meaning, source_sentence,
 why_chinese_students_misunderstand_it, estimated_level, exam_importance.
 Return compact JSON only. Do NOT output any <think> tags or thinking process.
 Output raw JSON directly.
@@ -31,7 +31,8 @@ Output raw JSON directly.
 COMBINED_ANALYSIS_PROMPT = """Analyze this article for Chinese postgraduate English reading.
 Return compact JSON with exactly:
 {
-"vocabulary":[{"lemma":"","meaning_in_context":"","common_meaning":"",
+"vocabulary":[{"lemma":"","category":"","meaning_in_context":"","common_meaning":"",
+"source_sentence":"",
 "why_chinese_students_misunderstand_it":"","estimated_level":"",
 "exam_importance":"","domain":""}],
 "rhetoric":[{"original_sentence":"","canonical_type":"","type":"","template":"",

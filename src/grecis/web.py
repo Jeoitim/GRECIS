@@ -25,8 +25,8 @@ from .llm import (
     post_chat_completion_raw,
 )
 from .models import Article
-from .nlp import analyze_article
-from .wordlists import tier_importance, vocabulary_tier
+from .nlp import analyze_article, simple_lemma, tokenize
+from .wordlists import match_vocabulary_tier, tier_importance, vocabulary_tier
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 LOCAL_CONFIG_PATH = PROJECT_ROOT / "config" / "local.yaml"
@@ -66,6 +66,42 @@ def word_context(text: str, word: str, limit: int = 240) -> str:
     sentences = re.split(r"(?<=[.!?])\s+", " ".join((text or "").split()))
     sentence = next((item for item in sentences if pattern.search(item)), "")
     return compact_text(sentence, limit)
+
+
+def article_vocabulary_highlights(
+    text: str, vocabulary: list[dict[str, Any]]
+) -> list[dict[str, str]]:
+    """Classify every article token independently from the selected review vocabulary."""
+    specialized_words: set[str] = set()
+    for item in vocabulary:
+        if item.get("category") not in {"polysemy", "熟词生义", "domain terminology"}:
+            continue
+        for value in (item.get("word"), item.get("lemma")):
+            normalized = str(value or "").strip().lower()
+            tier = vocabulary_tier(normalized)
+            is_polysemy = item.get("category") in {"polysemy", "熟词生义"}
+            if normalized and (tier == "rare" or (tier == "high_school" and is_polysemy)):
+                specialized_words.add(normalized)
+
+    highlights: dict[str, dict[str, str]] = {}
+    for surface in tokenize(text):
+        lemma, tier = match_vocabulary_tier(surface)
+        if tier in {"core", "key", "gre"}:
+            highlights[surface] = {"word": surface, "lemma": lemma, "tier": tier}
+        elif tier in {"rare", "high_school"}:
+            specialized_lemma = simple_lemma(surface)
+            if not (
+                surface in specialized_words
+                or lemma in specialized_words
+                or specialized_lemma in specialized_words
+            ):
+                continue
+            highlights[surface] = {
+                "word": surface,
+                "lemma": specialized_lemma,
+                "tier": "specialized",
+            }
+    return list(highlights.values())
 
 
 def article_summary(row: Any) -> dict[str, Any]:
@@ -405,7 +441,11 @@ def get_article(article_id: str) -> dict[str, Any]:
             for item in vocabulary
             if (
                 vocabulary_tier(item["lemma"]) not in {"high_school", "rare"}
-                or item["category"] in {"polysemy", "domain terminology"}
+                or item["category"] == "polysemy"
+                or (
+                    vocabulary_tier(item["lemma"]) == "rare"
+                    and item["category"] == "domain terminology"
+                )
             )
         ]
         collocations = [
@@ -454,6 +494,7 @@ def get_article(article_id: str) -> dict[str, Any]:
         "analysis": analysis,
         "digest": analysis_digest(llm, analysis),
         "vocabulary": vocabulary,
+        "vocabulary_highlights": article_vocabulary_highlights(row["text"], vocabulary),
         "collocations": collocations,
         "polysemy": polysemy,
         "sentence_patterns": patterns,
@@ -582,7 +623,9 @@ def list_vocabulary(
         tier = vocabulary_tier(item["lemma"])
         categories = str(item.get("categories") or "")
         special = "polysemy" in categories or "domain terminology" in categories
-        if tier in {"high_school", "rare"} and not special and not item["mastery"]:
+        if tier == "high_school" and "polysemy" not in categories and not item["mastery"]:
+            continue
+        if tier == "rare" and not special and not item["mastery"]:
             continue
         if query and query not in item["lemma"].lower() and query not in item["word"].lower():
             continue
@@ -615,9 +658,7 @@ def save_mastery(lemma: str, payload: MasteryUpdate) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail="词条格式不正确")
     db = get_db()
     article = db.get_article(payload.article_id) if payload.article_id else None
-    source_word = (
-        re.sub(r"[^a-zA-Z '-]", "", payload.word).strip().lower() or normalized
-    )
+    source_word = re.sub(r"[^a-zA-Z '-]", "", payload.word).strip().lower() or normalized
     example = word_context(article.text, source_word) if article else ""
     with db.connect() as conn:
         if payload.level is None:
@@ -734,9 +775,7 @@ def save_settings(payload: SettingsUpdate) -> dict[str, Any]:
 def test_settings(payload: SettingsUpdate) -> dict[str, Any]:
     current = get_config().llm
     api_key = (
-        payload.api_key.strip()
-        if payload.api_key and payload.api_key.strip()
-        else current.api_key
+        payload.api_key.strip() if payload.api_key and payload.api_key.strip() else current.api_key
     )
     analyzer = LLMAnalyzer.from_config(payload.model.strip(), api_key, payload.base_url.strip())
     if not analyzer.enabled():

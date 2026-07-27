@@ -1,16 +1,31 @@
 from grecis.models import Article
-from grecis.nlp import analyze_article, content_tokens, extract_collocations, extract_polysemy
+from grecis.nlp import (
+    analyze_article,
+    content_tokens,
+    extract_collocations,
+    extract_polysemy,
+    tokenize,
+    word_frequencies,
+)
+from grecis.wordlists import gaokao_words, kaoyan_words, vocabulary_tier
 
 
 def test_content_tokens_normalize_common_suffixes() -> None:
     assert "study" in content_tokens("Studies suggested stronger findings.")
     assert "suggest" in content_tokens("Studies suggested stronger findings.")
+    assert tokenize("You’re ready.") == ["you're", "ready"]
 
 
 def test_extract_polysemy_finds_exam_risk_word() -> None:
     rows = extract_polysemy("The court held that the case was at issue.")
     words = {row["word"] for row in rows}
     assert {"hold", "case", "issue"} <= words
+
+
+def test_extract_polysemy_ignores_ordinary_high_school_usage() -> None:
+    rows = extract_polysemy("The school opens early. The issue is important. She moved the box.")
+
+    assert rows == []
 
 
 def test_analyze_article_returns_core_sections() -> None:
@@ -53,7 +68,30 @@ def test_analyze_article_filters_common_high_school_words_from_vocab() -> None:
         ),
     )
     result = analyze_article(article)
-    words = {item["word"] for item in result.word_frequencies}
-    assert "issue" in words
-    assert "people" not in words
-    assert "can" not in words
+    assert all(vocabulary_tier(item["word"]) != "high_school" for item in result.word_frequencies)
+
+
+def test_analyze_article_keeps_contextual_high_school_polysemy() -> None:
+    article = Article(
+        id="polysemy",
+        title="Context matters",
+        source="test",
+        text="What is at issue is whether the policy will work.",
+    )
+
+    result = analyze_article(article)
+
+    assert any(
+        item["word"] == "issue" and item["category"] == "polysemy"
+        for item in result.word_frequencies
+    )
+
+
+def test_word_selection_scans_past_frequent_high_school_words() -> None:
+    simple_words = list(gaokao_words())[:45]
+    core = next(word for word in kaoyan_words() if word not in gaokao_words())
+    tokens = [word for word in simple_words for _ in range(2)] + [core]
+
+    rows = word_frequencies(tokens, "unknown", [f"The article discusses {core}."])
+
+    assert core in {item["word"] for item in rows}

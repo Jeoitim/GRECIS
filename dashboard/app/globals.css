@@ -108,6 +108,10 @@ button { cursor: pointer; }
 .legend button.is-off { opacity: .38; }
 .legend button.is-off .dot { border: 1px solid currentColor; background: transparent; }
 .legend b { color: var(--ink); font-weight: 500; }
+.reader-tools { display: flex; align-items: center; gap: 13px; }
+.highlight-scope { display: flex; padding: 2px; border: 1px solid var(--line); border-radius: 14px; background: var(--sheet); }
+.highlight-scope button { padding: 4px 8px; border: 0; border-radius: 11px; background: transparent; color: var(--muted); font-size: 9px; }
+.highlight-scope button.active { background: var(--green); color: var(--paper); }
 .dot { width: 7px; height: 7px; border-radius: 50%; }
 .dot.core { background: var(--rose); }
 .dot.key { background: var(--amber); }
