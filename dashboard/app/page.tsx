@@ -96,6 +96,7 @@ type Tooltip = {
   word: string;
   x: number;
   y: number;
+  placement: "above" | "below";
   phonetic: string;
   pos: string;
   zh: string;
@@ -160,6 +161,16 @@ function Icon({ children }: { children: React.ReactNode }) {
   return <span className="icon" aria-hidden="true">{children}</span>;
 }
 
+function UiIcon({ name }: { name: "add" | "trash" | "settings" }) {
+  return (
+    <svg className="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {name === "add" && <><path d="M12 5v14" /><path d="M5 12h14" /></>}
+      {name === "trash" && <><path d="M4 7h16" /><path d="M9 3h6l1 4H8l1-4Z" /><path d="m7 7 1 14h8l1-14" /><path d="M10 11v6M14 11v6" /></>}
+      {name === "settings" && <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.5v-.1A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.5h.3A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4.1v.3A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4h.3v4.1h-.3A1.7 1.7 0 0 0 19.4 15Z" /></>}
+    </svg>
+  );
+}
+
 export default function Home() {
   const [view, setView] = useState<View>("reader");
   const [health, setHealth] = useState<Health | null>(null);
@@ -185,28 +196,17 @@ export default function Home() {
   const [addMode, setAddMode] = useState<"manual" | "crawler">("manual");
   const [crawlerOptions, setCrawlerOptions] = useState<CrawlerOptions | null>(null);
   const [apiKey, setApiKey] = useState("");
-  const [dark, setDark] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const stored = window.localStorage.getItem("grecis-theme");
-    return stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  });
+  const [dark, setDark] = useState(false);
   const [focus, setFocus] = useState(false);
   const [dictionary, setDictionary] = useState(true);
-  const [highlightScope, setHighlightScope] = useState<HighlightScope>(() => {
-    if (typeof window === "undefined") return "review";
-    return window.localStorage.getItem("grecis-highlight-scope") === "all" ? "all" : "review";
+  const [highlightScope, setHighlightScope] = useState<HighlightScope>("review");
+  const [highlightVisibility, setHighlightVisibility] = useState({
+    core: true,
+    key: true,
+    gre: true,
+    specialized: true,
   });
-  const [highlightVisibility, setHighlightVisibility] = useState(() => {
-    if (typeof window === "undefined") {
-      return { core: true, key: true, gre: true, specialized: true };
-    }
-    return {
-      core: window.localStorage.getItem("grecis-highlight-core") !== "off",
-      key: window.localStorage.getItem("grecis-highlight-key") !== "off",
-      gre: window.localStorage.getItem("grecis-highlight-gre") !== "off",
-      specialized: window.localStorage.getItem("grecis-highlight-specialized") !== "off",
-    };
-  });
+  const [preferencesReady, setPreferencesReady] = useState(false);
   const [markingWord, setMarkingWord] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   const [fontSize, setFontSize] = useState(19);
@@ -217,6 +217,7 @@ export default function Home() {
   const hoverTimer = useRef<number | null>(null);
   const closeTimer = useRef<number | null>(null);
   const lookupRequest = useRef<AbortController | null>(null);
+  const globalLookupTarget = useRef<{ node: Text; start: number; end: number } | null>(null);
   const readerRef = useRef<HTMLElement | null>(null);
   const displayedProgress = useRef(0);
   const activeTaskId = useRef(0);
@@ -477,11 +478,65 @@ export default function Home() {
     hoverTimer.current = window.setTimeout(() => void lookup(raw, rect), delay);
   }
 
+  function wordAtPoint(x: number, y: number) {
+    const element = document.elementFromPoint(x, y);
+    if (!element || element.closest("input, textarea, select, option, code, kbd, [data-dictionary-ignore], .dictionary-popover")) {
+      return null;
+    }
+    const lookupDocument = document as Document & {
+      caretPositionFromPoint?: (clientX: number, clientY: number) => { offsetNode: Node; offset: number } | null;
+      caretRangeFromPoint?: (clientX: number, clientY: number) => Range | null;
+    };
+    const caretPosition = lookupDocument.caretPositionFromPoint?.(x, y);
+    const caretRange = caretPosition ? null : lookupDocument.caretRangeFromPoint?.(x, y);
+    const node = caretPosition?.offsetNode || caretRange?.startContainer || null;
+    let offset = caretPosition?.offset ?? caretRange?.startOffset ?? 0;
+    if (!node || node.nodeType !== 3) return null;
+    const textNode = node as Text;
+    const text = textNode.data;
+    if (offset >= text.length || !/[A-Za-z'’‘-]/.test(text[offset] || "")) offset -= 1;
+    if (offset < 0 || !/[A-Za-z]/.test(text[offset] || "")) return null;
+    let start = offset;
+    let end = offset + 1;
+    while (start > 0 && /[A-Za-z'’‘-]/.test(text[start - 1])) start -= 1;
+    while (end < text.length && /[A-Za-z'’‘-]/.test(text[end])) end += 1;
+    const word = text.slice(start, end).replace(/[’‘]/g, "'");
+    if (!/^[A-Za-z][A-Za-z'-]+$/.test(word)) return null;
+    const range = document.createRange();
+    range.setStart(textNode, start);
+    range.setEnd(textNode, end);
+    const rect = range.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    return { word, rect, node: textNode, start, end };
+  }
+
+  function handleGlobalLookupMove(event: React.MouseEvent<HTMLDivElement>) {
+    if (!dictionary) return;
+    const target = wordAtPoint(event.clientX, event.clientY);
+    if (!target) {
+      if (globalLookupTarget.current) {
+        globalLookupTarget.current = null;
+        scheduleClose();
+      }
+      return;
+    }
+    const current = globalLookupTarget.current;
+    if (current?.node === target.node && current.start === target.start && current.end === target.end) return;
+    globalLookupTarget.current = { node: target.node, start: target.start, end: target.end };
+    scheduleLookup(target.word, target.rect);
+  }
+
   async function lookup(raw: string, rect: DOMRect) {
     const word = raw.toLowerCase().replace(/[^a-z'-]/g, "");
     if (word.length < 2) return;
+    const placement = window.innerHeight - rect.bottom < 280 && rect.top > 280 ? "above" : "below";
+    const anchor = {
+      x: rect.left + rect.width / 2,
+      y: placement === "above" ? rect.top - 10 : rect.bottom + 10,
+      placement,
+    } as const;
     setTooltip({
-      word, x: rect.left + rect.width / 2, y: rect.bottom + 10,
+      word, ...anchor,
       phonetic: "", pos: "", zh: "正在查询本地词典…", en: "", loading: true,
     });
     const controller = new AbortController();
@@ -491,11 +546,11 @@ export default function Home() {
         `/dictionary/${encodeURIComponent(word)}`,
         { signal: controller.signal },
       );
-      setTooltip({ ...data, x: rect.left + rect.width / 2, y: rect.bottom + 10 });
+      setTooltip({ ...data, ...anchor });
     } catch (reason) {
       if (reason instanceof DOMException && reason.name === "AbortError") return;
       setTooltip({
-        word, x: rect.left + rect.width / 2, y: rect.bottom + 10, phonetic: "", pos: "",
+        word, ...anchor, phonetic: "", pos: "",
         zh: "暂未查到释义", en: reason instanceof Error ? reason.message : "",
       });
     }
@@ -545,8 +600,6 @@ export default function Home() {
         <span
           key={`${raw}-${index}`}
           className={`word ${tier ? `candidate tier-${tier}` : ""} ${levels[lemma] ? `level-${levels[lemma]}` : ""}`}
-          onMouseEnter={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect())}
-          onMouseLeave={scheduleClose}
           onFocus={(event) => scheduleLookup(part, event.currentTarget.getBoundingClientRect(), 0)}
           onBlur={scheduleClose}
           onClick={() => openWordMark(lemma)}
@@ -733,20 +786,43 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const storedTheme = window.localStorage.getItem("grecis-theme");
+      const preferredDark = storedTheme === "dark"
+        || (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      setDark(preferredDark);
+      setHighlightScope(
+        window.localStorage.getItem("grecis-highlight-scope") === "all" ? "all" : "review",
+      );
+      setHighlightVisibility({
+        core: window.localStorage.getItem("grecis-highlight-core") !== "off",
+        key: window.localStorage.getItem("grecis-highlight-key") !== "off",
+        gre: window.localStorage.getItem("grecis-highlight-gre") !== "off",
+        specialized: window.localStorage.getItem("grecis-highlight-specialized") !== "off",
+      });
+      setPreferencesReady(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!preferencesReady) return;
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     localStorage.setItem("grecis-theme", dark ? "dark" : "light");
-  }, [dark]);
+  }, [dark, preferencesReady]);
 
   useEffect(() => {
+    if (!preferencesReady) return;
     localStorage.setItem("grecis-highlight-scope", highlightScope);
-  }, [highlightScope]);
+  }, [highlightScope, preferencesReady]);
 
   useEffect(() => {
+    if (!preferencesReady) return;
     localStorage.setItem("grecis-highlight-core", highlightVisibility.core ? "on" : "off");
     localStorage.setItem("grecis-highlight-key", highlightVisibility.key ? "on" : "off");
     localStorage.setItem("grecis-highlight-gre", highlightVisibility.gre ? "on" : "off");
     localStorage.setItem("grecis-highlight-specialized", highlightVisibility.specialized ? "on" : "off");
-  }, [highlightVisibility]);
+  }, [highlightVisibility, preferencesReady]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -837,7 +913,14 @@ export default function Home() {
   }
 
   return (
-    <div className={`app-shell ${focus ? "focus-mode" : ""}`}>
+    <div
+      className={`app-shell ${focus ? "focus-mode" : ""}`}
+      onMouseMove={handleGlobalLookupMove}
+      onMouseLeave={() => {
+        globalLookupTarget.current = null;
+        scheduleClose();
+      }}
+    >
       <aside className="sidebar">
         <div className="brand-row">
           <div className="brand-mark">G</div>
@@ -854,8 +937,8 @@ export default function Home() {
         <div className="library-heading">
           <span>最近篇目</span>
           <div className="library-actions">
-            <button className="clear-recent" onClick={() => void clearRecent()} aria-label="清空最近篇目" title="清空最近篇目" disabled={!recent.length}>🗑︎</button>
-            <button onClick={() => void showAddDialog()} aria-label="增加文章" title="增加文章">＋</button>
+            <button onClick={() => void clearRecent()} aria-label="清空最近篇目" title="清空最近篇目" disabled={!recent.length}><UiIcon name="trash" /></button>
+            <button onClick={() => void showAddDialog()} aria-label="增加文章" title="增加文章"><UiIcon name="add" /></button>
           </div>
         </div>
         <div className="article-list">
@@ -871,7 +954,7 @@ export default function Home() {
         </div>
 
         <button className="settings-entry" onClick={() => setSettingsOpen(true)}>
-          <Icon>⚙</Icon><span>模型与 API</span><small>{settings.model || "加载中"}</small>
+          <UiIcon name="settings" /><span>模型与 API</span><small>{settings.model || "加载中"}</small>
         </button>
       </aside>
 
@@ -879,7 +962,7 @@ export default function Home() {
         <header className="topbar">
           <div className="breadcrumbs"><span>{view === "reader" ? detail?.analysis.field || "语料" : "GRECIS"}</span><b>/</b><span>{viewLabels[view]}</span></div>
           <div className="top-actions">
-            {view === "reader" && <button className={`text-button ${dictionary ? "is-on" : ""}`} onClick={() => { setDictionary(!dictionary); clearPendingLookup(); setTooltip(null); }}><i />悬停查词 · 0.5s</button>}
+            <button className={`text-button ${dictionary ? "is-on" : ""}`} onClick={() => { setDictionary(!dictionary); clearPendingLookup(); setTooltip(null); }}><i />全页查词 · 0.5s</button>
             <button className="circle-button" onClick={() => setFocus(!focus)} aria-label="切换专注模式">{focus ? "↙" : "↗"}</button>
             <button className="circle-button" onClick={() => setDark(!dark)} aria-label="切换深色模式">{dark ? "☀" : "◐"}</button>
           </div>
@@ -970,7 +1053,53 @@ export default function Home() {
                 <Icon>{busy === "analyze" ? "◌" : "✦"}</Icon>
                 <span><strong>{busy === "analyze" ? "Python 正在分析…" : "重新进行 LLM + NLP 分析"}</strong><small>{settings.model} · 写入 SQLite</small></span>
               </button>
-              <div className="corpus-note"><b>{detail.collocations.length}</b> 个搭配 · <b>{detail.polysemy.length}</b> 个熟词生义 · <b>{detail.sentence_patterns.length}</b> 个句式</div>
+              <details className="language-notes" open>
+                <summary>
+                  <span>精读语言点</span>
+                  <small>
+                    <b>{detail.collocations.length}</b> 搭配 · <b>{detail.polysemy.length}</b> 生义 · <b>{detail.sentence_patterns.length}</b> 句式
+                  </small>
+                </summary>
+                <div className="language-note-groups">
+                  <details open>
+                    <summary><span>搭配</span><b>{detail.collocations.length}</b></summary>
+                    <ol>
+                      {detail.collocations.map((item, index) => (
+                        <li key={`${item.expression}-${index}`}>
+                          <strong>{item.expression}</strong>
+                          {item.meaning && <p>{item.meaning}</p>}
+                        </li>
+                      ))}
+                    </ol>
+                    {!detail.collocations.length && <p className="language-note-empty">本篇暂无搭配记录</p>}
+                  </details>
+                  <details open>
+                    <summary><span>熟词生义</span><b>{detail.polysemy.length}</b></summary>
+                    <ol>
+                      {detail.polysemy.map((item, index) => (
+                        <li key={`${item.word}-${index}`}>
+                          <strong>{item.word}</strong>
+                          <p>{item.contextual_meaning}</p>
+                        </li>
+                      ))}
+                    </ol>
+                    {!detail.polysemy.length && <p className="language-note-empty">本篇暂无熟词生义记录</p>}
+                  </details>
+                  <details open>
+                    <summary><span>句式</span><b>{detail.sentence_patterns.length}</b></summary>
+                    <ol>
+                      {detail.sentence_patterns.map((item, index) => (
+                        <li key={`${item.type}-${index}`}>
+                          <strong>{item.type}</strong>
+                          {item.function && <p>{item.function}</p>}
+                          <blockquote>{item.sentence}</blockquote>
+                        </li>
+                      ))}
+                    </ol>
+                    {!detail.sentence_patterns.length && <p className="language-note-empty">本篇暂无句式记录</p>}
+                  </details>
+                </div>
+              </details>
             </aside>
           </div>
         )}
@@ -1072,7 +1201,17 @@ export default function Home() {
       </main>
 
       {tooltip && (
-        <div className="dictionary-popover" style={{ left: Math.min(window.innerWidth - 290, Math.max(16, tooltip.x - 130)), top: tooltip.y }} onMouseEnter={keepPopoverOpen} onMouseLeave={scheduleClose}>
+        <div
+          className={`dictionary-popover ${tooltip.placement === "above" ? "popover-above" : ""}`}
+          style={{
+            left: Math.min(window.innerWidth - 290, Math.max(16, tooltip.x - 130)),
+            ...(tooltip.placement === "above"
+              ? { bottom: Math.max(16, window.innerHeight - tooltip.y) }
+              : { top: tooltip.y }),
+          }}
+          onMouseEnter={keepPopoverOpen}
+          onMouseLeave={scheduleClose}
+        >
           <div className="dictionary-top"><strong>{tooltip.word}</strong><button aria-label="播放发音">◖))</button></div>
           <div className="phonetic">{tooltip.phonetic} <i>{tooltip.pos}</i></div>
           <p className={tooltip.loading ? "loading" : ""}>{tooltip.zh || "暂无中文释义"}</p>

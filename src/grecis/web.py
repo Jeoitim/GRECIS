@@ -123,6 +123,24 @@ def article_summary(row: Any) -> dict[str, Any]:
     }
 
 
+RHETORIC_TYPE_LABELS = {
+    "concession": "让步",
+    "contrast": "对比",
+    "causality": "因果",
+    "condition": "条件",
+    "stance": "立场表达",
+    "hedging": "审慎限定",
+    "emphasis": "强调",
+    "comparison": "比较",
+    "inversion": "倒装",
+    "cleft": "强调句",
+    "relative_clause": "定语从句",
+    "participial_clause": "分词结构",
+    "nominal_clause": "名词性从句",
+    "argument_development": "论证推进",
+}
+
+
 def analysis_digest(llm: dict[str, Any], analysis: dict[str, Any]) -> dict[str, Any]:
     valid = is_complete_analysis(llm)
     invalid = bool(llm) and not valid
@@ -143,22 +161,37 @@ def analysis_digest(llm: dict[str, Any], analysis: dict[str, Any]) -> dict[str, 
         or first.get("explanation")
         or ""
     )
+    domain = str(exam_value.get("primary_domain") or analysis.get("field") or "unknown")
+    type_labels = [RHETORIC_TYPE_LABELS.get(value, value) for value in types]
+    direct_insight = str(
+        llm.get("article_insight_zh")
+        or llm.get("insight_zh")
+        or exam_value.get("article_insight_zh")
+        or ""
+    ).strip()
+    first_explanation = str(
+        first.get("explanation_zh")
+        or first.get("explanation")
+        or first.get("reading_tip_zh")
+        or first.get("reading_tip")
+        or ""
+    ).strip()
+    if direct_insight:
+        insight = direct_insight
+    elif rhetoric:
+        structure_text = "、".join(type_labels[:3]) or "多层论证结构"
+        detail = f" {first_explanation}" if first_explanation else ""
+        insight = f"文章围绕“{domain}”展开，主要通过{structure_text}推进论证。{detail}".strip()
+    elif valid:
+        insight = "LLM 分析已完成，未识别到可展示的修辞节点。"
+    elif invalid:
+        insight = "此前的 LLM 返回不完整或无法解析；当前仅展示本地 NLP 结果。"
+    else:
+        insight = "当前文章已有本地 NLP 分析，尚未进行有效的 LLM 分析。"
     return {
-        "insight": (
-            f"模型识别出 {len(rhetoric)} 个可迁移的论证与句式节点。"
-            if rhetoric
-            else (
-                "LLM 分析已完成，未识别到可展示的修辞节点。"
-                if valid
-                else (
-                    "此前的 LLM 返回不完整或无法解析；当前仅展示本地 NLP 结果。"
-                    if invalid
-                    else "当前文章已有本地 NLP 分析，尚未进行有效的 LLM 分析。"
-                )
-            )
-        ),
-        "structure": " → ".join(types[:3]) or "本地结构识别",
-        "domain": exam_value.get("primary_domain") or analysis.get("field") or "unknown",
+        "insight": insight,
+        "structure": " → ".join(type_labels[:3]) or "本地结构识别",
+        "domain": domain,
         "note": note or "结合正文中的转折、限定和因果线索进行精读。",
         "model": (llm.get("_meta") or {}).get("model", ""),
         "status": "valid" if valid else ("invalid" if invalid else "local"),

@@ -277,6 +277,45 @@ def test_invalid_llm_record_is_not_reported_as_success(monkeypatch, tmp_path):
     assert history[0]["mode"] == "LLM 未解析 · NLP"
 
 
+def test_analysis_digest_uses_article_specific_llm_insight():
+    llm = {
+        "article_insight_zh": "文章质疑以行政命令加速化学品审批，并强调科学审查的必要性。",
+        "vocabulary": [],
+        "rhetoric": [
+            {
+                "canonical_type": "contrast",
+                "explanation_zh": "作者对比产业效率诉求与环境健康风险。",
+            }
+        ],
+        "exam_value": {"primary_domain": "environment"},
+    }
+
+    digest = web.analysis_digest(llm, {"field": "science"})
+
+    assert digest["insight"] == llm["article_insight_zh"]
+    assert digest["structure"] == "对比"
+    assert "模型识别出" not in digest["insight"]
+
+
+def test_analysis_digest_derives_specific_insight_for_older_records():
+    llm = {
+        "vocabulary": [],
+        "rhetoric": [
+            {
+                "canonical_type": "causality",
+                "explanation_zh": "作者说明冷却方案如何把节水收益转化为化学品排放风险。",
+            }
+        ],
+        "exam_value": {"primary_domain": "environment"},
+    }
+
+    digest = web.analysis_digest(llm, {"field": "science"})
+
+    assert "environment" in digest["insight"]
+    assert "因果" in digest["insight"]
+    assert "冷却方案" in digest["insight"]
+
+
 def test_recent_articles_can_be_cleared_without_deleting_corpus(monkeypatch, tmp_path):
     db, article_id = sample_db(tmp_path)
     monkeypatch.setattr(web, "get_db", lambda: db)

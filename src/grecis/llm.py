@@ -8,7 +8,7 @@ from typing import Any
 
 from .models import Article
 
-LLM_PROMPT_VERSION = "combined_rhetoric_v2"
+LLM_PROMPT_VERSION = "combined_rhetoric_v3"
 ANALYSIS_TIMEOUT_SECONDS = 180.0
 
 VOCABULARY_PROMPT = """You are an expert in Chinese postgraduate entrance examination English.
@@ -31,6 +31,7 @@ Output raw JSON directly.
 COMBINED_ANALYSIS_PROMPT = """Analyze this article for Chinese postgraduate English reading.
 Return compact JSON with exactly:
 {
+"article_insight_zh":"用一至两句中文具体概括文章的核心主张与论证路径，不要描述分析过程",
 "vocabulary":[{"lemma":"","category":"","meaning_in_context":"","common_meaning":"",
 "source_sentence":"",
 "why_chinese_students_misunderstand_it":"","estimated_level":"",
@@ -51,6 +52,7 @@ containing a connector. template should abstract the reusable English structure.
 explanation_zh and reading_tip_zh must be concise Chinese.
 Limits: vocabulary <= 12 high-value items, rhetoric <= 10 diverse items.
 Prefer polysemy, exam phrases, domain terms, long-sentence parsing, and argument logic.
+article_insight_zh must be specific to this article. Do not report counts of extracted items.
 Raw JSON only.
 """
 

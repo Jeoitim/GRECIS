@@ -67,7 +67,7 @@ def test_llm_analyzer_uses_single_combined_call(monkeypatch) -> None:
     )
 
     assert result["vocabulary"] == []
-    assert result["_meta"]["prompt_version"] == "combined_rhetoric_v2"
+    assert result["_meta"]["prompt_version"] == "combined_rhetoric_v3"
     assert len(calls) == 1
     assert calls[0]["max_tokens"] == 8192
     assert calls[0]["timeout"] == 180.0
